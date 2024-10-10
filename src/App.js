@@ -9,8 +9,11 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
-          Hello World!
+          Hello World! hallo
         </p>
+        <h1 className="text-3xl font-bold underline">
+          Hey this is tailwindcss!
+        </h1>
         <a
           className="App-link"
           href="https://reactjs.org"
