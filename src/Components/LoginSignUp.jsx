@@ -24,7 +24,7 @@ const LoginSignUp = () => {
             <FaUser className='icon' />
           </div>
           <div className='input-box'>
-            <input type='password' placeholder='Password' required />
+            <input type='password' placeholder='Password' minlength="4" required />
             <FaLock className='icon' />
           </div>
 
@@ -53,7 +53,7 @@ const LoginSignUp = () => {
             <FaEnvelope className='icon' />
           </div>
           <div className='input-box'>
-            <input type='password' placeholder='Password' required />
+            <input type='password' placeholder='Password' minlength="4" required />
             <FaLock className='icon' />
           </div>
           <div className='input-box'>
