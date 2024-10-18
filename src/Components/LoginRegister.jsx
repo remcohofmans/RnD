@@ -33,7 +33,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   return (
     <div className="min-h-screen flex">
       {/* Left Half (Background color for now, but you can add an image later) */}
-      <div className="w-1/2 bg-purple-300 flex items-center justify-center">
+      <div className="w-1/2 flex items-center justify-center" style={{ backgroundColor: '#C5C3E0' }}>
         {/* Placeholder for future image */}
         <h2 className="text-white text-4xl">Welcome!</h2>
       </div>
