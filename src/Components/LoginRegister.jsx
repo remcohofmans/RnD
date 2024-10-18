@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import butterflyImage from '../Assets/Butterfly.png';
 
 const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,7 +9,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
 
-  // State to track focus on inputs
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
 
@@ -32,20 +32,23 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Half (Background color for now, but you can add an image later) */}
-      <div className="w-1/2 flex items-center justify-center" style={{ backgroundColor: '#C5C3E0' }}>
-        {/* Placeholder for future image */}
-        <h2 className="text-white text-4xl">Welcome!</h2>
+      {/* Left Half */}
+      <div className="w-1/2 flex items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative">
+      <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }} ></div>        
+      <div className="relative z-10 text-center">
+          <h1 className="text-white text-5xl font-bold mb-4">V(l)inder</h1>
+          <p className="text-white text-lg">Find your perfect match</p>
+        </div>
       </div>
 
       {/* Right Half (Login/Signup Form) */}
-      <div className="w-1/2 flex items-center justify-center bg-white">
+      <div className="w-1/2 flex items-center justify-center bg-gray-50">
         <div className={`wrapper flex items-center justify-center w-full max-w-md ${!isLogin ? 'active' : ''}`}>
           {/* Login Form */}
           {isLogin && (
-            <div className="form-box login bg-white shadow-lg rounded-2xl p-10 w-full">
+            <div className="form-box login bg-white shadow-xl rounded-3xl p-10 w-full transform transition-transform duration-300 hover:scale-105">
               <form onSubmit={handleLoginSubmit} className="flex flex-col">
-                <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Login</h1>
+                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Login</h1>
 
                 <div className="mb-6">
                   <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
@@ -90,7 +93,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 <button
                   type="submit"
-                  className="w-full py-4 text-lg bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="w-full py-4 text-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105"
                 >
                   Login
                 </button>
@@ -113,9 +116,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
           {/* Register Form */}
           {!isLogin && (
-            <div className="form-box register bg-white shadow-lg rounded-2xl p-10 w-full">
+            <div className="form-box register bg-white shadow-xl rounded-3xl p-10 w-full transform transition-transform duration-300 hover:scale-105">
               <form onSubmit={handleSignUpSubmit} className="flex flex-col">
-                <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Sign up</h1>
+                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Sign up</h1>
 
                 <div className="mb-6">
                   <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
@@ -180,7 +183,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 <button
                   type="submit"
-                  className="w-full py-4 text-lg bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="w-full py-4 text-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105"
                 >
                   Sign up
                 </button>
