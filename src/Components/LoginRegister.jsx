@@ -1,71 +1,102 @@
 import React, { useState } from 'react';
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
-import './LoginRegister.css';
 
 const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and sign-up
+  const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
 
-  // Handle login form submit
+  // State to track focus on inputs
+  const [focusEmail, setFocusEmail] = useState(false);
+  const [focusPassword, setFocusPassword] = useState(false);
+
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    console.log('Login button pressed'); // Add this line to debug
     if (!loginEmail || !loginPassword) {
       console.error("Please provide email and password for login.");
       return;
     }
-    loginWithEmail(loginEmail, loginPassword); // Call login function with email and password
+    loginWithEmail(loginEmail, loginPassword);
   };
 
-  // Handle signup form submit
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
     if (!signUpEmail || !signUpPassword) {
       console.error("Please provide email and password for sign up.");
       return;
     }
-    signUpWithEmail(signUpEmail, signUpPassword); // Call signup function with email and password
+    signUpWithEmail(signUpEmail, signUpPassword);
   };
 
   return (
-    <div className={`wrapper ${!isLogin ? 'active' : ''}`}>
+    <div className={`wrapper flex items-center justify-center min-h-screen ${!isLogin ? 'active' : ''}`}>
       {/* Login Form */}
       {isLogin && (
-        <div className='form-box login'>
-          <form onSubmit={handleLoginSubmit}>
-            <h1>Login</h1>
-            <div className='input-box'>
-              <input
-                type='email'
-                placeholder='Email'
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                required
-              />
-              <FaUser className='icon' />
-            </div>
-            <div className='input-box'>
-              <input
-                type='password'
-                placeholder='Password'
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                required
-              />
-              <FaLock className='icon' />
+        <div className="form-box login bg-white shadow-lg rounded-2xl p-10 w-full max-w-md">
+          <form onSubmit={handleLoginSubmit} className="flex flex-col">
+            <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Login</h1>
+
+            <div className="mb-6">
+              <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  onFocus={() => setFocusEmail(true)}
+                  onBlur={() => setFocusEmail(false)}
+                  required
+                  className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusEmail ? 'scale-105' : ''}`}
+                />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <FaUser className="text-gray-400 text-xl" />
+                </div>
+              </div>
             </div>
 
-            <div className='remember-forgot'>
-              <label><input type='checkbox' /> Remember me</label>
+            <div className="mb-6">
+              <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  onFocus={() => setFocusPassword(true)}
+                  onBlur={() => setFocusPassword(false)}
+                  required
+                  className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusPassword ? 'scale-105' : ''}`}
+                />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <FaLock className="text-gray-400 text-xl" />
+                </div>
+              </div>
             </div>
 
-            <button type='submit'>Login</button>
+            <div className="flex items-center mb-6">
+              <input type="checkbox" id="remember" className="mr-2 text-lg" />
+              <label htmlFor="remember" className="text-lg text-gray-600">Remember me</label>
+            </div>
 
-            <div className='register-link'>
-              <p>Don't have an account yet? <a href='#' onClick={() => setIsLogin(false)}>Register</a></p>
+            <button
+              type="submit"
+              className="w-full py-4 text-lg bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Login
+            </button>
+
+            <div className="text-center mt-8">
+              <p className="text-lg text-gray-600">
+                Don't have an account yet?{' '}
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline"
+                  onClick={() => setIsLogin(false)}
+                >
+                  Register
+                </a>
+              </p>
             </div>
           </form>
         </div>
@@ -73,32 +104,51 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
       {/* Register Form */}
       {!isLogin && (
-        <div className='form-box register'>
-          <form onSubmit={handleSignUpSubmit}>
-            <h1>Sign up</h1>
-            <div className='input-box'>
-              <input
-                type='email'
-                placeholder='Email'
-                value={signUpEmail}
-                onChange={(e) => setSignUpEmail(e.target.value)}
-                required
-              />
-              <FaEnvelope className='icon' />
-            </div>
-            <div className='input-box'>
-              <input
-                type='password'
-                placeholder='Password'
-                value={signUpPassword}
-                onChange={(e) => setSignUpPassword(e.target.value)}
-                required
-              />
-              <FaLock className='icon' />
+        <div className="form-box register bg-white shadow-lg rounded-2xl p-10 w-full max-w-md">
+          <form onSubmit={handleSignUpSubmit} className="flex flex-col">
+            <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Sign up</h1>
+
+            <div className="mb-6">
+              <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={signUpEmail}
+                  onChange={(e) => setSignUpEmail(e.target.value)}
+                  onFocus={() => setFocusEmail(true)}
+                  onBlur={() => setFocusEmail(false)}
+                  required
+                  className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusEmail ? 'scale-105' : ''}`}
+                />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <FaEnvelope className="text-gray-400 text-xl" />
+                </div>
+              </div>
             </div>
 
-            <div className='input-box'>
-              <select required>
+            <div className="mb-6">
+              <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
+                  onFocus={() => setFocusPassword(true)}
+                  onBlur={() => setFocusPassword(false)}
+                  required
+                  className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusPassword ? 'scale-105' : ''}`}
+                />
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <FaLock className="text-gray-400 text-xl" />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <select
+                required
+                className="w-full py-4 px-4 text-lg rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+              >
                 <option value="">Select your Facility</option>
                 <option value="facility1">Facility 1</option>
                 <option value="facility2">Facility 2</option>
@@ -107,14 +157,36 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
               </select>
             </div>
 
-            <div className='remember-forgot'>
-              <label><input type='checkbox' /> I agree to the terms and conditions</label>
+            <div className="flex items-center mb-6">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mr-2 text-lg"
+                required
+              />
+              <label htmlFor="terms" className="text-lg text-gray-600">
+                I agree to the <a href="#" className="text-blue-500">terms and conditions</a>
+              </label>
             </div>
 
-            <button type='submit'>Sign up</button>
+            <button
+              type="submit"
+              className="w-full py-4 text-lg bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Sign up
+            </button>
 
-            <div className='login-link'>
-              <p>Already have an account? <a href='#' onClick={() => setIsLogin(true)}>Login</a></p>
+            <div className="text-center mt-8">
+              <p className="text-lg text-gray-600">
+                Already have an account?{' '}
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline"
+                  onClick={() => setIsLogin(true)}
+                >
+                  Login
+                </a>
+              </p>
             </div>
           </form>
         </div>
