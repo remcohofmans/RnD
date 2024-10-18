@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 // Sample user data
 const users = [
@@ -51,8 +53,12 @@ const UserCard = ({ user }) => (
     <p className="text-center text-gray-600">{user.location}</p>
     <p className="text-center mt-2">{user.bio}</p>
     <div className="flex justify-around mt-4">
-      <button className="bg-blue-500 text-white px-4 py-2 rounded">Connect</button>
-      <button className="bg-gray-500 text-white px-4 py-2 rounded">Skip</button>
+      <button className="flex items-center bg-green-500 text-white px-4 py-2 rounded">
+        <FontAwesomeIcon icon={faCheck} className="mr-2" /> Connect
+      </button>
+      <button className="flex items-center bg-red-500 text-white px-4 py-2 rounded">
+        <FontAwesomeIcon icon={faTimes} className="mr-2" /> Skip
+      </button>
     </div>
   </div>
 );
