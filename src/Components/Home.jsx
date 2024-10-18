@@ -17,15 +17,15 @@ const handleButtonClick = useCallback(() => {
 }, [loggedIn, logout, navigate]); // Add logout to the dependencies
 
   return (
-    <div class="container" id="container">
-      <div class="form-container sign-up">
+    <div className="container" id="container">
+      <div className="form-container sign-up">
         <form>
           <h1>
             This is the homepage!
           </h1>
           <div className="social-icons">
-              <a href="#" class="icon">
-              <i class="fa-brands fa-google"></i></a>
+              <a href="#" className="icon">
+              <i className="fa-brands fa-google"></i></a>
           </div>
         </form>
       </div>
