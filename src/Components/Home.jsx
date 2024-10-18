@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import './Home.css'; // Import the CSS file
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const Home = ({ loggedIn, email }) => {
+const Home = ({ loggedIn, logout, email }) => {
 const navigate = useNavigate();
 
 const handleButtonClick = useCallback(() => {
   if (loggedIn) {
-    // Logic for logging out (add your logout logic here)
-    console.log('Logging out...'); // Example placeholder for actual logout logic
+    // Call the passed logout function and navigate to login page after logout
+    logout(); // Call the logout function passed as prop
+    navigate('/login'); // Redirect to login page after logout
   } else {
-    navigate('/login'); // Redirect to login page
+    navigate('/login'); // Redirect to login page if user is not logged in
   }
-}, [loggedIn, navigate]);
+}, [loggedIn, logout, navigate]); // Add logout to the dependencies
 
   return (
     <div class="container" id="container">
@@ -29,16 +30,15 @@ const handleButtonClick = useCallback(() => {
         </form>
       </div>
 
-      <p>In ontwerp...</p>
       <div className="button-container">
         <input
           className="input-button"
           type="button"
           onClick={handleButtonClick}
-          value={loggedIn ? 'Log out' : 'Log in'}
-          aria-label={loggedIn ? 'Log out' : 'Log in'}
+          value={'Log out'}
+          aria-label={'Log out'}
         />
-        {loggedIn && email && (
+        {email && (
           <div className="email-address">Your email address is {email}</div>
         )}
       </div>
