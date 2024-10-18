@@ -12,7 +12,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   // Handle login form submit
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    console.log('Login button pressed'); // Add this line to debug
     if (!loginEmail || !loginPassword) {
       console.error("Please provide email and password for login.");
       return;
@@ -34,38 +33,61 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     <div className={`wrapper ${!isLogin ? 'active' : ''}`}>
       {/* Login Form */}
       {isLogin && (
-        <div className='form-box login'>
+        <div className="form-box login bg-white shadow-lg rounded-2xl p-8">
           <form onSubmit={handleLoginSubmit}>
-            <h1>Login</h1>
-            <div className='input-box'>
-              <input
-                type='email'
-                placeholder='Email'
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                required
-              />
-              <FaUser className='icon' />
-            </div>
-            <div className='input-box'>
-              <input
-                type='password'
-                placeholder='Password'
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                required
-              />
-              <FaLock className='icon' />
+            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
+
+            <div className="mb-4">
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  required
+                  className="w-full py-2 px-4 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+                />
+                <FaUser className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
             </div>
 
-            <div className='remember-forgot'>
-              <label><input type='checkbox' /> Remember me</label>
+            <div className="mb-4">
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                  className="w-full py-2 px-4 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+                />
+                <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
             </div>
 
-            <button type='submit'>Login</button>
+            <div className="flex items-center mb-6">
+              <input type="checkbox" id="remember" className="mr-2" />
+              <label htmlFor="remember" className="text-sm text-gray-600">Remember me</label>
+            </div>
 
-            <div className='register-link'>
-              <p>Don't have an account yet? <a href='#' onClick={() => setIsLogin(false)}>Register</a></p>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Login
+            </button>
+
+            <div className="text-center mt-6">
+              <p className="text-gray-600">
+                Don't have an account yet?{' '}
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline"
+                  onClick={() => setIsLogin(false)}
+                >
+                  Register
+                </a>
+              </p>
             </div>
           </form>
         </div>
@@ -73,32 +95,43 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
       {/* Register Form */}
       {!isLogin && (
-        <div className='form-box register'>
+        <div className="form-box register bg-white shadow-lg rounded-2xl p-8">
           <form onSubmit={handleSignUpSubmit}>
-            <h1>Sign up</h1>
-            <div className='input-box'>
-              <input
-                type='email'
-                placeholder='Email'
-                value={signUpEmail}
-                onChange={(e) => setSignUpEmail(e.target.value)}
-                required
-              />
-              <FaEnvelope className='icon' />
-            </div>
-            <div className='input-box'>
-              <input
-                type='password'
-                placeholder='Password'
-                value={signUpPassword}
-                onChange={(e) => setSignUpPassword(e.target.value)}
-                required
-              />
-              <FaLock className='icon' />
+            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Sign up</h1>
+
+            <div className="mb-4">
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={signUpEmail}
+                  onChange={(e) => setSignUpEmail(e.target.value)}
+                  required
+                  className="w-full py-2 px-4 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+                />
+                <FaEnvelope className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
             </div>
 
-            <div className='input-box'>
-              <select required>
+            <div className="mb-4">
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
+                  required
+                  className="w-full py-2 px-4 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+                />
+                <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <select
+                required
+                className="w-full py-2 px-4 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+              >
                 <option value="">Select your Facility</option>
                 <option value="facility1">Facility 1</option>
                 <option value="facility2">Facility 2</option>
@@ -107,14 +140,36 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
               </select>
             </div>
 
-            <div className='remember-forgot'>
-              <label><input type='checkbox' /> I agree to the terms and conditions</label>
+            <div className="flex items-center mb-6">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mr-2"
+                required
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600">
+                I agree to the <a href="#" className="text-blue-500">terms and conditions</a>
+              </label>
             </div>
 
-            <button type='submit'>Sign up</button>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Sign up
+            </button>
 
-            <div className='login-link'>
-              <p>Already have an account? <a href='#' onClick={() => setIsLogin(true)}>Login</a></p>
+            <div className="text-center mt-6">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <a
+                  href="#"
+                  className="text-blue-500 hover:underline"
+                  onClick={() => setIsLogin(true)}
+                >
+                  Login
+                </a>
+              </p>
             </div>
           </form>
         </div>
