@@ -34,8 +34,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     <div className="min-h-screen flex">
       {/* Left Half */}
       <div className="w-1/2 flex items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative">
-      <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }} ></div>        
-      <div className="relative z-10 text-center">
+        <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
+        <div className="relative z-10 text-center font-georama">
           <h1 className="text-white text-5xl font-bold mb-4">V(l)inder</h1>
           <p className="text-white text-lg">Find your perfect match</p>
         </div>
@@ -43,10 +43,10 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
       {/* Right Half (Login/Signup Form) */}
       <div className="w-1/2 flex items-center justify-center bg-gray-50">
-        <div className={`wrapper flex items-center justify-center w-full max-w-md ${!isLogin ? 'active' : ''}`}>
+        <div className={`wrapper flex items-center justify-center w-full max-w-md py-10 ${!isLogin ? 'active' : ''}`}>
           {/* Login Form */}
           {isLogin && (
-            <div className="form-box login bg-white shadow-xl rounded-3xl p-10 w-full transform transition-transform duration-300 hover:scale-105">
+            <div className="form-box login bg-white shadow-xl rounded-3xl w-full py-8 px-6 mx-4 transform transition-transform duration-300 hover:scale-105">
               <form onSubmit={handleLoginSubmit} className="flex flex-col">
                 <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Login</h1>
 
@@ -116,7 +116,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
           {/* Register Form */}
           {!isLogin && (
-            <div className="form-box register bg-white shadow-xl rounded-3xl p-10 w-full transform transition-transform duration-300 hover:scale-105">
+            <div className="form-box register bg-white shadow-xl rounded-3xl w-full py-8 px-6 mx-4 transform transition-transform duration-300 hover:scale-105">
               <form onSubmit={handleSignUpSubmit} className="flex flex-col">
                 <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Sign up</h1>
 
