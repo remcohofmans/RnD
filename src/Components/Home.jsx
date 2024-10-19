@@ -20,7 +20,7 @@ const Home = ({ loggedIn, logout, email }) => {
       {/* Left Half with Gradient Background */}
       <div className="w-1/2 flex items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative">
         <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
-        <div className="relative z-10 text-center font-georama">
+        <div className="relative z-10 text-center font-poppins">
           <h1 className="text-white text-5xl font-bold mb-4">V(l)inder!</h1>
           <p className="text-white text-lg">Find your perfect match</p>
         </div>
