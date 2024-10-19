@@ -35,7 +35,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       {/* Left Half */}
       <div className="w-1/2 flex items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative">
         <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
-        <div className="relative z-10 text-center font-poppins">
+        <div className="relative z-10 text-center font-georama">
           <h1 className="text-white text-5xl font-bold mb-4">V(l)inder</h1>
           <p className="text-white text-lg">Find your perfect match</p>
         </div>
@@ -160,6 +160,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   <select
                     required
                     className="w-full py-4 px-4 text-lg rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:bg-white focus:outline-none"
+                    style={{ paddingRight: '2.5rem' }} // Adjust this value if needed
                   >
                     <option value="">Select your Facility</option>
                     <option value="facility1">Facility 1</option>
