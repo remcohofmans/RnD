@@ -177,37 +177,51 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   <label htmlFor="facility" className="text-lg text-gray-600">
                     Choose your nearest facility:
                   </label>
-                  <select
-                    id="facility"
-                    className="w-full py-4 px-4 mt-2 text-lg border border-gray-300 rounded-lg bg-gray-100"
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Select a facility
-                    </option>
-                    <option value="facility1">Facility 1</option>
-                    <option value="facility2">Facility 2</option>
-                    <option value="facility3">Facility 3</option>
-                  </select>
+                  <div className="relative mt-2">
+                    <select
+                      id="facility"
+                      className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none" // Added pl-4 for left padding
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select a facility
+                      </option>
+                      <option value="facility1">Facility 1</option>
+                      <option value="facility2">Facility 2</option>
+                      <option value="facility3">Facility 3</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      {/* New Arrow Icon */}
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex items-center mb-6">
                   <input
                     type="checkbox"
-                    id="terms"
+                    id="agreeTerms"
+                    checked={isTermsAgreed}
+                    onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="mr-2 text-lg"
-                    required
-                    onChange={() => setShowTermsModal(true)}
                   />
-                  <label htmlFor="terms" className="text-lg text-gray-600">
-                    I agree to the <a href="#" className="text-blue-500" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>terms and conditions</a>
+                  <label htmlFor="agreeTerms" className="text-lg text-gray-600">
+                    I agree to the{' '}
+                    <a
+                      href="#"
+                      className="text-blue-500 hover:underline"
+                      onClick={() => setShowTermsModal(true)}
+                    >
+                      terms and conditions
+                    </a>
                   </label>
                 </div>
 
                 <button
                   type="submit"
                   className="w-full py-4 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
-                  disabled={!isTermsAgreed}  // Disable the button until terms are agreed
                 >
                   Sign up
                 </button>
@@ -233,46 +247,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         </div>
       </div>
 
-      {/* Modal for Terms and Conditions */}
+      {/* Modal for terms and conditions */}
       {showTermsModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-11/12 max-w-lg p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-4">Terms and Conditions</h2>
-            <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
-              <p className="text-gray-600">
-                Welcome to our platform. By accessing and using our services, you agree to comply with the following terms and conditions:
-                <br /><br />
-                1. **Acceptance of Terms**: By creating an account, you agree to be bound by these terms and any amendments.
-                <br /><br />
-                2. **Privacy Policy**: Your personal data is protected under our privacy policy.
-                <br /><br />
-                3. **Account Responsibilities**: You are responsible for maintaining the confidentiality of your account.
-                <br /><br />
-                4. **Prohibited Activities**: You may not engage in illegal or harmful activities on this platform.
-                <br /><br />
-                5. **Termination**: We reserve the right to suspend or terminate your account at any time.
-                <br /><br />
-                And so on...
-              </p>
-            </div>
-
-            <div className="flex items-center mb-6">
-              <input
-                type="checkbox"
-                id="agreeTerms"
-                className="mr-2"
-                checked={isTermsAgreed}
-                onChange={() => setIsTermsAgreed(!isTermsAgreed)}
-              />
-              <label htmlFor="agreeTerms" className="text-gray-600">
-                I have read and agree to the terms and conditions
-              </label>
-            </div>
-
+            <p className="text-gray-600 mb-4">
+              Here are the terms and conditions...
+            </p>
             <button
               onClick={() => setShowTermsModal(false)}
-              className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-purple-600' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
-              disabled={!isTermsAgreed}
+              className="w-full py-3 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
             >
               Close
             </button>
