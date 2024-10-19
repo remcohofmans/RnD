@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        georama: ['Poppins', 'sans-serif'], // Add Georama font
+        poppins: ['Poppins', 'sans-serif'], // Add Georama font
       },
     },
   },
