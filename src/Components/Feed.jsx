@@ -115,11 +115,7 @@ const Feed = () => {
           <UserCard key={user.id} user={user} />
         ))}
       </div>
-      <div className="flex justify-around mt-8">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">Home</button>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">Messages</button>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">Profile</button>
-      </div>
+
     </div>
   );
 };
