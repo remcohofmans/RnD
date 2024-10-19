@@ -11,7 +11,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
-  const [showRegisterInfo, setShowRegisterInfo] = useState(false); // State for showing registration info
+  const [showRegisterInfo, setShowRegisterInfo] = useState(false);
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -33,23 +33,25 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   return (
     <div className="min-h-screen flex">
-    {/* Left Half */}
-    <div className="w-1/2 flex flex-col items-center justify-start bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative py-10">
-      <div className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})`, filter: 'blur(5px)' }}></div>
-      <div className="relative z-10 text-center font-poppins mt-10"> {/* Adjusted margin */}
-        <h1 className="text-white text-6xl font-bold mb-4 font-cursive">V(l)inder</h1>
-        <p className="text-white text-lg mb-6">Find your perfect match</p>
+      {/* Left Half */}
+      <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative py-10">
+        <div className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})`, filter: 'blur(5px)' }}></div>
 
-        {/* Registration Info Prompt */}
-        {showRegisterInfo && (
-          <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-md mx-auto">
-            <h2 className="font-bold text-lg text-center text-purple-600">Join us and let your love story unfold...</h2>
-            <ul className="list-disc list-inside text-left mt-2">
-              <li>❤️ Inclusive: Designed with accessibility in mind.</li>
-              <li>❤️ Supportive Community: Meet people who understand your journey.</li>
-              <li>❤️ Safe & Secure: Your privacy is our priority.</li>
-            </ul>
-          </div>
+        {/* Title with Animation */}
+        <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
+          <h1 className="text-white text-6xl font-bold mb-4 font-cursive">V(l)inder</h1>
+          <p className="text-white text-lg mb-6">Find your perfect match</p>
+
+          {/* Registration Info Prompt */}
+          {showRegisterInfo && (
+            <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-md mx-auto">
+              <h2 className="font-bold text-lg text-center text-purple-600">Join us and let your love story unfold...</h2>
+              <ul className="list-disc list-inside text-left mt-2">
+                <li>❤️ Inclusive: Designed with accessibility in mind.</li>
+                <li>❤️ Supportive Community: Meet people who understand your journey.</li>
+                <li>❤️ Safe & Secure: Your privacy is our priority.</li>
+              </ul>
+            </div>
           )}
         </div>
       </div>
@@ -174,7 +176,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                     <option value="facility1">Facility 1</option>
                     <option value="facility2">Facility 2</option>
                     <option value="facility3">Facility 3</option>
-                    <option value="facility4">Facility 4</option>
                   </select>
                 </div>
 

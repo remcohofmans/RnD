@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { FaUser } from 'react-icons/fa'; // Import icons as needed
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
-import './Home.css'; // Keep this if you have any custom styles
 
 const Home = ({ loggedIn, logout, email }) => {
   const navigate = useNavigate();
