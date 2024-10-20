@@ -259,7 +259,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
               onClick={() => setShowTermsModal(false)}
               className="w-full py-3 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
             >
-              Close THIS
+              Close
             </button>
           </div>
         </div>
