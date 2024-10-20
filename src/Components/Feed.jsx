@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faTimes, faMusic, faBook, faGamepad, faPaw, faCamera, faDumbbell, faUtensils, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faTimes, faMusic, faBook, faGamepad, faPaw, faCamera, faDumbbell, faUtensils, faArrowLeft, faArrowRight, faUser, faMapMarkerAlt, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import boyImage from '../Assets/boy.jpg';
 import girlImage from '../Assets/girl.jpg';
@@ -72,17 +72,19 @@ const hobbyIcons = {
 };
 
 const UserCard = ({ user }) => (
-  <div className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105 text-center">
+  <div className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105 w-80 mx-auto">
     {/* Profile Picture at the top */}
     <img className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" src={user.profilePicture} alt={`${user.name} profile`} />
-    <h2 className="text-2xl font-semibold text-gray-800">{user.name}</h2>
-    <p className="text-gray-600">{user.age} years</p>
-    <p className="text-gray-600">{user.location}</p>
-    <p className="text-gray-600">{user.facility}</p>
+    <h2 className="text-2xl font-semibold text-gray-800 text-center">{user.name}</h2>
+    <div className="text-left mt-4">
+      <p className="text-gray-600"><FontAwesomeIcon icon={faUser} className="mr-2" />{user.age} years</p>
+      <p className="text-gray-600"><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />{user.location}</p>
+      <p className="text-gray-600"><FontAwesomeIcon icon={faBuilding} className="mr-2" />{user.facility}</p>
+    </div>
     
-    <div className="mt-4">
+    <div className="mt-4 text-left">
       <span className="text-gray-700 font-bold">Hobbies:</span>
-      <div className="flex justify-center space-x-3 mt-2">
+      <div className="flex space-x-3 mt-2">
         {user.hobbies.map((hobby, index) => (
           <span key={index} className="flex items-center text-gray-800 text-lg">
             <FontAwesomeIcon icon={hobbyIcons[hobby]} className="mr-2 text-[#C5C3E0]" />
@@ -92,7 +94,7 @@ const UserCard = ({ user }) => (
       </div>
     </div>
 
-    <p className="mt-4 text-gray-700">{user.bio}</p>
+    <p className="mt-4 text-gray-700 text-left">{user.bio}</p>
 
     <div className="flex justify-between mt-6">
       <button className="flex items-center bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 rounded-full shadow-lg hover:from-green-500 hover:to-green-700 transition-all duration-300">
@@ -122,7 +124,7 @@ const Feed = () => {
   });
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md text-center relative">
+    <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md relative">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#C5C3E0]">v(l)inder</h1>
         <div className="flex space-x-4">
@@ -135,9 +137,9 @@ const Feed = () => {
         </div>
       </div>
 
-      <div {...handlers} className="relative">
+      <div {...handlers} className="relative flex items-center justify-center">
         <button 
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
+          className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300 z-10"
           onClick={handlePrevious}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
@@ -146,14 +148,14 @@ const Feed = () => {
         <UserCard user={users[currentIndex]} />
 
         <button 
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
+          className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300 z-10"
           onClick={handleNext}
         >
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
 
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-4 text-sm text-gray-600 text-center">
         {currentIndex + 1} / {users.length}
       </div>
     </div>
