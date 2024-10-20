@@ -206,16 +206,10 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                     checked={isTermsAgreed}
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="mr-2 text-lg"
+                    required
                   />
                   <label htmlFor="agreeTerms" className="text-lg text-gray-600">
-                    I agree to the{' '}
-                    <a
-                      href="#"
-                      className="text-blue-500 hover:underline"
-                      onClick={() => setShowTermsModal(true)}
-                    >
-                      terms and conditions
-                    </a>
+                  I agree to the <a href="#" className="text-blue-500" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>terms and conditions</a>
                   </label>
                 </div>
 
@@ -248,16 +242,44 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       </div>
 
       {/* Modal for terms and conditions */}
-      {showTermsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+       {/* Modal for Terms and Conditions */}
+       {showTermsModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-11/12 max-w-lg p-6">
             <h2 className="text-2xl font-bold mb-4">Terms and Conditions</h2>
-            <p className="text-gray-600 mb-4">
-              Here are the terms and conditions...
-            </p>
+            <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
+              <p className="text-gray-600">
+                Welcome to our platform. By accessing and using our services, you agree to comply with the following terms and conditions:
+                <br /><br />
+                1. **Acceptance of Terms**: By creating an account, you agree to be bound by these terms and any amendments.
+                <br /><br />
+                2. **Privacy Policy**: Your personal data is protected under our privacy policy.
+                <br /><br />
+                3. **Account Responsibilities**: You are responsible for maintaining the confidentiality of your account.
+                <br /><br />
+                4. **Prohibited Activities**: You may not engage in illegal or harmful activities on this platform.
+                <br /><br />
+                5. **Termination**: We reserve the right to suspend or terminate your account at any time.
+                <br /><br />
+                And so on...
+              </p>
+            </div>
+            <div className="flex items-center mb-6">
+              <input
+                type="checkbox"
+                id="agreeTerms"
+                className="mr-2"
+                checked={isTermsAgreed}
+                onChange={() => setIsTermsAgreed(!isTermsAgreed)}
+              />
+              <label htmlFor="agreeTerms" className="text-gray-600">
+                I have read and agree to the terms and conditions
+              </label>
+            </div>
             <button
               onClick={() => setShowTermsModal(false)}
-              className="w-full py-3 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
+              className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-purple-600' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
+              disabled={!isTermsAgreed}
             >
               Close
             </button>
