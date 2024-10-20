@@ -48,8 +48,8 @@ const Home = ({ loggedIn, logout, email }) => {
                 className="py-4 px-4 w-full text-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105"
                 type="button"
                 onClick={handleButtonClick}
-                value={loggedIn ? 'Log out' : 'Login'}
-                aria-label={loggedIn ? 'Log out' : 'Login'}
+                value={loggedIn ? 'Log out' : 'Log in'}
+                aria-label={loggedIn ? 'Log out' : 'Log in'}
               />
             </div>
           </div>
