@@ -66,7 +66,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           {isLogin && (
             <div className="form-box login bg-white shadow-xl rounded-3xl w-full py-10 px-8 mx-4 transform transition-transform duration-300 hover:scale-105">
               <form onSubmit={handleLoginSubmit} className="flex flex-col">
-                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Login</h1>
+                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Log in</h1>
 
                 <div className="mb-6">
                   <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-300">
