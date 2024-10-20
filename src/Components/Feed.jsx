@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faTimes, faMusic, faBook, faGamepad, faPaw, faCamera, faDumbbell, faUtensils, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { useSwipeable } from 'react-swipeable';
 import boyImage from '../Assets/boy.jpg';
 import girlImage from '../Assets/girl.jpg';
 
@@ -115,6 +116,11 @@ const Feed = () => {
     setCurrentIndex((prevIndex) => (prevIndex === users.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const handlers = useSwipeable({
+    onSwipedLeft: handleNext,
+    onSwipedRight: handlePrevious,
+  });
+
   return (
     <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md text-center relative">
       <div className="flex justify-between items-center mb-6">
@@ -129,7 +135,7 @@ const Feed = () => {
         </div>
       </div>
 
-      <div className="relative">
+      <div {...handlers} className="relative">
         <button 
           className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300"
           onClick={handlePrevious}
@@ -145,6 +151,10 @@ const Feed = () => {
         >
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
+      </div>
+
+      <div className="mt-4 text-sm text-gray-600">
+        {currentIndex + 1} / {users.length}
       </div>
     </div>
   );
