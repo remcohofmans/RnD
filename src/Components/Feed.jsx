@@ -1,63 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faTimes, faMusic, faBook, faGamepad, faPaw, faCamera, faDumbbell, faUtensils, faArrowLeft, faArrowRight, faUser, faMapMarkerAlt, faBuilding } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHeart,
+  faTimes,
+  faMusic,
+  faBook,
+  faGamepad,
+  faPaw,
+  faCamera,
+  faDumbbell,
+  faUtensils,
+  faArrowLeft,
+  faArrowRight,
+  faUser,
+  faMapMarkerAlt,
+  faBuilding,
+} from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import boyImage from '../Assets/boy.jpg';
 import girlImage from '../Assets/girl.jpg';
+import { supabase } from '../supabaseClient';
 
-const users = [
-  {
-    id: 1,
-    name: 'Lucas Janssens',
-    age: 25,
-    location: 'Brugge, BE',
-    facility: 'Faciliteit open hart',
-    hobbies: ['music', 'outdoor'],
-    bio: 'Loves music and outdoor activities.',
-    profilePicture: boyImage,
-  },
-  {
-    id: 2,
-    name: 'Marie Peeters',
-    age: 30,
-    location: 'Gent, BE',
-    facility: 'Faciliteit',
-    hobbies: ['reading', 'cooking'],
-    bio: 'Enjoys reading and cooking.',
-    profilePicture: girlImage,
-  },
-  {
-    id: 3,
-    name: 'Tom Vermeulen',
-    age: 28,
-    location: 'Antwerpen, BE',
-    facility: 'Faciliteit',
-    hobbies: ['gaming', 'tech'],
-    bio: 'Avid gamer and tech enthusiast.',
-    profilePicture: boyImage,
-  },
-  {
-    id: 4,
-    name: 'Emma Claes',
-    age: 22,
-    location: 'Leuven, BE',
-    facility: 'Faciliteit',
-    hobbies: ['animals', 'fitness'],
-    bio: 'Animal lover and fitness fanatic.',
-    profilePicture: girlImage,
-  },
-  {
-    id: 5,
-    name: 'Liam Maes',
-    age: 26,
-    location: 'Brussel, BE',
-    facility: 'Faciliteit',
-    hobbies: ['art', 'photography'],
-    bio: 'Passionate about art and photography.',
-    profilePicture: boyImage,
-  },
-];
-
+// Define hobby icons
 const hobbyIcons = {
   music: faMusic,
   reading: faBook,
@@ -71,17 +35,29 @@ const hobbyIcons = {
   outdoor: faPaw,
 };
 
+// UserCard Component
 const UserCard = ({ user }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105 w-80 mx-auto">
-    {/* Profile Picture at the top */}
-    <img className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" src={user.profilePicture} alt={`${user.name} profile`} />
+    <img
+      className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+      src={user.profilePicture}
+      alt={`${user.name} profile`}
+    />
     <h2 className="text-2xl font-semibold text-gray-800 text-center">{user.name}</h2>
     <div className="text-left mt-4">
-      <p className="text-gray-600"><FontAwesomeIcon icon={faUser} className="mr-2" />{user.age} years</p>
-      <p className="text-gray-600"><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />{user.location}</p>
-      <p className="text-gray-600"><FontAwesomeIcon icon={faBuilding} className="mr-2" />{user.facility}</p>
+      <p className="text-gray-600">
+        <FontAwesomeIcon icon={faUser} className="mr-2" />
+        {user.age} years
+      </p>
+      <p className="text-gray-600">
+        <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+        {user.location}
+      </p>
+      <p className="text-gray-600">
+        <FontAwesomeIcon icon={faBuilding} className="mr-2" />
+        {user.facility}
+      </p>
     </div>
-    
     <div className="mt-4 text-left">
       <span className="text-gray-700 font-bold">Hobbies:</span>
       <div className="flex space-x-3 mt-2">
@@ -93,9 +69,7 @@ const UserCard = ({ user }) => (
         ))}
       </div>
     </div>
-
     <p className="mt-4 text-gray-700 text-left">{user.bio}</p>
-
     <div className="flex justify-between mt-6">
       <button className="flex items-center bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 rounded-full shadow-lg hover:from-green-500 hover:to-green-700 transition-all duration-300">
         <FontAwesomeIcon icon={faHeart} className="mr-2" /> Love
@@ -107,8 +81,46 @@ const UserCard = ({ user }) => (
   </div>
 );
 
+// Main Feed Component
 const Feed = () => {
+  const [users, setUsers] = useState([]); // Initialize users from Supabase
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: fetchedData, error } = await supabase
+          .from('users') // Replace with your actual table name
+          .select('birthday, facility, City, name'); // Specify the columns you want
+
+        if (error) {
+          throw error;
+        }
+
+        // Transform fetched data into user objects
+        const transformedUsers = fetchedData.map((item) => ({
+          id: item.id, // Add id if available in your table
+          name: item.name,
+          location: item.City, // Assuming you want to use city as location
+          facility: item.facility,
+          birthday: item.birthday, // This could be used for age calculation
+          profilePicture: boyImage, // Placeholder image, adjust as needed
+          hobbies: [], // Add hobbies if available
+          bio: 'Bio not available', // Add bio or modify as necessary
+        }));
+
+        setUsers(transformedUsers);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? users.length - 1 : prevIndex - 1));
@@ -122,6 +134,14 @@ const Feed = () => {
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrevious,
   });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md relative">
@@ -138,16 +158,16 @@ const Feed = () => {
       </div>
 
       <div {...handlers} className="relative flex items-center justify-center">
-        <button 
+        <button
           className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300 z-10"
           onClick={handlePrevious}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
 
-        <UserCard user={users[currentIndex]} />
+        {users.length > 0 && <UserCard user={users[currentIndex]} />}
 
-        <button 
+        <button
           className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-md hover:bg-gray-400 transition duration-300 z-10"
           onClick={handleNext}
         >
