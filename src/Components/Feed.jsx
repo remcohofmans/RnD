@@ -35,6 +35,14 @@ const hobbyIcons = {
   outdoor: faPaw,
 };
 
+// Utility function to calculate age from birthday
+const calculateAge = (birthday) => {
+  const birthDate = new Date(birthday);
+  const ageDiff = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDiff);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
 // UserCard Component
 const UserCard = ({ user }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105 w-80 mx-auto">
@@ -106,6 +114,7 @@ const Feed = () => {
           location: item.City, // Assuming you want to use city as location
           facility: item.facility,
           birthday: item.birthday, // This could be used for age calculation
+          age: calculateAge(item.birthday), // Calculate age
           profilePicture: boyImage, // Placeholder image, adjust as needed
           hobbies: [], // Add hobbies if available
           bio: 'Bio not available', // Add bio or modify as necessary
