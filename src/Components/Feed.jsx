@@ -126,7 +126,7 @@ const Feed = () => {
   return (
     <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md relative">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-[#C5C3E0]">v(l)inder</h1>
+        <h1 className="text-3xl font-bold text-[#C5C3E0]">V(l)inder</h1>
         <div className="flex space-x-4">
           <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 transition-transform transform hover:scale-105">
             Refresh
