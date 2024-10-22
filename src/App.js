@@ -5,6 +5,7 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import Chats from './pages/Chats';
 import Feed from './Components/Feed'
+import UserFilterForm from './Components/UserFilterForm';
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -94,6 +95,8 @@ export default function App() {
         <Route path="/chats" element={<Chats/>} />
         {/* Route to Feed */}
         <Route path="/feed" element={<Feed />} />
+        {/* Route to UserFilterForm */}
+        <Route path="/userfilterform" element={<UserFilterForm />} />
       </Routes>
     </Router>
   );
