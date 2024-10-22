@@ -27,23 +27,23 @@ const UserFilterForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow-lg w-80 mx-auto mt-12 space-y-4"
+      className="bg-[#E9E9F0] p-6 rounded-lg shadow-md w-80 mx-auto mt-12 space-y-4"
     >
       <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Beperking</label>
+        <label className="block text-[#C5C3E0] font-semibold mb-2">Beperking</label>
         <input
           type="text"
           value={beperking}
           onChange={(e) => setBeperking(e.target.value)}
-          className="mt-1 p-2 border rounded w-full"
+          className="mt-1 p-2 border border-gray-300 rounded w-full"
         />
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Interesse</label>
+        <label className="block text-[#C5C3E0] font-semibold mb-2">Interesse</label>
         <div className="flex space-x-4 mt-1">
           {['Man', 'Vrouw', 'Geen voorkeur'].map((option) => (
-            <label key={option} className="inline-flex items-center">
+            <label key={option} className="inline-flex items-center text-[#333]">
               <input
                 type="radio"
                 value={option}
@@ -58,9 +58,9 @@ const UserFilterForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Fysiek?</label>
+        <label className="block text-[#C5C3E0] font-semibold mb-2">Fysiek?</label>
         <div className="flex space-x-4 mt-1">
-          <label className="inline-flex items-center">
+          <label className="inline-flex items-center text-[#333]">
             <input
               type="radio"
               value="Ja"
@@ -70,7 +70,7 @@ const UserFilterForm = () => {
             />
             <span className="ml-2">Ja</span>
           </label>
-          <label className="inline-flex items-center">
+          <label className="inline-flex items-center text-[#333]">
             <input
               type="radio"
               value="Nee"
@@ -84,7 +84,7 @@ const UserFilterForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Hobbies</label>
+        <label className="block text-[#C5C3E0] font-semibold mb-2">Hobbies</label>
         <div className="flex space-x-2 mt-1">
           {/* Add buttons for each hobby as needed */}
           {['Hobby1', 'Hobby2', 'Hobby3'].map((hobby) => (
@@ -94,7 +94,7 @@ const UserFilterForm = () => {
               className={`px-4 py-2 rounded-full transition duration-300 ${
                 hobbies.includes(hobby)
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 hover:bg-gray-300'
+                  : 'bg-[#C5C3E0] text-gray-800 hover:bg-blue-300'
               }`}
               onClick={() =>
                 setHobbies((prev) =>
@@ -111,14 +111,14 @@ const UserFilterForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Faciliteit</label>
+        <label className="block text-[#C5C3E0] font-semibold mb-2">Faciliteit</label>
         <select
           multiple
           value={faciliteit}
           onChange={(e) =>
             setFaciliteit(Array.from(e.target.selectedOptions, (option) => option.value))
           }
-          className="mt-1 p-2 border rounded w-full"
+          className="mt-1 p-2 border border-gray-300 rounded w-full"
         >
           {/* Add options for each faciliteit as needed */}
           <option value="Faciliteit 1">Faciliteit 1</option>
@@ -129,7 +129,7 @@ const UserFilterForm = () => {
 
       <button
         type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded-full w-full mt-4 transition duration-300 hover:bg-blue-600"
+        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-full w-full mt-4 transition duration-300 hover:from-blue-600 hover:to-indigo-700"
       >
         Bevestig
       </button>
