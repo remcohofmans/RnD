@@ -1,18 +1,41 @@
 import React, { useState } from 'react';
+import Modal from 'react-modal';
+
+// List of hobbies in Dutch
+const availableHobbies = [
+  'Zwemmen', 
+  'Films kijken', 
+  'Lezen', 
+  'Wandelen', 
+  'Schrijven', 
+  'Fotografie'
+];
+
+// Modal Styles
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80%',
+    maxWidth: '500px',
+  },
+};
 
 // Main Component
 const UserFilterForm = () => {
-  // State management for form fields
   const [beperking, setBeperking] = useState('');
   const [interesse, setInteresse] = useState('Geen voorkeur');
   const [fysiek, setFysiek] = useState(null);
   const [hobbies, setHobbies] = useState([]);
   const [faciliteit, setFaciliteit] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Process the form data
     const formData = {
       beperking,
       interesse,
@@ -21,7 +44,20 @@ const UserFilterForm = () => {
       faciliteit,
     };
     console.log('Form submitted:', formData);
-    // You can add logic to send formData to a backend or perform other actions
+  };
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const toggleHobby = (hobby) => {
+    setHobbies((prev) =>
+      prev.includes(hobby) ? prev.filter((h) => h !== hobby) : [...prev, hobby]
+    );
   };
 
   return (
@@ -86,27 +122,21 @@ const UserFilterForm = () => {
       <div className="mb-4">
         <label className="block text-[#C5C3E0] font-semibold mb-2">Hobbies</label>
         <div className="flex space-x-2 mt-1">
-          {/* Add buttons for each hobby as needed */}
-          {['Hobby1', 'Hobby2', 'Hobby3'].map((hobby) => (
-            <button
-              key={hobby}
-              type="button"
-              className={`px-4 py-2 rounded-full transition duration-300 ${
-                hobbies.includes(hobby)
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-[#C5C3E0] text-gray-800 hover:bg-blue-300'
-              }`}
-              onClick={() =>
-                setHobbies((prev) =>
-                  prev.includes(hobby)
-                    ? prev.filter((h) => h !== hobby)
-                    : [...prev, hobby]
-                )
-              }
+          {hobbies.map((hobby, index) => (
+            <span
+              key={index}
+              className="px-4 py-2 bg-blue-600 text-white rounded-full"
             >
               {hobby}
-            </button>
+            </span>
           ))}
+          <button
+            type="button"
+            onClick={openModal}
+            className="px-4 py-2 bg-[#C5C3E0] text-gray-800 rounded-full hover:bg-blue-300 transition duration-300"
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -120,7 +150,6 @@ const UserFilterForm = () => {
           }
           className="mt-1 p-2 border border-gray-300 rounded w-full"
         >
-          {/* Add options for each faciliteit as needed */}
           <option value="Faciliteit 1">Faciliteit 1</option>
           <option value="Faciliteit 2">Faciliteit 2</option>
           <option value="Faciliteit 3">Faciliteit 3</option>
@@ -133,6 +162,36 @@ const UserFilterForm = () => {
       >
         Bevestig
       </button>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Select Hobbies"
+      >
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Selecteer Hobbies</h2>
+        <div className="space-y-2">
+          {availableHobbies.map((hobby) => (
+            <div key={hobby} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={hobbies.includes(hobby)}
+                onChange={() => toggleHobby(hobby)}
+                className="form-checkbox text-blue-600"
+              />
+              <span className="ml-2">{hobby}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full transition duration-300 hover:from-blue-600 hover:to-indigo-700"
+          >
+            Sluiten
+          </button>
+        </div>
+      </Modal>
     </form>
   );
 };
