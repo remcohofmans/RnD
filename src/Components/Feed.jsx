@@ -17,8 +17,6 @@ import {
   faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
-import boyImage from '../Assets/boy.jpg';
-import girlImage from '../Assets/girl.jpg';
 import { supabase } from '../supabaseClient';
 
 // Define hobby icons
@@ -48,7 +46,7 @@ const UserCard = ({ user }) => (
   <div className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105 w-80 mx-auto">
     <img
       className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-      src={user.profilePicture}
+      src={`data:image/jpeg;base64,${user.profilePicture}`}
       alt={`${user.name} profile`}
     />
     <h2 className="text-2xl font-semibold text-gray-800 text-center">{user.name}</h2>
@@ -101,7 +99,7 @@ const Feed = () => {
       try {
         const { data: fetchedData, error } = await supabase
           .from('users') // Replace with your actual table name
-          .select('birthday, facility, City, name'); // Specify the columns you want
+          .select('id, birthday, facility, City, name, profilepictureBASE64'); // Specify the columns you want
 
         if (error) {
           throw error;
@@ -115,7 +113,7 @@ const Feed = () => {
           facility: item.facility,
           birthday: item.birthday, // This could be used for age calculation
           age: calculateAge(item.birthday), // Calculate age
-          profilePicture: boyImage, // Placeholder image, adjust as needed
+          profilePicture: item.profilepictureBASE64, // Use base64 profile picture
           hobbies: [], // Add hobbies if available
           bio: 'Bio not available', // Add bio or modify as necessary
         }));
