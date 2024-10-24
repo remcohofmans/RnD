@@ -19,55 +19,79 @@ const Home = ({ loggedIn, logout, email }) => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Half with Gradient Background */}
-      <div className="w-1/2 flex items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative">
-        <div className="absolute top-0 right-0 bottom-0 left-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
-        <div className="relative z-10 text-center font-poppins">
-          <h1 className="text-white text-5xl font-bold mb-4">V(l)inder</h1>
-          <p className="text-white text-lg">Find your perfect match</p>
+    <div className="min-h-screen flex flex-col">
+      {/* Navigation Bar */}
+      <nav className="flex justify-between items-center bg-white shadow-md p-4">
+        <h1 className="text-purple-700 text-3xl font-bold">V(l)inder</h1>
+        <div className="flex space-x-4">
+          <button className="text-gray-700 hover:text-purple-600 font-medium" onClick={handleGoToFeed}>Feed</button>
+          <button className="text-gray-700 hover:text-purple-600 font-medium" onClick={handleButtonClick}>
+            {loggedIn ? 'Log out' : 'Login'}
+          </button>
         </div>
-      </div>
+      </nav>
 
-      {/* Right Half for User Info */}
-      <div className="w-1/2 flex items-center justify-center bg-gray-50">
-        <div className="wrapper flex items-center justify-center w-full max-w-md py-10">
-          <div className="bg-white shadow-xl rounded-3xl w-full py-8 px-6 mx-4 transform transition-transform duration-300 hover:scale-105">
-            <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Hi there!</h1>
-
-            {/* Display Email Address */}
-            {email && (
-              <div className="text-center mb-6">
-                <p className="text-lg text-gray-600">
-                  Your email address is <span className="font-semibold">{email}</span>
-                </p>
-              </div>
-            )}
-
-            {/* Logout Button */}
-            <div className="flex justify-center mb-4">
-              <input
-                className="py-4 px-4 w-full text-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105"
-                type="button"
-                onClick={handleButtonClick}
-                value={loggedIn ? 'Log out' : 'Log in'}
-                aria-label={loggedIn ? 'Log out' : 'Log in'}
-              />
-            </div>
-
-            {/* Go to Feed Button */}
-            <div className="flex justify-center">
-              <input
-                className="py-4 px-4 w-full text-lg bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-lg hover:bg-green-600 transition-transform duration-300 transform hover:scale-105"
-                type="button"
-                onClick={handleGoToFeed}
-                value="Go to Feed"
-                aria-label="Go to Feed"
-              />
-            </div>
+      {/* Hero Section */}
+      <div className="flex-1 flex bg-gradient-to-tr from-purple-50 to-purple-100 relative">
+        <div className="w-full h-full opacity-40 bg-cover bg-center absolute" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
+        <div className="relative z-10 w-full flex items-center justify-center text-center font-poppins py-20 px-4">
+          <div className="text-gray-800 space-y-4 max-w-xl mx-auto">
+            <h1 className="text-5xl font-bold leading-tight">Find Your Perfect Match</h1>
+            <p className="text-lg leading-relaxed max-w-lg mx-auto">Discover connections that matter, whether it's friendship, romance, or networking.</p>
+            <button
+              className="mt-6 py-3 px-8 bg-purple-600 text-white rounded-lg text-xl hover:bg-purple-700 transition-transform transform hover:scale-105"
+              onClick={handleButtonClick}
+            >
+              {loggedIn ? 'Log out' : 'Get Started'}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Feature Section */}
+      <div className="bg-gray-50 py-16 px-4 text-center">
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">Why Choose V(l)inder?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
+            <h3 className="text-2xl font-bold mb-4 text-purple-700">Smart Matching</h3>
+            <p className="text-gray-600 leading-relaxed">Our advanced algorithm ensures you're paired with like-minded individuals for meaningful connections.</p>
+          </div>
+          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
+            <h3 className="text-2xl font-bold mb-4 text-purple-700">Privacy First</h3>
+            <p className="text-gray-600 leading-relaxed">We prioritize your privacy and security, so you can connect with peace of mind.</p>
+          </div>
+          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
+            <h3 className="text-2xl font-bold mb-4 text-purple-700">Seamless Experience</h3>
+            <p className="text-gray-600 leading-relaxed">Our platform is designed to provide a smooth and enjoyable user experience from start to finish.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="bg-gray-100 py-16 px-4 text-center">
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">What Our Users Say</h2>
+        <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-8">
+          <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
+            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder helped me find my soulmate! The matching process was so easy and accurate."</p>
+            <p className="mt-4 text-xl font-semibold text-purple-600">- Sarah T.</p>
+          </div>
+          <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
+            <p className="text-lg text-gray-600 leading-relaxed">"I've made so many new friends thanks to this platform. Highly recommend!"</p>
+            <p className="mt-4 text-xl font-semibold text-purple-600">- Jake L.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-8 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <p className="text-center md:text-left">© 2024 V(l)inder. All rights reserved.</p>
+          <div className="space-x-4">
+            <a href="#" className="hover:text-purple-400">Privacy Policy</a>
+            <a href="#" className="hover:text-purple-400">Terms of Service</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

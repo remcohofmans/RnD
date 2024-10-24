@@ -37,255 +37,150 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   return (
     <div className="min-h-screen flex">
       {/* Left Half */}
-      <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#C5C3E0] to-[#7851A9] relative py-10">
+      <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-gray-50 to-gray-200 relative py-10">
         <div className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center" style={{ backgroundImage: `url(${butterflyImage})`, filter: 'blur(5px)' }}></div>
 
         {/* Title with Animation */}
         <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
-          <h1 className="text-white text-6xl font-bold mb-4 font-cursive">V(l)inder</h1>
-          <p className="text-white text-lg mb-6">Find your perfect match</p>
+          <h1 className="text-gray-800 text-5xl font-bold mb-4 font-cursive">V(l)inder</h1>
+          <p className="text-gray-600 text-lg mb-6">Find your perfect match</p>
 
           {/* Registration Info Prompt */}
           {showRegisterInfo && (
-            <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-md mx-auto">
-              <h2 className="font-bold text-lg text-center text-purple-600">Join us and let your love story unfold...</h2>
-              <ul className="list-disc list-inside text-left mt-2">
-                <li>❤️ Inclusive: Designed with accessibility in mind.</li>
-                <li>❤️ Supportive Community: Meet people who understand your journey.</li>
-                <li>❤️ Safe & Secure: Your privacy is our priority.</li>
-              </ul>
+            <div className="mt-6 bg-white text-gray-600 p-4 rounded-lg shadow-md">
+              Create an account to connect with like-minded people and start building meaningful connections.
             </div>
           )}
         </div>
       </div>
 
-      {/* Right Half (Login/Signup Form) */}
-      <div className="w-1/2 flex items-center justify-center bg-gray-50">
-        <div className={`wrapper flex items-center justify-center w-full max-w-md py-10 ${!isLogin ? 'active' : ''}`}>
-          {/* Login Form */}
-          {isLogin && (
-            <div className="form-box login bg-white shadow-xl rounded-3xl w-full py-10 px-8 mx-4 transform transition-transform duration-300 hover:scale-105">
-              <form onSubmit={handleLoginSubmit} className="flex flex-col">
-                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Log in</h1>
+      {/* Right Half */}
+      <div className="w-1/2 flex flex-col justify-center p-12 bg-white shadow-lg">
+        <div className="w-full max-w-md mx-auto">
+          <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">{isLogin ? 'Login' : 'Sign Up'}</h2>
 
-                <div className="mb-6">
-                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-300">
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      onFocus={() => setFocusEmail(true)}
-                      onBlur={() => setFocusEmail(false)}
-                      required
-                      className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusEmail ? 'scale-105' : ''}`}
-                    />
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <FaUser className="text-gray-400 text-xl" />
-                    </div>
-                  </div>
-                </div>
+          {isLogin ? (
+            <form onSubmit={handleLoginSubmit} className="space-y-6">
+              {/* Email Input */}
+              <div className="relative">
+                <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-purple-500' : ''}`} />
+                <input
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  onFocus={() => setFocusEmail(true)}
+                  onBlur={() => setFocusEmail(false)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Email"
+                  required
+                />
+              </div>
 
-                <div className="mb-6">
-                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-300">
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      onFocus={() => setFocusPassword(true)}
-                      onBlur={() => setFocusPassword(false)}
-                      required
-                      className={`flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none transition-transform duration-300 transform rounded-lg ${focusPassword ? 'scale-105' : ''}`}
-                    />
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <FaLock className="text-gray-400 text-xl" />
-                    </div>
-                  </div>
-                </div>
+              {/* Password Input */}
+              <div className="relative">
+                <FaLock className={`absolute left-3 top-3 text-gray-500 ${focusPassword ? 'text-purple-500' : ''}`} />
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  onFocus={() => setFocusPassword(true)}
+                  onBlur={() => setFocusPassword(false)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Password"
+                  required
+                />
+              </div>
 
-                <div className="flex items-center mb-6">
-                  <input type="checkbox" id="remember" className="mr-2 text-lg" />
-                  <label htmlFor="remember" className="text-lg text-gray-600">Remember me</label>
-                </div>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
+              >
+                Login
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSignUpSubmit} className="space-y-6">
+              {/* Email Input */}
+              <div className="relative">
+                <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-purple-500' : ''}`} />
+                <input
+                  type="email"
+                  value={signUpEmail}
+                  onChange={(e) => setSignUpEmail(e.target.value)}
+                  onFocus={() => setFocusEmail(true)}
+                  onBlur={() => setFocusEmail(false)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Email"
+                  required
+                />
+              </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-4 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
-                >
-                  Log in
-                </button>
+              {/* Password Input */}
+              <div className="relative">
+                <FaLock className={`absolute left-3 top-3 text-gray-500 ${focusPassword ? 'text-purple-500' : ''}`} />
+                <input
+                  type="password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
+                  onFocus={() => setFocusPassword(true)}
+                  onBlur={() => setFocusPassword(false)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Password"
+                  required
+                />
+              </div>
 
-                <div className="text-center mt-8">
-                  <p className="text-lg text-gray-600">
-                    Don't have an account yet?{' '}
-                    <a
-                      href="#"
-                      className="text-blue-500 hover:underline"
-                      onClick={() => {
-                        setIsLogin(false);
-                        setShowRegisterInfo(true); // Show registration info when switching to sign up
-                      }}
-                    >
-                      Sign up
-                    </a>
-                  </p>
-                </div>
-              </form>
-            </div>
+              {/* Terms Checkbox */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isTermsAgreed}
+                  onChange={(e) => setIsTermsAgreed(e.target.checked)}
+                  className="h-4 w-4 text-purple-500 focus:ring-purple-500"
+                />
+                <label className="ml-2 text-gray-600">I agree to the Terms of Service</label>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-transform transform hover:scale-105"
+              >
+                Sign Up
+              </button>
+            </form>
           )}
 
-          {/* Sign Up Form */}
-          {!isLogin && (
-            <div className="form-box register bg-white shadow-xl rounded-3xl w-full py-10 px-8 mx-4 transform transition-transform duration-300 hover:scale-105">
-              <form onSubmit={handleSignUpSubmit} className="flex flex-col">
-                <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Sign Up</h1>
-
-                <div className="mb-6">
-                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-300">
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={signUpEmail}
-                      onChange={(e) => setSignUpEmail(e.target.value)}
-                      required
-                      className="flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none rounded-lg"
-                    />
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <FaEnvelope className="text-gray-400 text-xl" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 transition duration-300">
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      value={signUpPassword}
-                      onChange={(e) => setSignUpPassword(e.target.value)}
-                      required
-                      className="flex-grow py-4 px-4 text-lg bg-gray-100 focus:outline-none rounded-lg"
-                    />
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <FaLock className="text-gray-400 text-xl" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <label htmlFor="facility" className="text-lg text-gray-600">
-                    Choose your nearest facility:
-                  </label>
-                  <div className="relative mt-2">
-                    <select
-                      id="facility"
-                      className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none" // Added pl-4 for left padding
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select a facility
-                      </option>
-                      <option value="facility1">Facility 1</option>
-                      <option value="facility2">Facility 2</option>
-                      <option value="facility3">Facility 3</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      {/* New Arrow Icon */}
-                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center mb-6">
-                  <input
-                    type="checkbox"
-                    id="agreeTerms"
-                    checked={isTermsAgreed}
-                    onChange={(e) => setIsTermsAgreed(e.target.checked)}
-                    className="mr-2 text-lg"
-                    required
-                  />
-                  <label htmlFor="agreeTerms" className="text-lg text-gray-600">
-                  I agree to the <a href="#" className="text-blue-500" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>terms and conditions</a>
-                  </label>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-4 text-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:bg-pink-600 transition-transform duration-300 transform hover:scale-105"
-                >
-                  Sign up
-                </button>
-
-                <div className="text-center mt-8">
-                  <p className="text-lg text-gray-600">
-                    Already have an account?{' '}
-                    <a
-                      href="#"
-                      className="text-blue-500 hover:underline"
-                      onClick={() => {
-                        setIsLogin(true);
-                        setShowRegisterInfo(false); // Hide registration info when switching back to login
-                      }}
-                    >
-                      Log in
-                    </a>
-                  </p>
-                </div>
-              </form>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Modal for terms and conditions */}
-       {/* Modal for Terms and Conditions */}
-       {showTermsModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-11/12 max-w-lg p-6">
-            <h2 className="text-2xl font-bold mb-4">Terms and Conditions</h2>
-            <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
+          {/* Toggle Form */}
+          <div className="text-center mt-8">
+            {isLogin ? (
               <p className="text-gray-600">
-                Welcome to our platform. By accessing and using our services, you agree to comply with the following terms and conditions:
-                <br /><br />
-                1. **Acceptance of Terms**: By creating an account, you agree to be bound by these terms and any amendments.
-                <br /><br />
-                2. **Privacy Policy**: Your personal data is protected under our privacy policy.
-                <br /><br />
-                3. **Account Responsibilities**: You are responsible for maintaining the confidentiality of your account.
-                <br /><br />
-                4. **Prohibited Activities**: You may not engage in illegal or harmful activities on this platform.
-                <br /><br />
-                5. **Termination**: We reserve the right to suspend or terminate your account at any time.
-                <br /><br />
-                And so on...
+                Don't have an account?{' '}
+                <button
+                  className="text-purple-500 hover:text-purple-700 font-medium"
+                  onClick={() => {
+                    setIsLogin(false);
+                    setShowRegisterInfo(true);
+                  }}
+                >
+                  Sign Up
+                </button>
               </p>
-            </div>
-            <div className="flex items-center mb-6">
-              <input
-                type="checkbox"
-                id="agreeTerms"
-                className="mr-2"
-                checked={isTermsAgreed}
-                onChange={() => setIsTermsAgreed(!isTermsAgreed)}
-              />
-              <label htmlFor="agreeTerms" className="text-gray-600">
-                I have read and agree to the terms and conditions
-              </label>
-            </div>
-            <button
-              onClick={() => setShowTermsModal(false)}
-              className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-purple-600' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
-              disabled={!isTermsAgreed}
-            >
-              Close
-            </button>
+            ) : (
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <button
+                  className="text-purple-500 hover:text-purple-700 font-medium"
+                  onClick={() => setIsLogin(true)}
+                >
+                  Login
+                </button>
+              </p>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
