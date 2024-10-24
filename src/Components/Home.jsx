@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { FaUser } from 'react-icons/fa'; // Import icons as needed
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 
