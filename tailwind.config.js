@@ -4,13 +4,14 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  theme: {
+  theme: 
+  {
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'], // Add Georama font
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
-  },
-  plugins: [],
+    plugins: [],
+  } 
 }
 
