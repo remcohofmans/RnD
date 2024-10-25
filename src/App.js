@@ -5,6 +5,8 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import Chats from './Components/Chats';
 import Feed from './Components/Feed'
+import SettingsUser from './Components/SettingsUser';
+import PasswordChangeForm from './Components/PasswordChangeForm';
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -94,6 +96,10 @@ export default function App() {
         <Route path="/chats" element={<Chats/>} />
         {/* Route to Feed */}
         <Route path="/feed" element={<Feed />} />
+        <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
+
+
       </Routes>
     </Router>
   );
