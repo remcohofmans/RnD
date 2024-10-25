@@ -5,6 +5,8 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import Chats from './Components/Chats';
 import Feed from './Components/Feed'
+import ProtectedRoute from './Components/ProtectedRoute';
+
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -82,18 +84,22 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Protect the Home route so only authenticated users can access it */}
         <Route 
           path="/" 
-          element={user ? <Home 
-              loggedIn={!!user}  // Boolean to indicate logged-in status
-              logout={logout} 
-              email={user?.email} /> : <Navigate to="/login" />} />
-              {/* Login/Register route */}
-        <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={<Chats/>} />
-        {/* Route to Feed */}
-        <Route path="/feed" element={<Feed />} />
+          element={<ProtectedRoute element={<Home loggedIn={!!user} logout={logout} email={user?.email} />} loggedIn={!!user} />} 
+        />
+        <Route 
+          path="/login" 
+          element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} 
+        />
+        <Route 
+          path="/chats" 
+          element={<ProtectedRoute element={<Chats />} loggedIn={!!user} />} 
+        />
+        <Route 
+          path="/feed" 
+          element={<ProtectedRoute element={<Feed />} loggedIn={!!user} />} 
+        />
       </Routes>
     </Router>
   );
