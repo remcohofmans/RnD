@@ -3,7 +3,7 @@ import { supabase } from './lib/helper/supabaseClient';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
-import Chats from './pages/Chats';
+import Chats from './Components/Chats';
 import Feed from './Components/Feed'
 
 export default function App() {
