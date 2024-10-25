@@ -63,15 +63,17 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
   };
 
   return (
-    <div className={`fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center ${showModal ? '' : 'hidden'}`}>
-      <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h2 className="text-2xl font-bold mb-4">Selecteer je hobby's</h2>
-        <h3 className="text-xl font-semibold mt-4">{currentCategory}</h3>
+    <div className={`fixed inset-0 bg-[#360009] bg-opacity-75 flex justify-center items-center ${showModal ? '' : 'hidden'}`}>
+      <div className="bg-[#F0E9EA] rounded-lg shadow-lg p-6 w-96">
+        <h2 className="text-2xl font-bold mb-4 text-[#360009]">Selecteer je hobby's</h2>
+        <h3 className="text-xl font-semibold mt-4 text-[#F43F5E]">{currentCategory}</h3>
         <div className="grid grid-cols-2 gap-2 mt-2">
           {availableHobbies[currentCategory].map((hobby) => (
             <button
               key={hobby.name}
-              className={`flex items-center border p-2 rounded-lg hover:bg-gray-200 ${selectedHobbies.includes(`${currentCategory}:${hobby.name}`) ? 'bg-blue-200' : ''}`}
+              className={`flex items-center border p-2 rounded-lg ${
+                selectedHobbies.includes(`${currentCategory}:${hobby.name}`) ? 'bg-[#FB7185]' : 'hover:bg-[#FFBEC8]'
+              }`}
               onClick={() => handleHobbyToggle(currentCategory, hobby)}
             >
               <span className="mr-2"><FontAwesomeIcon icon={hobby.icon} /></span>
@@ -80,9 +82,9 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
           ))}
         </div>
         <div className="mt-4 flex justify-between">
-          <button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={prevCategory}>Vorige</button>
-          <button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={nextCategory}>Volgende</button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(false)}>Sluiten</button>
+          <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={prevCategory}>Vorige</button>
+          <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={nextCategory}>Volgende</button>
+          <button className="bg-[#360009] text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(false)}>Sluiten</button>
         </div>
       </div>
     </div>
@@ -95,18 +97,18 @@ const HobbiesSelection = () => {
 
   return (
     <div>
-      <button className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(true)}>
+      <button className="flex items-center bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(true)}>
         <FontAwesomeIcon icon={faPlus} className="mr-2" /> Voeg Hobby's Toe
       </button>
       <HobbiesModal showModal={showModal} setShowModal={setShowModal} selectedHobbies={selectedHobbies} setSelectedHobbies={setSelectedHobbies} />
       <div className="mt-4">
-        <h3 className="text-lg font-semibold">Geselecteerde Hobby's:</h3>
+        <h3 className="text-lg font-semibold text-[#360009]">Geselecteerde Hobby's:</h3>
         <div className="flex flex-wrap mt-2">
           {selectedHobbies.map((hobbyKey) => {
             const [category, hobbyName] = hobbyKey.split(':');
             const hobby = availableHobbies[category].find((h) => h.name === hobbyName);
             return (
-              <span key={hobbyKey} className="flex items-center border p-2 rounded-lg m-1">
+              <span key={hobbyKey} className="flex items-center border p-2 rounded-lg m-1 bg-[#FFBEC8] text-[#360009]">
                 <span className="mr-2"><FontAwesomeIcon icon={hobby.icon} /></span>
                 {hobby.name}
               </span>
@@ -125,105 +127,99 @@ const FilterForm = () => {
   const [facility, setFacility] = useState('');
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-[#E9E9F0] rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Filter</h2>
+    <div className="max-w-md mx-auto mt-12 p-6 bg-[#F0E9EA] rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-[#360009]">Filter</h2>
       <div className="mb-4">
-        <label className="block text-gray-700">Beperking</label>
+        <label className="block text-[#360009]">Beperking</label>
         <input
           type="text"
           value={restriction}
           onChange={(e) => setRestriction(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-[#FB7185] shadow-sm focus:border-[#F43F5E] focus:ring-[#F43F5E]"
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Interesse</label>
+        <label className="block text-[#360009]">Interesse</label>
         <div className="mt-2 space-y-2">
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Man"
-                checked={interest === 'Man'}
-                onChange={(e) => setInterest(e.target.value)}
-              />
-              <span className="ml-2">Man</span>
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Vrouw"
-                checked={interest === 'Vrouw'}
-                onChange={(e) => setInterest(e.target.value)}
-              />
-              <span className="ml-2">Vrouw</span>
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Geen voorkeur"
-                checked={interest === 'Geen voorkeur'}
-                onChange={(e) => setInterest(e.target.value)}
-              />
-              <span className="ml-2">Geen voorkeur</span>
-            </label>
-          </div>
+          <label>
+            <input
+              type="radio"
+              value="Man"
+              checked={interest === 'Man'}
+              onChange={(e) => setInterest(e.target.value)}
+              className="mr-2"
+            />
+            Man
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Vrouw"
+              checked={interest === 'Vrouw'}
+              onChange={(e) => setInterest(e.target.value)}
+              className="mr-2"
+            />
+            Vrouw
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Geen voorkeur"
+              checked={interest === 'Geen voorkeur'}
+              onChange={(e) => setInterest(e.target.value)}
+              className="mr-2"
+            />
+            Geen voorkeur
+          </label>
         </div>
       </div>
-       
-
       <div className="mb-4">
-        <label className="block text-gray-700">Fysiek?</label>
+        <label className="block text-[#360009]">Fysiek?</label>
         <div className="mt-2 space-y-2">
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Ja"
-                checked={physical === 'Ja'}
-                onChange={(e) => setPhysical(e.target.value)}
-              />
-              <span className="ml-2">Ja</span>
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Nee"
-                checked={physical === 'Nee'}
-                onChange={(e) => setPhysical(e.target.value)}
-              />
-              <span className="ml-2">Nee</span>
-            </label>
-          </div>
+          <label>
+            <input
+              type="radio"
+              value="Ja"
+              checked={physical === 'Ja'}
+              onChange={(e) => setPhysical(e.target.value)}
+              className="mr-2"
+            />
+            Ja
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Nee"
+              checked={physical === 'Nee'}
+              onChange={(e) => setPhysical(e.target.value)}
+              className="mr-2"
+            />
+            Nee
+          </label>
         </div>
       </div>
-      <HobbiesSelection />
       <div className="mb-4">
-        <label className="block text-gray-700">Faciliteit</label>
+        <label className="block text-[#360009]">Faciliteit</label>
         <select
           value={facility}
           onChange={(e) => setFacility(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="mt-1 block w-full rounded-md border-[#FB7185] shadow-sm focus:border-[#F43F5E] focus:ring-[#F43F5E]"
         >
-          <option value="Faciliteit 1">Faciliteit 1</option>
-          <option value="Faciliteit 2">Faciliteit 2</option>
-          <option value="Faciliteit 3">Faciliteit 3</option>
+          <option value="">Kies een faciliteit</option>
+          <option value="Zwembad">Zwembad</option>
+          <option value="Gym">Gym</option>
+          <option value="Bibliotheek">Bibliotheek</option>
         </select>
       </div>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Bevestig</button>
+      <HobbiesSelection />
+      <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg mt-4">Bevestig</button>
     </div>
   );
 };
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen bg-[#F0E9EA] flex items-center justify-center">
       <FilterForm />
     </div>
   );
