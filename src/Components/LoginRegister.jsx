@@ -56,14 +56,23 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
 
           {showRegisterInfo && (
-            <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-md mx-auto">
-              <h2 className="font-bold text-lg text-center text-[#e11d48]">Join us and let your love story unfold...</h2>
-              <ul className="list-disc list-inside text-left mt-2">
-                <li>❤️ <strong>Inclusive:</strong> Designed with accessibility in mind.</li>
-                <li>❤️ <strong>Supportive Community:</strong> Meet people who understand your journey.</li>
-                <li>❤️ <strong>Safe & Secure:</strong> Your privacy is our priority.</li>
-              </ul>
+            <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 w-full mx-auto">
+            <h2 className="font-bold text-lg text-center text-[#e11d48]">Join us and let your love story unfold...</h2>
+            <div className="flex justify-between items-center text-center mt-4 space-x-6 w-full">
+              <div className="flex items-center space-x-2">
+                <span>❤️</span>
+                <strong>Inclusive</strong>
+              </div>
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span>❤️</span>
+                <strong>Supportive Community</strong>
+              </div>
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span>❤️</span>
+                <strong>Safe & Secure</strong>
+              </div>
             </div>
+          </div>           
           )}
         </div>
       </div>
