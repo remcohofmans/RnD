@@ -101,7 +101,7 @@ const Feed = () => {
       try {
         const { data: fetchedData, error } = await supabase
           .from('users') // Replace with your actual table name
-          .select('birthday, facility, City, name'); // Specify the columns you want
+          .select('birthday, facility, city, name'); // Specify the columns you want
 
         if (error) {
           throw error;
@@ -111,7 +111,7 @@ const Feed = () => {
         const transformedUsers = fetchedData.map((item) => ({
           id: item.id, // Add id if available in your table
           name: item.name,
-          location: item.City, // Assuming you want to use city as location
+          location: item.city, // Assuming you want to use city as location
           facility: item.facility,
           birthday: item.birthday, // This could be used for age calculation
           age: calculateAge(item.birthday), // Calculate age
