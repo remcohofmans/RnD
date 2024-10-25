@@ -61,7 +61,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       </div>
 
       {/* Right Half */}
-      <div className="w-1/2 flex flex-col justify-center p-12 bg-[#fff1f2] shadow-lg">
+      <div className="w-1/2 flex flex-col justify-center p-12 bg-[#FFFFFF] shadow-lg">
         <div className="w-full max-w-md mx-auto">
           <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Login' : 'Sign Up'}</h2>
 
