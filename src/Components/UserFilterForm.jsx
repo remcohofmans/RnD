@@ -1,119 +1,257 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlus, faSwimmer, faFilm, faBook, faHiking, faPenFancy, faCamera, faMusic, faPaintBrush, faBiking, faUtensils, faRunning, faChess, faDumbbell, faGuitar, faTree, faPlane, faSkiing, faGamepad, faDrum, faTheaterMasks, faRocket, faHorse, faFish, faBowlingBall, faFootballBall
-} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
 
-const availableHobbies = {
-  Sport: [
-    { name: 'Zwemmen', icon: faSwimmer },
-    { name: 'Wandelen', icon: faHiking },
-    { name: 'Fietsen', icon: faBiking },
-    { name: 'Hardlopen', icon: faRunning },
-    { name: 'Fitness', icon: faDumbbell },
-    { name: 'Skiën', icon: faSkiing },
-    { name: 'Paardrijden', icon: faHorse },
-    { name: 'Vissen', icon: faFish },
-    { name: 'Bowlen', icon: faBowlingBall },
-    { name: 'Voetbal', icon: faFootballBall },
-  ],
-  Muziek: [
-    { name: 'Muziek luisteren', icon: faMusic },
-    { name: 'Gitaar spelen', icon: faGuitar },
-    { name: 'Drummen', icon: faDrum },
-  ],
-  Kunst: [
-    { name: 'Schilderen', icon: faPaintBrush },
-    { name: 'Fotografie', icon: faCamera },
-    { name: 'Schrijven', icon: faPenFancy },
-    { name: 'Toneelspelen', icon: faTheaterMasks },
-  ],
-  Overige: [
-    { name: 'Films kijken', icon: faFilm },
-    { name: 'Lezen', icon: faBook },
-    { name: 'Videospellen', icon: faGamepad },
-    { name: 'Tuinieren', icon: faTree },
-    { name: 'Reizen', icon: faPlane },
-    { name: 'Koken', icon: faUtensils },
-    { name: 'Schaken', icon: faChess },
-    { name: 'Modelvliegtuigen', icon: faRocket },
-  ],
-};
+const availableHobbies = [
+  // Collectie & Leren
+  { name: 'Geschiedenis', icon: '📜', category: 'Leren' },
+  { name: 'Munten verzamelen', icon: '🪙', category: 'Leren' },
+  { name: 'Postzegels verzamelen', icon: '📫', category: 'Leren' },
+  { name: 'Talen leren', icon: '🗣️', category: 'Leren' },
+
+  // Creatief & Artistiek
+  { name: 'Beeldhouwen', icon: '🗿', category: 'Creatief' },
+  { name: 'Breien', icon: '🧶', category: 'Creatief' },
+  { name: 'Gitaar spelen', icon: '🎸', category: 'Creatief' },
+  { name: 'Haken', icon: '🪢', category: 'Creatief' },
+  { name: 'Handlettering', icon: '🖋️', category: 'Creatief' },
+  { name: 'Kalligrafie', icon: '✒️', category: 'Creatief' },
+  { name: 'Keramiek', icon: '🏺', category: 'Creatief' },
+  { name: 'Naaien', icon: '🧵', category: 'Creatief' },
+  { name: 'Origami', icon: '📄', category: 'Creatief' },
+  { name: 'Piano spelen', icon: '🎹', category: 'Creatief' },
+  { name: 'Schilderen', icon: '🎨', category: 'Creatief' },
+  { name: 'Schrijven', icon: '✍️', category: 'Creatief' },
+  { name: 'Tekenen', icon: '🖍️', category: 'Creatief' },
+  { name: 'Fotografie', icon: '📷', category: 'Creatief' },
+  { name: 'Drummen', icon: '🥁', category: 'Creatief' },
+
+  // Entertainment & Media
+  { name: 'Bordspellen', icon: '🎲', category: 'Media' },
+  { name: 'Films kijken', icon: '🎬', category: 'Media' },
+  { name: 'Gamen', icon: '🎮', category: 'Media' },
+  { name: 'Kaartspellen', icon: '🃏', category: 'Media' },
+  { name: 'Lezen', icon: '📚', category: 'Media' },
+  { name: 'Podcasts luisteren', icon: '🎧', category: 'Media' },
+  { name: 'Puzzelen', icon: '🧩', category: 'Media' },
+  { name: 'Series kijken', icon: '📺', category: 'Media' },
+  { name: 'Schaken', icon: '♟️', category: 'Media' },
+  { name: 'Stripboeken lezen', icon: '📖', category: 'Media' },
+
+  // Voedsel & Drank
+  { name: 'Barista', icon: '☕', category: 'Voedsel' },
+  { name: 'Bakken', icon: '🥖', category: 'Voedsel' },
+  { name: 'Cocktails maken', icon: '🍸', category: 'Voedsel' },
+  { name: 'Koken', icon: '👨‍🍳', category: 'Voedsel' },
+  { name: 'Wijnproeven', icon: '🍷', category: 'Voedsel' },
+  { name: 'Bierbrouwen', icon: '🍺', category: 'Voedsel' },
+
+  // Buiten & Natuur
+  { name: 'Fotografie natuur', icon: '📸', category: 'Natuur' },
+  { name: 'Kamperen', icon: '⛺', category: 'Natuur' },
+  { name: 'Sterrenkijken', icon: '🔭', category: 'Natuur' },
+  { name: 'Tuinieren', icon: '🌱', category: 'Natuur' },
+  { name: 'Vissen', icon: '🎣', category: 'Natuur' },
+  { name: 'Vogelspotten', icon: '🦅', category: 'Natuur' },
+  { name: 'Naar zee gaan', icon: '🏖️', category: 'Natuur' },
+
+  // Sociaal & Gemeenschap
+  { name: 'Debatteren', icon: '🗣️', category: 'Sociaal' },
+  { name: 'Improvisatie', icon: '🎪', category: 'Sociaal' },
+  { name: 'Theater', icon: '🎭', category: 'Sociaal' },
+  { name: 'Vrijwilligerswerk', icon: '🤝', category: 'Sociaal' },
+  { name: 'Zingen', icon: '🎤', category: 'Sociaal' },
+
+  // Sport
+  { name: 'Basketball', icon: '🏀', category: 'Sport' },
+  { name: 'Boksen', icon: '🥊', category: 'Sport' },
+  { name: 'Dansen', icon: '💃', category: 'Sport' },
+  { name: 'Fietsen', icon: '🚴‍♂️', category: 'Sport' },
+  { name: 'Fitness', icon: '💪', category: 'Sport' },
+  { name: 'Hardlopen', icon: '🏃‍♂️', category: 'Sport' },
+  { name: 'Hockey', icon: '🏑', category: 'Sport' },
+  { name: 'Klimmen', icon: '🧗‍♀️', category: 'Sport' },
+  { name: 'Paardrijden', icon: '🏇', category: 'Sport' },
+  { name: 'Skiën', icon: '⛷️', category: 'Sport' },
+  { name: 'Skateboarden', icon: '🛹', category: 'Sport' },
+  { name: 'Surfen', icon: '🏄‍♂️', category: 'Sport' },
+  { name: 'Tennis', icon: '🎾', category: 'Sport' },
+  { name: 'Volleybal', icon: '🏐', category: 'Sport' },
+  { name: 'Vechtsport', icon: '🥋', category: 'Sport' },
+  { name: 'Wandelen', icon: '🚶‍♂️', category: 'Sport' },
+  { name: 'Zwemmen', icon: '🏊‍♂️', category: 'Sport' },
+
+  // Technologie
+  { name: 'bouwen', icon: '🛠️', category: 'Technologie' },
+  { name: 'computer', icon: '💻', category: 'Technologie' },
+
+  // Reizen
+  { name: 'Backpacken', icon: '🎒', category: 'Reizen' },
+  { name: 'Culturen ontdekken', icon: '🌍', category: 'Reizen' },
+  { name: 'Reizen', icon: '✈️', category: 'Reizen' },
+  { name: 'Taaluitwisseling', icon: '💭', category: 'Reizen' },
+];
+
+
+const facilities = Array.from({ length: 10 }, (_, i) => ({
+  value: `facility-${i + 1}`,
+  label: `Faciliteit ${i + 1}`
+}));
+
+const ButtonGroup = ({ options, value, onChange, error }) => (
+  <div className="flex gap-2">
+    {options.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        onClick={() => onChange(option.value)}
+        className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
+          value === option.value
+            ? 'bg-rose-500 text-white shadow-sm'
+            : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+        }`}
+      >
+        {option.label}
+      </button>
+    ))}
+  </div>
+);
+
+// ... (HobbyCategory and HobbiesModal components remain the same)
+const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
+  <div className="mb-6">
+    <h3 className="text-base font-medium text-gray-900 mb-3">{category}</h3>
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      {hobbies.map((hobby) => (
+        <button
+          key={hobby.name}
+          onClick={() => onToggle(hobby)}
+          className={`flex items-center gap-2 p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
+            selectedHobbies.includes(hobby.name)
+              ? 'bg-rose-500 text-white border-rose-600 shadow-sm transform scale-[1.02]'
+              : 'border-gray-200 hover:bg-rose-50 hover:border-rose-300'
+          }`}
+          aria-pressed={selectedHobbies.includes(hobby.name)}
+        >
+          <span role="img" aria-label={hobby.name} className="text-xl">
+            {hobby.icon}
+          </span>
+          <span className="text-sm font-medium truncate">{hobby.name}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
 
 const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHobbies }) => {
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const categories = Object.keys(availableHobbies);
-  const currentCategory = categories[currentCategoryIndex];
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
 
-  const handleHobbyToggle = (category, hobby) => {
-    const hobbyKey = `${category}:${hobby.name}`;
-    setSelectedHobbies((prevSelected) =>
-      prevSelected.includes(hobbyKey)
-        ? prevSelected.filter((item) => item !== hobbyKey)
-        : [...prevSelected, hobbyKey]
-    );
-  };
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setShowModal(false);
+    };
+    if (showModal) {
+      window.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
 
-  const nextCategory = () => {
-    setCurrentCategoryIndex((prevIndex) => (prevIndex + 1) % categories.length);
-  };
+  const categories = ['all', ...new Set(availableHobbies.map(h => h.category))];
 
-  const prevCategory = () => {
-    setCurrentCategoryIndex((prevIndex) => (prevIndex - 1 + categories.length) % categories.length);
-  };
-
-  return (
-    <div className={`fixed inset-0 bg-[#360009] bg-opacity-75 flex justify-center items-center ${showModal ? '' : 'hidden'}`}>
-      <div className="bg-[#F0E9EA] rounded-lg shadow-lg p-6 w-96">
-        <h2 className="text-2xl font-bold mb-4 text-[#360009]">Selecteer je hobby's</h2>
-        <h3 className="text-xl font-semibold mt-4 text-[#F43F5E]">{currentCategory}</h3>
-        <div className="grid grid-cols-2 gap-2 mt-2">
-          {availableHobbies[currentCategory].map((hobby) => (
-            <button
-              key={hobby.name}
-              className={`flex items-center border p-2 rounded-lg ${
-                selectedHobbies.includes(`${currentCategory}:${hobby.name}`) ? 'bg-[#FB7185]' : 'hover:bg-[#FFBEC8]'
-              }`}
-              onClick={() => handleHobbyToggle(currentCategory, hobby)}
-            >
-              <span className="mr-2"><FontAwesomeIcon icon={hobby.icon} /></span>
-              {hobby.name}
-            </button>
-          ))}
-        </div>
-        <div className="mt-4 flex justify-between">
-          <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={prevCategory}>Vorige</button>
-          <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={nextCategory}>Volgende</button>
-          <button className="bg-[#360009] text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(false)}>Sluiten</button>
-        </div>
-      </div>
-    </div>
+  const filteredHobbies = availableHobbies.filter(hobby =>
+    hobby.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (activeCategory === 'all' || hobby.category === activeCategory)
   );
-};
 
-const HobbiesSelection = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]);
+  if (!showModal) return null;
 
   return (
-    <div>
-      <button className="flex items-center bg-[#F43F5E] text-white px-4 py-2 rounded-lg" onClick={() => setShowModal(true)}>
-        <FontAwesomeIcon icon={faPlus} className="mr-2" /> Voeg Hobby's Toe
-      </button>
-      <HobbiesModal showModal={showModal} setShowModal={setShowModal} selectedHobbies={selectedHobbies} setSelectedHobbies={setSelectedHobbies} />
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold text-[#360009]">Geselecteerde Hobby's:</h3>
-        <div className="flex flex-wrap mt-2">
-          {selectedHobbies.map((hobbyKey) => {
-            const [category, hobbyName] = hobbyKey.split(':');
-            const hobby = availableHobbies[category].find((h) => h.name === hobbyName);
-            return (
-              <span key={hobbyKey} className="flex items-center border p-2 rounded-lg m-1 bg-[#FFBEC8] text-[#360009]">
-                <span className="mr-2"><FontAwesomeIcon icon={hobby.icon} /></span>
-                {hobby.name}
-              </span>
-            );
-          })}
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
+          <button
+            onClick={() => setShowModal(false)}
+            className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+          >
+            ← Terug
+          </button>
+          <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
+            Selecteer Hobby's
+          </h2>
+          <div className="w-[76px]" />
+        </div>
+
+        <div className="p-4 border-b bg-white">
+          <div className="relative mb-4">
+            <input
+              type="search"
+              placeholder="Zoek hobby's..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 bg-gray-50"
+              aria-label="Zoek hobby's"
+            />
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeCategory === category 
+                    ? 'bg-rose-500 text-white shadow-sm' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category === 'all' ? 'Alle' : category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="overflow-y-auto flex-1 p-4">
+          {filteredHobbies.length > 0 ? (
+            Object.entries(
+              filteredHobbies.reduce((acc, hobby) => {
+                const category = activeCategory === 'all' ? hobby.category : activeCategory;
+                if (!acc[category]) acc[category] = [];
+                acc[category].push(hobby);
+                return acc;
+              }, {})
+            ).map(([category, hobbies]) => (
+              <HobbyCategory
+                key={category}
+                category={category}
+                hobbies={hobbies}
+                selectedHobbies={selectedHobbies}
+                onToggle={(hobby) => {
+                  setSelectedHobbies(prev =>
+                    prev.includes(hobby.name)
+                      ? prev.filter(h => h !== hobby.name)
+                      : [...prev, hobby.name]
+                  );
+                }}
+              />
+            ))
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <span className="text-4xl mb-4 block">🔍</span>
+              <p className="text-lg">Geen hobby's gevonden voor "{searchTerm}"</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -121,108 +259,172 @@ const HobbiesSelection = () => {
 };
 
 const FilterForm = () => {
-  const [restriction, setRestriction] = useState('');
-  const [interest, setInterest] = useState('');
-  const [physical, setPhysical] = useState('');
-  const [facility, setFacility] = useState('');
+  const [formData, setFormData] = useState({
+    restriction: '',
+    interest: '',
+    physical: '',
+    facility: '',
+  });
+  const [showModal, setShowModal] = useState(false);
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const interestOptions = [
+    { value: 'man', label: 'Man' },
+    { value: 'vrouw', label: 'Vrouw' },
+    { value: 'geen-voorkeur', label: 'Geen voorkeur' },
+  ];
+
+  const physicalOptions = [
+    { value: 'ja', label: 'Ja' },
+    { value: 'nee', label: 'Nee' },
+  ];
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.interest) newErrors.interest = 'Selecteer een interesse';
+    if (!formData.physical) newErrors.physical = 'Selecteer een optie';
+    if (!formData.facility) newErrors.facility = 'Selecteer een faciliteit';
+    if (selectedHobbies.length === 0) newErrors.hobbies = 'Selecteer ten minste één hobby';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const isValid = validateForm();
+    
+    if (isValid) {
+      console.log('Form submitted:', { ...formData, hobbies: selectedHobbies });
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 2000);
+    }
+  };
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: '' }));
+  };
+
+  const getHobbyIcon = (hobbyName) => {
+    const hobby = availableHobbies.find(h => h.name === hobbyName);
+    return hobby ? hobby.icon : '🎯';
+  };
+
+  const FormField = ({ label, id, error, children }) => (
+    <div className="space-y-2">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      {children}
+      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
+    </div>
+  );
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-[#F0E9EA] rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-[#360009]">Filter</h2>
-      <div className="mb-4">
-        <label className="block text-[#360009]">Beperking</label>
-        <input
-          type="text"
-          value={restriction}
-          onChange={(e) => setRestriction(e.target.value)}
-          className="mt-1 block w-full rounded-md border-[#FB7185] shadow-sm focus:border-[#F43F5E] focus:ring-[#F43F5E]"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-[#360009]">Interesse</label>
-        <div className="mt-2 space-y-2">
-          <label>
-            <input
-              type="radio"
-              value="Man"
-              checked={interest === 'Man'}
-              onChange={(e) => setInterest(e.target.value)}
-              className="mr-2"
-            />
-            Man
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Filter Voorkeuren</h1>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
+        <FormField id="restriction" label="Beperkingen">
+          <input
+            type="text"
+            id="restriction"
+            value={formData.restriction}
+            onChange={(e) => handleChange('restriction', e.target.value)}
+            className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-white"
+            placeholder="Voer eventuele beperkingen in..."
+          />
+        </FormField>
+        
+        <FormField id="interest" label="Interesse" error={errors.interest}>
+          <ButtonGroup
+            options={interestOptions}
+            value={formData.interest}
+            onChange={(value) => handleChange('interest', value)}
+          />
+        </FormField>
+
+        <FormField id="physical" label="Fysieke Activiteit" error={errors.physical}>
+          <ButtonGroup
+            options={physicalOptions}
+            value={formData.physical}
+            onChange={(value) => handleChange('physical', value)}
+          />
+        </FormField>
+
+        <FormField id="facility" label="Faciliteit" error={errors.facility}>
+          <select
+            id="facility"
+            value={formData.facility}
+            onChange={(e) => handleChange('facility', e.target.value)}
+            className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-white"
+          >
+            <option value="">Selecteer een faciliteit...</option>
+            {facilities.map(facility => (
+              <option key={facility.value} value={facility.value}>{facility.label}</option>
+            ))}
+          </select>
+        </FormField>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Geselecteerde Hobby's
           </label>
-          <label>
-            <input
-              type="radio"
-              value="Vrouw"
-              checked={interest === 'Vrouw'}
-              onChange={(e) => setInterest(e.target.value)}
-              className="mr-2"
-            />
-            Vrouw
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="Geen voorkeur"
-              checked={interest === 'Geen voorkeur'}
-              onChange={(e) => setInterest(e.target.value)}
-              className="mr-2"
-            />
-            Geen voorkeur
-          </label>
+          <div className="flex flex-wrap gap-2 min-h-[44px] p-2 bg-gray-50 rounded-xl border border-gray-200">
+            {selectedHobbies.map((hobby) => (
+              <div 
+                key={hobby} 
+                className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm"
+              >
+                <span>{getHobbyIcon(hobby)}</span>
+                <span className="text-sm font-medium">{hobby}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedHobbies(selectedHobbies.filter(h => h !== hobby))}
+                  className="ml-1 text-gray-400 hover:text-red-500"
+                  aria-label={`Verwijder ${hobby}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
         </div>
-      </div>
-      <div className="mb-4">
-        <label className="block text-[#360009]">Fysiek?</label>
-        <div className="mt-2 space-y-2">
-          <label>
-            <input
-              type="radio"
-              value="Ja"
-              checked={physical === 'Ja'}
-              onChange={(e) => setPhysical(e.target.value)}
-              className="mr-2"
-            />
-            Ja
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="Nee"
-              checked={physical === 'Nee'}
-              onChange={(e) => setPhysical(e.target.value)}
-              className="mr-2"
-            />
-            Nee
-          </label>
-        </div>
-      </div>
-      <div className="mb-4">
-        <label className="block text-[#360009]">Faciliteit</label>
-        <select
-          value={facility}
-          onChange={(e) => setFacility(e.target.value)}
-          className="mt-1 block w-full rounded-md border-[#FB7185] shadow-sm focus:border-[#F43F5E] focus:ring-[#F43F5E]"
+
+        <button
+          type="button"
+          onClick={() => setShowModal(true)}
+          className="w-full border border-gray-300 rounded-xl p-3 text-left hover:bg-gray-50 focus:ring-2 focus:ring-rose-500"
         >
-          <option value="">Kies een faciliteit</option>
-          <option value="Zwembad">Zwembad</option>
-          <option value="Gym">Gym</option>
-          <option value="Bibliotheek">Bibliotheek</option>
-        </select>
-      </div>
-      <HobbiesSelection />
-      <button className="bg-[#F43F5E] text-white px-4 py-2 rounded-lg mt-4">Bevestig</button>
+          {selectedHobbies.length === 0 ? 'Selecteer hobby\'s...' : `${selectedHobbies.length} hobby's geselecteerd`}
+        </button>
+
+        <button 
+          type="submit" 
+          className="w-full bg-rose-500 text-white p-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
+        >
+          Verzenden
+        </button>
+        
+        {submitted && (
+          <div className="bg-green-50 text-green-800 p-4 rounded-xl text-center animate-fade-in">
+            ✓ Formulier succesvol verzonden!
+          </div>
+        )}
+      </form>
+      
+      <HobbiesModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        selectedHobbies={selectedHobbies}
+        setSelectedHobbies={setSelectedHobbies}
+      />
     </div>
   );
 };
 
-const App = () => {
-  return (
-    <div className="min-h-screen bg-[#F0E9EA] flex items-center justify-center">
-      <FilterForm />
-    </div>
-  );
-};
-
-export default App;
+export default FilterForm;
