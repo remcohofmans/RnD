@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import ImageUpload from './ImageUpload';
+
 const availableHobbies = [
   // Collectie & Leren
   { name: 'Geschiedenis', icon: '📜', category: 'Leren' },
@@ -91,10 +93,6 @@ const availableHobbies = [
 ];
 
 
-const facilities = Array.from({ length: 10 }, (_, i) => ({
-  value: `facility-${i + 1}`,
-  label: `Faciliteit ${i + 1}`
-}));
 
 const ButtonGroup = ({ options, value, onChange, error }) => (
   <div className="flex gap-2">
@@ -115,7 +113,6 @@ const ButtonGroup = ({ options, value, onChange, error }) => (
   </div>
 );
 
-// ... (HobbyCategory and HobbiesModal components remain the same)
 const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
   <div className="mb-6">
     <h3 className="text-base font-medium text-gray-900 mb-3">{category}</h3>
@@ -180,19 +177,17 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
-          <button
-            onClick={() => setShowModal(false)}
-            className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
-          >
-            ← Terug
-          </button>
-          <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
-            Selecteer Hobby's
-          </h2>
-          <div className="w-[76px]" />
-        </div>
-
+       <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
+  <h2 id="modal-title" className="text-xl font-semibold text-gray-900 pl-4"> {/* Added padding-left */}
+    Selecteer Hobby's
+  </h2>
+  <button
+    onClick={() => setShowModal(false)}
+    className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 text-2xl" // Increased font size
+  >
+    x
+  </button>
+</div>
         <div className="p-4 border-b bg-white">
           <div className="relative mb-4">
             <input
@@ -262,8 +257,7 @@ const FilterForm = () => {
   const [formData, setFormData] = useState({
     restriction: '',
     interest: '',
-    physical: '',
-    facility: '',
+    physical: ''
   });
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]);
@@ -271,14 +265,14 @@ const FilterForm = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const interestOptions = [
-    { value: 'man', label: 'Man' },
-    { value: 'vrouw', label: 'Vrouw' },
-    { value: 'geen-voorkeur', label: 'Geen voorkeur' },
-  ];
+    { value: 'man', label: 'Man 🤷‍♂️' },
+    { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
+    { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
+];
 
   const physicalOptions = [
-    { value: 'ja', label: 'Ja' },
-    { value: 'nee', label: 'Nee' },
+    { value: 'ja', label: 'Ja ✔️' },
+    { value: 'nee', label: 'Nee ❌' },
   ];
 
   const validateForm = () => {
@@ -286,7 +280,6 @@ const FilterForm = () => {
     
     if (!formData.interest) newErrors.interest = 'Selecteer een interesse';
     if (!formData.physical) newErrors.physical = 'Selecteer een optie';
-    if (!formData.facility) newErrors.facility = 'Selecteer een faciliteit';
     if (selectedHobbies.length === 0) newErrors.hobbies = 'Selecteer ten minste één hobby';
     
     setErrors(newErrors);
@@ -324,7 +317,7 @@ const FilterForm = () => {
     </div>
   );
 
-  return (
+return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Filter Voorkeuren</h1>
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
@@ -339,7 +332,7 @@ const FilterForm = () => {
           />
         </FormField>
         
-        <FormField id="interest" label="Interesse" error={errors.interest}>
+        <FormField id="interest" label="Waar heb je interesse in?" error={errors.interest}>
           <ButtonGroup
             options={interestOptions}
             value={formData.interest}
@@ -347,26 +340,12 @@ const FilterForm = () => {
           />
         </FormField>
 
-        <FormField id="physical" label="Fysieke Activiteit" error={errors.physical}>
+        <FormField id="physical" label="Zou je het fijn vinden om intiem 💏 te zijn met je lief?" error={errors.physical}>
           <ButtonGroup
             options={physicalOptions}
             value={formData.physical}
             onChange={(value) => handleChange('physical', value)}
           />
-        </FormField>
-
-        <FormField id="facility" label="Faciliteit" error={errors.facility}>
-          <select
-            id="facility"
-            value={formData.facility}
-            onChange={(e) => handleChange('facility', e.target.value)}
-            className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-white"
-          >
-            <option value="">Selecteer een faciliteit...</option>
-            {facilities.map(facility => (
-              <option key={facility.value} value={facility.value}>{facility.label}</option>
-            ))}
-          </select>
         </FormField>
 
         <div className="space-y-2">
@@ -403,6 +382,10 @@ const FilterForm = () => {
           {selectedHobbies.length === 0 ? 'Selecteer hobby\'s...' : `${selectedHobbies.length} hobby's geselecteerd`}
         </button>
 
+        {/* Picture upload section */}
+        
+    
+        
         <button 
           type="submit" 
           className="w-full bg-rose-500 text-white p-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
