@@ -3,7 +3,7 @@ import { supabase } from './lib/helper/supabaseClient';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
-import Chats from './Components/Chats';
+import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
 
 export default function App() {
@@ -91,7 +91,7 @@ export default function App() {
               email={user?.email} /> : <Navigate to="/login" />} />
               {/* Login/Register route */}
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={<Chats/>} />
+        <Route path="/chats" element={<ChatsPage/>} />
         {/* Route to Feed */}
         <Route path="/feed" element={<Feed />} />
       </Routes>
