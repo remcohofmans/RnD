@@ -29,7 +29,7 @@ export const useMatches = (userId) => {
 
       const { data: usersData, error: usersError } = await supabase
         .from('users')
-        .select('id, email')
+        .select('id, email, name')
         .in('id', Array.from(userIds));
 
       if (usersError) throw usersError;
@@ -42,7 +42,8 @@ export const useMatches = (userId) => {
         return {
           match_id: match.match_id,
           otherUserId: otherUserId,
-          otherUserEmail: otherUser ? otherUser.email : 'Unknown'
+          otherUserEmail: otherUser ? otherUser.email : 'Unknown',
+          otherUserName: otherUser ? otherUser.name : 'name not found in users table'
         };
       });
 

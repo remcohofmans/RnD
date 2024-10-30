@@ -4,7 +4,7 @@ import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { ChatHeader } from './ChatHeader';
 
-export const ChatWindow = ({ matchId, otherUserEmail }) => {
+export const ChatWindow = ({ matchId, otherUserName }) => {
   // State management
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -126,7 +126,7 @@ export const ChatWindow = ({ matchId, otherUserEmail }) => {
   // Render component
   return (
     <div className="bg-white shadow-lg rounded-lg flex flex-col h-full">
-      <ChatHeader otherUserEmail={otherUserEmail} />
+      <ChatHeader otherUserName={otherUserName} />
       <MessageList 
         messages={messages}
         currentUser={currentUser}
