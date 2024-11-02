@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../lib/helper/supabaseClient'; 
+
 
 const PasswordChangeForm = () => {
   const navigate = useNavigate();
@@ -20,18 +22,54 @@ const PasswordChangeForm = () => {
     confirmPassword: false
   });
 
-  const handleSubmit = (e) => {
+  const [success, setSuccess] = useState(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
+    // Check if the new password and confirm password match
     if (formData.newPassword !== formData.confirmPassword) {
-      setError("Nieuwe wachtwoorden komen niet overeen");
+      setError("Nieuwe wachtwoorden zijn niet hetzelfde");
       return;
     }
 
-    console.log('Password change form submitted:', formData);
-    alert('Wachtwoord succesvol bijgewerkt');
-    navigate('/settingsUser');
+    if (formData.newPassword.length < 6) {
+      setError("Het nieuwe wachtwoord moet minstens 6 tekens hebben");
+      return;
+    }
+
+    try {
+      // Get the current session
+      const { data: { session } } = await supabase.auth.getSession();
+
+      // Re-authenticate using the old password
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: session.user.email,
+        password: formData.oldPassword,
+      });
+
+      if (loginError) {
+        setError("Oude wachtwoord klopt niet");
+        return;
+      }
+
+      // Update password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: formData.newPassword,
+      });
+
+      if (updateError) {
+        setError("Fout bij updaten van wachtwoord: " + updateError.message);
+      } else {
+        setSuccess("Wachtwoord is geüpdated");
+        navigate('/settingsUser');
+      }
+    } catch (err) {
+      console.error("Onverwachte fout:", err);
+      setError("Een onverwachte fout heeft plaatsgevonden ");
+    }
   };
 
   const handleChange = (e) => {
