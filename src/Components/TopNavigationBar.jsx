@@ -12,18 +12,18 @@ const TopNavigationBar = () => {
       navigate('/login');
       return;
     }
-    navigate(path);
+    
   };
 
   // Separate the items into three groups: left, center, and right
   const leftItem = { icon: faHome, label: 'Home', path: '/home' };
   const centerItems = [
     { icon: faHeart, label: 'Find Love', path: '/feed' },
-    { icon: faUserFriends, label: 'Find Friends', path: '/feed' },
+    { icon: faUserFriends, label: 'Friends', path: '/feed' },
     { icon: faComment, label: 'Messages', path: '/messages' },
     { icon: faCog, label: 'Settings', path: '/settings' }
   ];
-  const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/login' };
+  const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };
 
   const NavItem = ({ item }) => (
     <div 
