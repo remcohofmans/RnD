@@ -106,7 +106,7 @@ const SettingsUser = () => {
           </div>
         )}
 
-        {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Verwijderen", "Profiel Pauzeren"].map((option) => (
+        {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
           <button
             key={option}
             className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
