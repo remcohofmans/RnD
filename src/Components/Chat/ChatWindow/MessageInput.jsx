@@ -45,13 +45,13 @@ export const MessageInput = ({ onSendMessage }) => {
 
     return (
         <div className="relative">
-            <form onSubmit={handleSubmit} className="bg-gray-100 px-4 py-3 border-t">
+            <form onSubmit={handleSubmit} className="bg-rose-50 px-4 py-3 border-t border-rose-200">
                 <div className="flex space-x-3 relative">
                     <button 
                         ref={emojiButtonRef}
                         type="button"
                         onClick={toggleEmojiPicker}
-                        className="px-2 py-2 text-xl hover:bg-gray-200 rounded-lg focus:outline-none"
+                        className="px-2 py-2 text-xl hover:bg-rose-200 rounded-lg focus:outline-none"
                     >
                         😊
                     </button>
@@ -59,17 +59,17 @@ export const MessageInput = ({ onSendMessage }) => {
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        className="flex-grow px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-grow px-3 py-2 bg-white border border-rose-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="Type a message..."
                     />
                     <button 
                         type="submit" 
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                     >
                         Send
                     </button>
                 </div>
-
+    
                 {showEmojiPicker && (
                     <div 
                         ref={emojiPickerRef}
@@ -96,4 +96,5 @@ export const MessageInput = ({ onSendMessage }) => {
             </form>
         </div>
     );
+    
 };

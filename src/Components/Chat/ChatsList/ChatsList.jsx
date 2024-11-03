@@ -49,8 +49,8 @@ export const ChatsList = ({ matches, onSelectMatch, selectedMatchId }) => {
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <h2 className="text-xl font-semibold p-4 bg-gray-100">Your Matches</h2>
-      <ul className="divide-y divide-gray-200">
+      <h2 className="text-xl font-semibold p-4 bg-rose-100 text-rose-700">Your Matches</h2>
+      <ul className="divide-y divide-rose-200">
         {sortedMatches.map((match) => (
           <ChatListItem
             key={match.match_id}

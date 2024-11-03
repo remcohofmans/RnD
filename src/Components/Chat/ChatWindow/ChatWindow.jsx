@@ -124,15 +124,16 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   }
 
   // Render component
-  return (
-    <div className="bg-white shadow-lg rounded-lg flex flex-col h-full">
-      <ChatHeader otherUserName={otherUserName} />
-      <MessageList 
-        messages={messages}
-        currentUser={currentUser}
-        messagesEndRef={messagesEndRef}
-      />
-      <MessageInput onSendMessage={sendMessage} />
-    </div>
-  );
+return (
+  <div className="bg-white shadow-lg rounded-lg flex flex-col h-full border border-rose-200">
+    <ChatHeader otherUserName={otherUserName} />
+    <MessageList 
+      messages={messages}
+      currentUser={currentUser}
+      messagesEndRef={messagesEndRef}
+    />
+    <MessageInput onSendMessage={sendMessage} />
+  </div>
+);
+
 };

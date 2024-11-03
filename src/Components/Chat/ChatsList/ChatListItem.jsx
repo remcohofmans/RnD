@@ -56,24 +56,24 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
 
   return (
     <li
-      className={`cursor-pointer hover:bg-gray-50 transition-colors duration-150 ease-in-out ${
-        isSelected ? 'bg-blue-50' : ''
+      className={`cursor-pointer hover:bg-rose-50 transition-colors duration-150 ease-in-out ${
+        isSelected ? 'bg-rose-100' : ''
       }`}
       onClick={() => onSelect(match.match_id)}
     >
       <div className="p-4 flex justify-between items-center">
         <div className="flex-1">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-rose-900">
             {match.otherUserName || 'Unknown name in db'}
           </h3>
           {lastMessage && (
-            <p className="text-sm text-gray-500 truncate">
+            <p className="text-sm text-rose-500 truncate">
               {lastMessage.message}
             </p>
           )}
         </div>
         {!isLoading && !hasSentMessage && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
             New Match
           </span>
         )}
