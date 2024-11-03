@@ -2,32 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../supabaseClient';
 
 export const ChatListItem = ({ match, isSelected, onSelect }) => {
-  const [hasMessages, setHasMessages] = useState(false);
+  const [hasSentMessage, setHasSentMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [lastMessage, setLastMessage] = useState(null);
 
   useEffect(() => {
-    checkForExistingConversation();
+    checkForSentMessages();
   }, [match.match_id]);
 
-  const checkForExistingConversation = async () => {
+  const checkForSentMessages = async () => {
     try {
       setIsLoading(true);
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user;
+      
+      if (!currentUser) {
+        console.error('No user session found');
+        return;
+      }
+
       const { data: messages, error: messagesError } = await supabase
         .from('chats')
-        .select('id, message')
+        .select('id, message, sender_id')
         .eq('match_id', match.match_id)
-        .order('created_at', { ascending: false })
+        .eq('sender_id', currentUser.id)
         .limit(1);
 
       if (messagesError) {
         throw messagesError;
       }
 
-      setHasMessages(messages && messages.length > 0);
-      setLastMessage(messages?.[0] || null);
+      // Get the last message for preview, can be of both users
+      const { data: lastMessageData, error: lastMessageError } = await supabase
+        .from('chats')
+        .select('id, message')
+        .eq('match_id', match.match_id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (lastMessageError) {
+        throw lastMessageError;
+      }
+
+      setHasSentMessage(Boolean(messages && messages.length > 0));
+      setLastMessage(lastMessageData?.[0] || null);
     } catch (error) {
-      console.error('Error checking for existing conversation:', error);
+      console.error('Error checking for sent messages:', error);
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +64,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       <div className="p-4 flex justify-between items-center">
         <div className="flex-1">
           <h3 className="text-lg font-medium text-gray-900">
-            {match.otherUserName}
+            {match.otherUserName || 'Unknown name in db'}
           </h3>
           {lastMessage && (
             <p className="text-sm text-gray-500 truncate">
@@ -51,7 +72,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
             </p>
           )}
         </div>
-        {!isLoading && !hasMessages && (
+        {!isLoading && !hasSentMessage && (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
             New Match
           </span>
