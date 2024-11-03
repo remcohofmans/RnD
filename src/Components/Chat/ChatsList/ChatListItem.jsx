@@ -86,7 +86,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
   return (
     <li
       className={`cursor-pointer hover:bg-rose-50 transition-colors duration-150 ease-in-out ${
-        isSelected ? 'bg-rose-100' : ''
+        isSelected ? 'bg-rose-50' : ''
       }`}
       onClick={() => onSelect(match.match_id)}
     >
