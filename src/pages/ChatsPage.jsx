@@ -16,7 +16,6 @@ const ChatsPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Your Chats</h1>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* ChatsList - Positioned to the left */}
           <div className="md:col-span-3">

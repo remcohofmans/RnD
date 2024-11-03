@@ -5,6 +5,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
   const [hasSentMessage, setHasSentMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [lastMessage, setLastMessage] = useState(null);
+  const [isOtherUserLastSender, setIsOtherUserLastSender] = useState(false);
 
   useEffect(() => {
     checkForSentMessages();
@@ -13,7 +14,6 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
   const checkForSentMessages = async () => {
     try {
       setIsLoading(true);
-      
       const { data: { session } } = await supabase.auth.getSession();
       const currentUser = session?.user;
       
@@ -36,7 +36,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       // Get the last message for preview, can be of both users
       const { data: lastMessageData, error: lastMessageError } = await supabase
         .from('chats')
-        .select('id, message')
+        .select('id, message, sender_id')
         .eq('match_id', match.match_id)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -45,13 +45,42 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
         throw lastMessageError;
       }
 
-      setHasSentMessage(Boolean(messages && messages.length > 0));
+      const hasMessages = Boolean(messages && messages.length > 0);
+      setHasSentMessage(hasMessages);
       setLastMessage(lastMessageData?.[0] || null);
+      
+      // Check if the last message is from the other user
+      if (lastMessageData?.[0]) {
+        setIsOtherUserLastSender(lastMessageData[0].sender_id !== currentUser.id);
+      }
+
     } catch (error) {
       console.error('Error checking for sent messages:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const StatusBadge = () => {
+    if (isLoading) return null;
+    
+    if (!hasSentMessage) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
+          New Match
+        </span>
+      );
+    }
+    
+    if (isOtherUserLastSender) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
+          Your Turn
+        </span>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -72,12 +101,10 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
             </p>
           )}
         </div>
-        {!isLoading && !hasSentMessage && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
-            New Match
-          </span>
-        )}
+        <StatusBadge />
       </div>
     </li>
   );
 };
+
+export default ChatListItem;
