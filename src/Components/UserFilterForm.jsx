@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import DistanceControl from './DistanceControl';
+import AgeRangeControl from './AgeRangeControl';
 
 
 const availableHobbies = [
@@ -259,6 +260,8 @@ const FilterForm = () => {
     interest: '',
     physical: '',
     distance: '5',
+    minAge: '18',
+    maxAge: '35'
   });
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]);
@@ -281,6 +284,8 @@ const FilterForm = () => {
     if (!formState.interest) newErrors.interest = 'Selecteer een interesse';
     if (!formState.physical) newErrors.physical = 'Selecteer een optie';
     if (!formState.distance) newErrors.distance = 'Voer een afstand in';
+    if (!formState.minAge) newErrors.age = 'Selecteer een minimum leeftijd';
+    if (!formState.maxAge) newErrors.age = 'Selecteer een maximum leeftijd';
     if (selectedHobbies.length === 0) newErrors.hobbies = 'Selecteer ten minste één hobby';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -329,6 +334,25 @@ const FilterForm = () => {
             placeholder="Voer eventuele beperkingen in..."
           />
           {errors.restriction && <div className="text-red-500 text-sm mt-1">{errors.restriction}</div>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Leeftijdsvoorkeur
+          </label>
+          <AgeRangeControl
+            minValue={formState.minAge}
+            maxValue={formState.maxAge}
+            onChangeMin={(value) => {
+              setFormState(prev => ({ ...prev, minAge: value }));
+              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
+            }}
+            onChangeMax={(value) => {
+              setFormState(prev => ({ ...prev, maxAge: value }));
+              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
+            }}
+          />
+          {errors.age && <div className="text-red-500 text-sm">{errors.age}</div>}
         </div>
 
         <div className="space-y-2">
@@ -420,6 +444,7 @@ const FilterForm = () => {
           <div className="bg-green-50 text-green-800 p-4 rounded-xl text-center animate-fade-in">
             <h2 className="text-lg font-semibold">Gegevens Verzonden!</h2>
             <p><strong>Beperkingen:</strong> {submittedData.restriction}</p>
+            <p><strong>Leeftijdsvoorkeur:</strong> {submittedData.minAge} - {submittedData.maxAge} jaar</p>
             <p><strong>Interesse:</strong> {submittedData.interest}</p>
             <p><strong>Intiem:</strong> {submittedData.physical}</p>
             <p><strong>Maximale Afstand:</strong> {submittedData.distance}</p>
