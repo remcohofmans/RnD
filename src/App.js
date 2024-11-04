@@ -6,6 +6,7 @@ import Home from './Components/Home';
 import Chats from './pages/Chats';
 import Feed from './Components/Feed'
 import UserFilterForm from './Components/UserFilterForm';
+import ImageUpload from './Components/ImageUpload';
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -97,6 +98,9 @@ export default function App() {
         <Route path="/feed" element={<Feed />} />
         {/* Route to UserFilterForm */}
         <Route path="/userfilterform" element={<UserFilterForm />} />
+        {/* Route to UploadFoto */}
+        <Route path="/UploadFoto" element={<ImageUpload />} />
+
       </Routes>
     </Router>
   );

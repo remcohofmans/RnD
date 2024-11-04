@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-import ImageUpload from './ImageUpload';
+import DistanceControl from './DistanceControl';
+
 
 const availableHobbies = [
   // Collectie & Leren
@@ -93,7 +94,6 @@ const availableHobbies = [
 ];
 
 
-
 const ButtonGroup = ({ options, value, onChange, error }) => (
   <div className="flex gap-2">
     {options.map((option) => (
@@ -112,6 +112,7 @@ const ButtonGroup = ({ options, value, onChange, error }) => (
     ))}
   </div>
 );
+
 
 const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
   <div className="mb-6">
@@ -137,7 +138,6 @@ const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
     </div>
   </div>
 );
-
 
 const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHobbies }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -177,17 +177,17 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-       <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
-  <h2 id="modal-title" className="text-xl font-semibold text-gray-900 pl-4"> {/* Added padding-left */}
-    Selecteer Hobby's
-  </h2>
-  <button
-    onClick={() => setShowModal(false)}
-    className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 text-2xl" // Increased font size
-  >
-    x
-  </button>
-</div>
+        <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
+          <h2 id="modal-title" className="text-xl font-semibold text-gray-900 pl-4">
+            Selecteer Hobby's
+          </h2>
+          <button
+            onClick={() => setShowModal(false)}
+            className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 text-2xl"
+          >
+            ×
+          </button>
+        </div>
         <div className="p-4 border-b bg-white">
           <div className="relative mb-4">
             <input
@@ -254,21 +254,22 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
 };
 
 const FilterForm = () => {
-  const [formData, setFormData] = useState({
+  const [formState, setFormState] = useState({
     restriction: '',
     interest: '',
-    physical: ''
+    physical: '',
+    distance: '5',
   });
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState(null);
 
   const interestOptions = [
     { value: 'man', label: 'Man 🤷‍♂️' },
     { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
     { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
-];
+  ];
 
   const physicalOptions = [
     { value: 'ja', label: 'Ja ✔️' },
@@ -277,29 +278,32 @@ const FilterForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    if (!formData.interest) newErrors.interest = 'Selecteer een interesse';
-    if (!formData.physical) newErrors.physical = 'Selecteer een optie';
+    if (!formState.interest) newErrors.interest = 'Selecteer een interesse';
+    if (!formState.physical) newErrors.physical = 'Selecteer een optie';
+    if (!formState.distance) newErrors.distance = 'Voer een afstand in';
     if (selectedHobbies.length === 0) newErrors.hobbies = 'Selecteer ten minste één hobby';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const isValid = validateForm();
-    
-    if (isValid) {
-      console.log('Form submitted:', { ...formData, hobbies: selectedHobbies });
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 2000);
+    if (validateForm()) {
+      const dataToSubmit = { ...formState, hobbies: selectedHobbies };
+      setSubmittedData(dataToSubmit);
+      console.log('Form submitted:', dataToSubmit);
     }
   };
 
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setErrors(prev => ({ ...prev, [field]: '' }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const getHobbyIcon = (hobbyName) => {
@@ -307,46 +311,69 @@ const FilterForm = () => {
     return hobby ? hobby.icon : '🎯';
   };
 
-  const FormField = ({ label, id, error, children }) => (
-    <div className="space-y-2">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      {children}
-      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
-    </div>
-  );
-
-return (
+  return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Filter Voorkeuren</h1>
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
-        <FormField id="restriction" label="Beperkingen">
+        <div className="space-y-2">
+          <label htmlFor="restriction" className="block text-sm font-medium text-gray-700">
+            Beperkingen
+          </label>
           <input
             type="text"
             id="restriction"
-            value={formData.restriction}
-            onChange={(e) => handleChange('restriction', e.target.value)}
-            className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-white"
+            name="restriction"
+            value={formState.restriction}
+            onChange={handleInputChange}
+            className="w-full h-12 border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-gray-50 focus:bg-white transition duration-150 ease-in-out"
             placeholder="Voer eventuele beperkingen in..."
           />
-        </FormField>
-        
-        <FormField id="interest" label="Waar heb je interesse in?" error={errors.interest}>
+          {errors.restriction && <div className="text-red-500 text-sm mt-1">{errors.restriction}</div>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Waar heb je interesse in?
+          </label>
           <ButtonGroup
             options={interestOptions}
-            value={formData.interest}
-            onChange={(value) => handleChange('interest', value)}
+            value={formState.interest}
+            onChange={(value) => {
+              setFormState(prev => ({ ...prev, interest: value }));
+              if (errors.interest) setErrors(prev => ({ ...prev, interest: '' }));
+            }}
           />
-        </FormField>
+          {errors.interest && <div className="text-red-500 text-sm">{errors.interest}</div>}
+        </div>
 
-        <FormField id="physical" label="Zou je het fijn vinden om intiem 💏 te zijn met je lief?" error={errors.physical}>
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Zou je het fijn vinden om intiem 💏 te zijn met je lief?
+          </label>
           <ButtonGroup
             options={physicalOptions}
-            value={formData.physical}
-            onChange={(value) => handleChange('physical', value)}
+            value={formState.physical}
+            onChange={(value) => {
+              setFormState(prev => ({ ...prev, physical: value }));
+              if (errors.physical) setErrors(prev => ({ ...prev, physical: '' }));
+            }}
           />
-        </FormField>
+          {errors.physical && <div className="text-red-500 text-sm">{errors.physical}</div>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Maximale afstand
+          </label>
+          <DistanceControl
+            value={formState.distance}
+            onChange={(value) => {
+              setFormState(prev => ({ ...prev, distance: value }));
+              if (errors.distance) setErrors(prev => ({ ...prev, distance: '' }));
+            }}
+          />
+          {errors.distance && <div className="text-red-500 text-sm">{errors.distance}</div>}
+        </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
@@ -362,7 +389,7 @@ return (
                 <span className="text-sm font-medium">{hobby}</span>
                 <button
                   type="button"
-                  onClick={() => setSelectedHobbies(selectedHobbies.filter(h => h !== hobby))}
+                  onClick={() => setSelectedHobbies(prev => prev.filter(h => h !== hobby))}
                   className="ml-1 text-gray-400 hover:text-red-500"
                   aria-label={`Verwijder ${hobby}`}
                 >
@@ -382,10 +409,6 @@ return (
           {selectedHobbies.length === 0 ? 'Selecteer hobby\'s...' : `${selectedHobbies.length} hobby's geselecteerd`}
         </button>
 
-        {/* Picture upload section */}
-        
-    
-        
         <button 
           type="submit" 
           className="w-full bg-rose-500 text-white p-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
@@ -393,9 +416,14 @@ return (
           Verzenden
         </button>
         
-        {submitted && (
+        {submittedData && (
           <div className="bg-green-50 text-green-800 p-4 rounded-xl text-center animate-fade-in">
-            ✓ Formulier succesvol verzonden!
+            <h2 className="text-lg font-semibold">Gegevens Verzonden!</h2>
+            <p><strong>Beperkingen:</strong> {submittedData.restriction}</p>
+            <p><strong>Interesse:</strong> {submittedData.interest}</p>
+            <p><strong>Intiem:</strong> {submittedData.physical}</p>
+            <p><strong>Maximale Afstand:</strong> {submittedData.distance}</p>
+            <p><strong>Geselecteerde Hobby's:</strong> {submittedData.hobbies.join(', ')}</p>
           </div>
         )}
       </form>
