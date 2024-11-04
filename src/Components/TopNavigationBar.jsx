@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart, faUserFriends, faComment, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 const TopNavigationBar = () => {
   const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleNavigate = (path) => {
     if (path === '/logout') {
-      // Add your logout logic here
-      navigate('/login');
+      setShowLogoutConfirm(true);
       return;
     }
-    
+    navigate(path);
+  };
+
+  const confirmLogout = (confirm) => {
+    if (confirm) {
+      // Add your logout logic here
+      navigate('/login');
+    }
+    setShowLogoutConfirm(false);
   };
 
   // Separate the items into three groups: left, center, and right
@@ -39,26 +47,51 @@ const TopNavigationBar = () => {
   );
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 flex items-center py-4"
-      style={{ backgroundColor: '#f43f5e' }}
-    >
-      {/* Left item (Home) */}
-      <div className="w-24 pl-4">
-        <NavItem item={leftItem} />
+    <div>
+      <div
+        className="fixed top-0 left-0 right-0 flex items-center py-4"
+        style={{ backgroundColor: '#f43f5e' }}
+      >
+        {/* Left item (Home) */}
+        <div className="w-24 pl-4">
+          <NavItem item={leftItem} />
+        </div>
+
+        {/* Center items */}
+        <div className="flex-1 flex justify-center gap-12">
+          {centerItems.map((item, index) => (
+            <NavItem key={index} item={item} />
+          ))}
+        </div>
+
+        {/* Right item (Logout) */}
+        <div className="w-24 flex justify-end pr-4">
+          <NavItem item={rightItem} />
+        </div>
       </div>
 
-      {/* Center items */}
-      <div className="flex-1 flex justify-center gap-12">
-        {centerItems.map((item, index) => (
-          <NavItem key={index} item={item} />
-        ))}
-      </div>
-
-      {/* Right item (Logout) */}
-      <div className="w-24 flex justify-end pr-4">
-        <NavItem item={rightItem} />
-      </div>
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => confirmLogout(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 text-white rounded"
+                style={{ backgroundColor: '#f43f5e' }}
+                onClick={() => confirmLogout(true)}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
