@@ -95,7 +95,6 @@ export default function App() {
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         <Route path="/chats" element={<Chats/>} />
         {/* Route to Feed */}
-        <Route path="/feed" element={<Feed />} />
         <Route path="/settingsUser" element={<SettingsUser />} />
         <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
 
