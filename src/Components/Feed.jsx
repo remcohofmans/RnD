@@ -18,6 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useSwipeable } from 'react-swipeable';
 import { supabase } from '../supabaseClient';
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
 
 const hobbyIcons = {
   music: faMusic,
@@ -39,7 +40,7 @@ const calculateAge = (birthday) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
 
-const UserCard = ({ user }) => (
+const UserCard = ({ user, onLove }) => (
   <div className="bg-[#F0E9EA] rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto transition-transform duration-300 hover:scale-105">
     <img
       className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-[#FB7185]"
@@ -74,7 +75,10 @@ const UserCard = ({ user }) => (
     </div>
     <p className="mt-4 text-[#360009] text-left">{user.bio}</p>
     <div className="flex justify-between mt-6">
-      <button className="flex items-center bg-[#FB7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#F43F5E] transition-all duration-300">
+      <button
+        onClick={onLove} // Call the onLove function when the Love button is clicked
+        className="flex items-center bg-[#FB7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#F43F5E] transition-all duration-300"
+      >
         <FontAwesomeIcon icon={faHeart} className="mr-2" /> Love
       </button>
       <button className="flex items-center bg-[#FFBEC8] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#F43F5E] transition-all duration-300">
@@ -89,24 +93,22 @@ const Feed = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Get current user from custom hook
+  const { currentUser, loading: authLoading, error: authError } = useSupabaseAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error } = await supabase
-
-          .from('users') // Replace with your actual table name
-          .select('birthday, facility, city, name') // Specify the columns you want
+          .from('users')
           .select('id, birthday, facility, city, name, profilepictureBASE64');
         if (error) throw error;
-
 
         const transformedUsers = fetchedData.map((item) => ({
           id: item.id,
           name: item.name,
-          
           location: item.city,
-
           facility: item.facility,
           birthday: item.birthday,
           age: calculateAge(item.birthday),
@@ -125,6 +127,24 @@ const Feed = () => {
     fetchData();
   }, []);
 
+  const handleLove = async () => {
+
+  
+    const likedUserId = users[currentIndex].id;
+
+    try {
+      const { data, error } = await supabase
+        .from('likes')
+        .insert([{ user_id: currentUser.id, liked_user_id: likedUserId }]);
+
+    } catch (error) {
+      // More detailed error message
+      console.error("Error liking user:", error.message || error);
+      alert("Error liking user, please try again.");
+    }
+  };
+  
+
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? users.length - 1 : prevIndex - 1));
   };
@@ -138,12 +158,12 @@ const Feed = () => {
     onSwipedRight: handlePrevious,
   });
 
-  if (loading) {
+  if (loading || authLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (error || authError) {
+    return <div>Error: {error || authError}</div>;
   }
 
   return (
@@ -168,7 +188,7 @@ const Feed = () => {
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
 
-        {users.length > 0 && <UserCard user={users[currentIndex]} />}
+        {users.length > 0 && <UserCard user={users[currentIndex]} onLove={handleLove} />}
 
         <button
           className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-[#F0E9EA] p-2 rounded-full shadow-md hover:bg-[#FB7185] transition duration-300 z-10"
