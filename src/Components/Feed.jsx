@@ -94,14 +94,19 @@ const Feed = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error } = await supabase
-          .from('users')
+
+          .from('users') // Replace with your actual table name
+          .select('birthday, facility, city, name') // Specify the columns you want
           .select('id, birthday, facility, city, name, profilepictureBASE64');
         if (error) throw error;
+
 
         const transformedUsers = fetchedData.map((item) => ({
           id: item.id,
           name: item.name,
+          
           location: item.city,
+
           facility: item.facility,
           birthday: item.birthday,
           age: calculateAge(item.birthday),
