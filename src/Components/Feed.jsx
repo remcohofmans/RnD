@@ -96,9 +96,7 @@ const Feed = () => {
         const { data: fetchedData, error } = await supabase
 
           .from('users') // Replace with your actual table name
-          .select('birthday, facility, city, name'); // Specify the columns you want
-
-          .from('users')
+          .select('birthday, facility, city, name') // Specify the columns you want
           .select('id, birthday, facility, city, name, profilepictureBASE64');
         if (error) throw error;
 
