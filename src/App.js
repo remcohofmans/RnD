@@ -102,7 +102,7 @@ export default function App() {
         <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         {/* Route to UserFilterForm */}
-        <Route path="/userFilterForm" element={user ? <Navigate to="/userFilterForm" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         
         {/* Route to UploadFoto */}
         <Route path="/uploadFoto" element={user ? <UploadFoto /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
