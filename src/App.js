@@ -5,7 +5,12 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
+
+import UserFilterForm from './Components/UserFilterForm';
+import ImageUpload from './Components/ImageUpload';
+
 import TopNavigationBar from './Components/TopNavigationBar';
+
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -95,7 +100,14 @@ export default function App() {
         <Route path="/chats" element={<ChatsPage/>} />
         {/* Route to Feed */}
         <Route path="/feed" element={<Feed />} />
+
+        {/* Route to UserFilterForm */}
+        <Route path="/userfilterform" element={<UserFilterForm />} />
+        {/* Route to UploadFoto */}
+        <Route path="/UploadFoto" element={<ImageUpload />} />
+
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
+
 
       </Routes>
     </Router>
