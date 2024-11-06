@@ -5,6 +5,8 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
+import SettingsUser from './Components/SettingsUser';
+import PasswordChangeForm from './Components/PasswordChangeForm';
 
 import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
@@ -99,6 +101,8 @@ export default function App() {
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
+        <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
         <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         {/* Route to UserFilterForm */}
