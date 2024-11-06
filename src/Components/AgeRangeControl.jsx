@@ -53,12 +53,7 @@ const AgeRangeControl = ({
     <div className="space-y-2">
       <div className="bg-white shadow-lg rounded-2xl p-6">
         <div className="flex flex-col items-center gap-6">
-          <label htmlFor={id} className="text-sm font-medium text-gray-700">
-            Age Range
-          </label>
-          
           <div className="flex items-center gap-8 w-full max-w-md">
-            {/* Minimum age control */}
             <div className="flex-1 space-y-2">
               <span className="text-sm text-gray-500">Min Age</span>
               <div className="flex items-center gap-3">
@@ -138,22 +133,6 @@ const AgeRangeControl = ({
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Range indicator */}
-          <div className="w-full max-w-md h-2 bg-rose-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-rose-300 to-rose-600 transition-all duration-200"
-              style={{ 
-                width: `${((maxAge - 18) / (100 - 18)) * 100}%`,
-                marginLeft: `${((minAge - 18) / (100 - 18)) * 100}%`
-              }}
-            />
-          </div>
-
-          <div className="flex justify-between w-full max-w-md text-sm text-rose-500">
-            <span>18</span>
-            <span>100</span>
           </div>
         </div>
       </div>

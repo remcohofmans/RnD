@@ -258,7 +258,6 @@ const FilterForm = () => {
   const [formState, setFormState] = useState({
     restriction: '',
     interest: '',
-    physical: '',
     distance: '5',
     minAge: '18',
     maxAge: '35'
@@ -274,15 +273,9 @@ const FilterForm = () => {
     { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
   ];
 
-  const physicalOptions = [
-    { value: 'ja', label: 'Ja ✔️' },
-    { value: 'nee', label: 'Nee ❌' },
-  ];
-
   const validateForm = () => {
     const newErrors = {};
     if (!formState.interest) newErrors.interest = 'Selecteer een interesse';
-    if (!formState.physical) newErrors.physical = 'Selecteer een optie';
     if (!formState.distance) newErrors.distance = 'Voer een afstand in';
     if (!formState.minAge) newErrors.age = 'Selecteer een minimum leeftijd';
     if (!formState.maxAge) newErrors.age = 'Selecteer een maximum leeftijd';
@@ -338,6 +331,21 @@ const FilterForm = () => {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
+            Waar heb je interesse in?
+          </label>
+          <ButtonGroup
+            options={interestOptions}
+            value={formState.interest}
+            onChange={(value) => {
+              setFormState(prev => ({ ...prev, interest: value }));
+              if (errors.interest) setErrors(prev => ({ ...prev, interest: '' }));
+            }}
+          />
+          {errors.interest && <div className="text-red-500 text-sm">{errors.interest}</div>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
             Leeftijdsvoorkeur
           </label>
           <AgeRangeControl
@@ -354,37 +362,7 @@ const FilterForm = () => {
           />
           {errors.age && <div className="text-red-500 text-sm">{errors.age}</div>}
         </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Waar heb je interesse in?
-          </label>
-          <ButtonGroup
-            options={interestOptions}
-            value={formState.interest}
-            onChange={(value) => {
-              setFormState(prev => ({ ...prev, interest: value }));
-              if (errors.interest) setErrors(prev => ({ ...prev, interest: '' }));
-            }}
-          />
-          {errors.interest && <div className="text-red-500 text-sm">{errors.interest}</div>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Zou je het fijn vinden om intiem 💏 te zijn met je lief?
-          </label>
-          <ButtonGroup
-            options={physicalOptions}
-            value={formState.physical}
-            onChange={(value) => {
-              setFormState(prev => ({ ...prev, physical: value }));
-              if (errors.physical) setErrors(prev => ({ ...prev, physical: '' }));
-            }}
-          />
-          {errors.physical && <div className="text-red-500 text-sm">{errors.physical}</div>}
-        </div>
-
+        
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
             Maximale afstand
@@ -446,7 +424,6 @@ const FilterForm = () => {
             <p><strong>Beperkingen:</strong> {submittedData.restriction}</p>
             <p><strong>Leeftijdsvoorkeur:</strong> {submittedData.minAge} - {submittedData.maxAge} jaar</p>
             <p><strong>Interesse:</strong> {submittedData.interest}</p>
-            <p><strong>Intiem:</strong> {submittedData.physical}</p>
             <p><strong>Maximale Afstand:</strong> {submittedData.distance}</p>
             <p><strong>Geselecteerde Hobby's:</strong> {submittedData.hobbies.join(', ')}</p>
           </div>

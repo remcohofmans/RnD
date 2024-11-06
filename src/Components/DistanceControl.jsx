@@ -35,10 +35,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
     <div className="space-y-2">
       <div className="bg-white shadow-lg rounded-2xl p-6">
         <div className="flex flex-col items-center gap-4">
-          <label htmlFor={id} className="text-sm font-medium text-gray-700">
-            Distance Range
-          </label>
-          
+          {/* Removed Distance Range Label */}
           <div className="flex items-center gap-4 w-full max-w-xs">
             <button
               type="button"
@@ -61,6 +58,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
                 className="w-full text-3xl font-semibold text-center bg-transparent border-b-2 border-rose-200 focus:border-rose-500 focus:ring-0 p-2 text-rose-900"
                 aria-describedby={error ? `${id}-error` : undefined}
               />
+              {/* Keeping km label */}
               <span className="absolute right-0 bottom-3 text-rose-400 text-lg" aria-hidden="true">
                 km
               </span>
@@ -77,18 +75,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
             </button>
           </div>
 
-          {/* Range indicator */}
-          <div className="w-full max-w-xs h-2 bg-rose-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-rose-300 to-rose-600 transition-all duration-200"
-              style={{ width: `${(distance / 100) * 100}%` }}
-            />
-          </div>
-
-          <div className="flex justify-between w-full max-w-xs text-sm text-rose-500">
-            <span>1 km</span>
-            <span>100 km</span>
-          </div>
+          
         </div>
       </div>
       
