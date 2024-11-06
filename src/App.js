@@ -97,14 +97,15 @@ export default function App() {
               email={user?.email} /> : <Navigate to="/login" />} />
               {/* Login/Register route */}
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={<ChatsPage/>} />
+        <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
-        <Route path="/feed" element={<Feed />} />
+        <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         {/* Route to UserFilterForm */}
-        <Route path="/userfilterform" element={<UserFilterForm />} />
+        <Route path="/userFilterForm" element={user ? <Navigate to="/userFilterForm" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        
         {/* Route to UploadFoto */}
-        <Route path="/UploadFoto" element={<ImageUpload />} />
+        <Route path="/uploadFoto" element={user ? <UploadFoto /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
 
