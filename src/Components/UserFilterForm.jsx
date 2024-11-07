@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import DistanceControl from './DistanceControl';
 import AgeRangeControl from './AgeRangeControl';
-
+import { supabase } from '../supabaseClient';
 
 const availableHobbies = [
   // Collectie & Leren
@@ -260,7 +260,7 @@ const FilterForm = () => {
     interest: '',
     distance: '5',
     minAge: '18',
-    maxAge: '35'
+    maxAge: '35',
   });
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]);
@@ -284,35 +284,58 @@ const FilterForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const dataToSubmit = { ...formState, hobbies: selectedHobbies };
-      setSubmittedData(dataToSubmit);
-      console.log('Form submitted:', dataToSubmit);
+      const dataToSubmit = {
+        restriction: formState.restriction,
+        interest: formState.interest,
+        min_age: parseInt(formState.minAge),
+        max_age: parseInt(formState.maxAge),
+        distance: parseInt(formState.distance),
+        hobbies: selectedHobbies.join(', '), // assuming hobbies is stored as a comma-separated string
+      };
+
+      try {
+        const { data, error } = await supabase
+          .from('userpreferences') // replace 'your-table-name' with the actual table name
+          .insert([dataToSubmit]);
+
+        if (error) {
+          console.error('Error inserting data:', error);
+        } else {
+          setSubmittedData(dataToSubmit);
+          console.log('Form submitted:', dataToSubmit);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      }
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
   const getHobbyIcon = (hobbyName) => {
-    const hobby = availableHobbies.find(h => h.name === hobbyName);
+    const hobby = availableHobbies.find((h) => h.name === hobbyName);
     return hobby ? hobby.icon : '🎯';
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Filter Voorkeuren</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100"
+      >
         <div className="space-y-2">
           <label htmlFor="restriction" className="block text-sm font-medium text-gray-700">
             Beperkingen
@@ -337,105 +360,85 @@ const FilterForm = () => {
             options={interestOptions}
             value={formState.interest}
             onChange={(value) => {
-              setFormState(prev => ({ ...prev, interest: value }));
-              if (errors.interest) setErrors(prev => ({ ...prev, interest: '' }));
+              setFormState((prev) => ({ ...prev, interest: value }));
+              if (errors.interest) setErrors((prev) => ({ ...prev, interest: '' }));
             }}
           />
           {errors.interest && <div className="text-red-500 text-sm">{errors.interest}</div>}
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Leeftijdsvoorkeur
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Leeftijdsvoorkeur</label>
           <AgeRangeControl
             minValue={formState.minAge}
             maxValue={formState.maxAge}
             onChangeMin={(value) => {
-              setFormState(prev => ({ ...prev, minAge: value }));
-              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
+              setFormState((prev) => ({ ...prev, minAge: value }));
+              if (errors.age) setErrors((prev) => ({ ...prev, age: '' }));
             }}
             onChangeMax={(value) => {
-              setFormState(prev => ({ ...prev, maxAge: value }));
-              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
+              setFormState((prev) => ({ ...prev, maxAge: value }));
+              if (errors.age) setErrors((prev) => ({ ...prev, age: '' }));
             }}
           />
           {errors.age && <div className="text-red-500 text-sm">{errors.age}</div>}
         </div>
-        
+
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Maximale afstand
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Maximale afstand</label>
           <DistanceControl
             value={formState.distance}
             onChange={(value) => {
-              setFormState(prev => ({ ...prev, distance: value }));
-              if (errors.distance) setErrors(prev => ({ ...prev, distance: '' }));
+              setFormState((prev) => ({ ...prev, distance: value }));
+              if (errors.distance) setErrors((prev) => ({ ...prev, distance: '' }));
             }}
           />
           {errors.distance && <div className="text-red-500 text-sm">{errors.distance}</div>}
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Geselecteerde Hobby's
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Geselecteerde Hobby's</label>
           <div className="flex flex-wrap gap-2 min-h-[44px] p-2 bg-gray-50 rounded-xl border border-gray-200">
             {selectedHobbies.map((hobby) => (
-              <div 
-                key={hobby} 
-                className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm"
-              >
+              <div key={hobby} className="flex items-center gap-2 px-3 py-1 bg-rose-500 text-white rounded-full">
                 <span>{getHobbyIcon(hobby)}</span>
-                <span className="text-sm font-medium">{hobby}</span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedHobbies(prev => prev.filter(h => h !== hobby))}
-                  className="ml-1 text-gray-400 hover:text-red-500"
-                  aria-label={`Verwijder ${hobby}`}
-                >
-                  ×
-                </button>
+                <span>{hobby}</span>
               </div>
             ))}
+            <button
+              type="button"
+              className="flex items-center gap-2 px-3 py-1 bg-gray-200 rounded-full text-gray-900"
+              onClick={() => setShowModal(true)}
+            >
+              <span>+</span>
+              <span>Hobby's toevoegen</span>
+            </button>
           </div>
           {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
         </div>
 
         <button
-          type="button"
-          onClick={() => setShowModal(true)}
-          className="w-full border border-gray-300 rounded-xl p-3 text-left hover:bg-gray-50 focus:ring-2 focus:ring-rose-500"
+          type="submit"
+          className="w-full py-3 px-6 text-white bg-rose-500 rounded-xl transition duration-150 ease-in-out hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
         >
-          {selectedHobbies.length === 0 ? 'Selecteer hobby\'s...' : `${selectedHobbies.length} hobby's geselecteerd`}
+          Toepassen
         </button>
-
-        <button 
-          type="submit" 
-          className="w-full bg-rose-500 text-white p-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
-        >
-          Verzenden
-        </button>
-        
-        {submittedData && (
-          <div className="bg-green-50 text-green-800 p-4 rounded-xl text-center animate-fade-in">
-            <h2 className="text-lg font-semibold">Gegevens Verzonden!</h2>
-            <p><strong>Beperkingen:</strong> {submittedData.restriction}</p>
-            <p><strong>Leeftijdsvoorkeur:</strong> {submittedData.minAge} - {submittedData.maxAge} jaar</p>
-            <p><strong>Interesse:</strong> {submittedData.interest}</p>
-            <p><strong>Maximale Afstand:</strong> {submittedData.distance}</p>
-            <p><strong>Geselecteerde Hobby's:</strong> {submittedData.hobbies.join(', ')}</p>
-          </div>
-        )}
       </form>
-      
-      <HobbiesModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        selectedHobbies={selectedHobbies}
-        setSelectedHobbies={setSelectedHobbies}
-      />
+
+      {showModal && (
+        <HobbiesModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          selectedHobbies={selectedHobbies}
+          setSelectedHobbies={setSelectedHobbies}
+        />
+      )}
+
+      {submittedData && (
+        <div className="mt-8 p-4 bg-green-100 text-green-700 rounded-lg">
+          Form data submitted successfully!
+        </div>
+      )}
     </div>
   );
 };
