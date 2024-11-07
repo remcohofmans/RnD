@@ -293,19 +293,41 @@ const FilterForm = () => {
         min_age: parseInt(formState.minAge),
         max_age: parseInt(formState.maxAge),
         distance: parseInt(formState.distance),
-        hobbies: selectedHobbies.join(', '), // assuming hobbies is stored as a comma-separated string
+        hobbies: selectedHobbies.join(', '), // assuming hobbies are stored as a comma-separated string
       };
 
       try {
         const { data, error } = await supabase
           .from('userpreferences') // replace 'your-table-name' with the actual table name
-          .insert([dataToSubmit]);
+          .select('id')
+          .eq('id', 1)
+          .single();
 
-        if (error) {
-          console.error('Error inserting data:', error);
+        if (data) {
+          // Update existing entry
+          const { data: updateData, error: updateError } = await supabase
+            .from('userpreferences') // replace 'your-table-name' with the actual table name
+            .update(dataToSubmit)
+            .eq('id', 1);
+
+          if (updateError) {
+            console.error('Error updating data:', updateError);
+          } else {
+            setSubmittedData(dataToSubmit);
+            console.log('Form updated:', dataToSubmit);
+          }
         } else {
-          setSubmittedData(dataToSubmit);
-          console.log('Form submitted:', dataToSubmit);
+          // Insert new entry
+          const { data: insertData, error: insertError } = await supabase
+            .from('userpreferences') // replace 'your-table-name' with the actual table name
+            .insert([dataToSubmit]);
+
+          if (insertError) {
+            console.error('Error inserting data:', insertError);
+          } else {
+            setSubmittedData(dataToSubmit);
+            console.log('Form submitted:', dataToSubmit);
+          }
         }
       } catch (error) {
         console.error('Unexpected error:', error);
@@ -324,10 +346,43 @@ const FilterForm = () => {
     }
   };
 
+  const handleRemoveHobby = (hobby) => {
+    setSelectedHobbies((prev) => prev.filter((h) => h !== hobby));
+  };
+
   const getHobbyIcon = (hobbyName) => {
     const hobby = availableHobbies.find((h) => h.name === hobbyName);
     return hobby ? hobby.icon : '🎯';
   };
+
+  const fetchData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('userpreferences') // replace 'your-table-name' with the actual table name
+        .select('*')
+        .eq('id', 1)
+        .single();
+
+      if (error) {
+        console.error('Error fetching data:', error);
+      } else {
+        setFormState({
+          restriction: data.restriction,
+          interest: data.interest,
+          distance: data.distance.toString(),
+          minAge: data.min_age.toString(),
+          maxAge: data.max_age.toString(),
+        });
+        setSelectedHobbies(data.hobbies.split(', ')); // assuming hobbies are stored as a comma-separated string
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -397,21 +452,30 @@ const FilterForm = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Geselecteerde Hobby's</label>
-          <div className="flex flex-wrap gap-2 min-h-[44px] p-2 bg-gray-50 rounded-xl border border-gray-200">
+          <label className="block text-sm font-medium text-gray-700">Hobby's</label>
+          <div className="flex flex-wrap gap-2">
             {selectedHobbies.map((hobby) => (
-              <div key={hobby} className="flex items-center gap-2 px-3 py-1 bg-rose-500 text-white rounded-full">
-                <span>{getHobbyIcon(hobby)}</span>
-                <span>{hobby}</span>
-              </div>
+              <span
+                key={hobby}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-rose-100 text-rose-800"
+              >
+                {getHobbyIcon(hobby)} {hobby}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveHobby(hobby)}
+                  className="ml-2 text-rose-500 hover:text-rose-700 focus:outline-none"
+                >
+                  &times;
+                </button>
+              </span>
             ))}
             <button
               type="button"
-              className="flex items-center gap-2 px-3 py-1 bg-gray-200 rounded-full text-gray-900"
               onClick={() => setShowModal(true)}
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-rose-500 text-white hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
             >
-              <span>+</span>
-              <span>Hobby's toevoegen</span>
+              <span className="mr-2">+</span>
+              Hobby's toevoegen
             </button>
           </div>
           {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
