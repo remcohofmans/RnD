@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
-import { LoadingSpinner } from '../Components/common/LoadingSpinner.jsx'; 
+import { LoadingSpinner } from '../Components/common/LoadingSpinner.jsx';
+import  TopNavigationBar from '../Components/TopNavigationBar.jsx' 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -189,6 +190,7 @@ const ImageUpload = ({ onUploadComplete }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <TopNavigationBar />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
