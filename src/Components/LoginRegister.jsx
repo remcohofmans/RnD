@@ -7,11 +7,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [loginPassword, setLoginPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+
+  // State for feedback
+  const [emailFeedback, setEmailFeedback] = useState('');
+  const [passwordFeedback, setPasswordFeedback] = useState('');
+  const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -24,11 +30,48 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
-    if (!signUpEmail || !signUpPassword || !isTermsAgreed) {
-      console.error("Please provide email, password and agree to the terms for sign up.");
+    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed) {
+      console.error("Please provide email, password, confirm password, and agree to the terms for sign up.");
+      return;
+    }
+    if (signUpPassword !== confirmPassword) {
+      console.error("Passwords do not match.");
       return;
     }
     signUpWithEmail(signUpEmail, signUpPassword);
+  };
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setSignUpEmail(email);
+    // Simple email validation feedback
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailFeedback('Please enter a valid email address.');
+    } else {
+      setEmailFeedback('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
+    setSignUpPassword(password);
+    // Simple password validation feedback
+    if (password.length < 6) {
+      setPasswordFeedback('Password must be at least 6 characters long.');
+    } else {
+      setPasswordFeedback('');
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const password = e.target.value;
+    setConfirmPassword(password);
+    // Confirm password feedback
+    if (password !== signUpPassword) {
+      setConfirmPasswordFeedback('Passwords do not match.');
+    } else {
+      setConfirmPasswordFeedback('');
+    }
   };
 
   return (
@@ -89,7 +132,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         <input
           type="email"
           value={loginEmail}
-          onChange={(e) => setLoginEmail(e.target.value)}
+          onChange={handleEmailChange}
           onFocus={() => setFocusEmail(true)}
           onBlur={() => setFocusEmail(false)}
           className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
@@ -128,7 +171,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         <input
           type="email"
           value={signUpEmail}
-          onChange={(e) => setSignUpEmail(e.target.value)}
+          onChange={handleEmailChange}
           onFocus={() => setFocusEmail(true)}
           onBlur={() => setFocusEmail(false)}
           className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
@@ -143,7 +186,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         <input
           type="password"
           value={signUpPassword}
-          onChange={(e) => setSignUpPassword(e.target.value)}
+          onChange={handlePasswordChange}
           onFocus={() => setFocusPassword(true)}
           onBlur={() => setFocusPassword(false)}
           className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
@@ -151,6 +194,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           required
         />
       </div>
+
+      <div className="relative">
+        <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+          className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+          placeholder="Confirm Password"
+          required
+        />
+      </div>
+
+      {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
 
       {/* Facility Dropdown */}
       <div className="mb-6">
@@ -194,8 +251,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       <button
         type="submit"
         className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
-        disabled={!isTermsAgreed}
-      >
+        disabled={!isTermsAgreed || signUpPassword !== confirmPassword}
+        >
         Sign Up
       </button>
     </form>
