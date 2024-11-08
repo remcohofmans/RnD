@@ -91,12 +91,25 @@ const Home = ({ loggedIn, logout, email }) => {
       )}
 
       {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative pt-20">
-        <div className="w-full h-full opacity-40 bg-cover bg-center absolute" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
-        <div className="relative z-10 w-full flex items-center justify-center text-center font-poppins py-20 px-4">
-          <div className="text-gray-800 space-y-4 max-w-xl mx-auto">
+      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative pt-[60px]">
+        {/* Merged Background and Content Container */}
+        <div
+          className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
+          style={{
+            backgroundImage: `url(${butterflyImage})`,
+            backgroundColor: '#fbf6f0', 
+            backgroundSize: 'contain',  // Ensures the entire image fits inside the container
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            minHeight: '100vh',   // Ensures the container scales to fill the screen height
+          }}
+        >
+          {/* Content */}
+          <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
             <h1 className="text-5xl font-bold leading-tight text-[#881337]">Find Your Perfect Match</h1>
-            <p className="text-lg leading-relaxed max-w-lg mx-auto">Discover connections that matter, whether it's friendship, romance, or networking.</p>
+            <p className="text-lg leading-relaxed max-w-lg mx-auto">
+              Discover connections that matter, whether it's friendship, romance, or networking.
+            </p>
             <button
               className="mt-6 py-3 px-8 bg-[#f43f5e] text-white rounded-lg text-xl hover:bg-[#e11d48] transition-transform transform hover:scale-105"
               onClick={handleButtonClick}
