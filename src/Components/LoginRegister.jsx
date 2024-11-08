@@ -166,20 +166,23 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
             />
         </div>
 
-      {/* Password Input */}
-      <div className="relative">
-        <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
-        <input
-          type="password"
-          value={loginPassword}
-          onChange={(e) => setLoginPassword(e.target.value)}
-          onFocus={() => setFocusPassword(true)}
-          onBlur={() => setFocusPassword(false)}
-          className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-          placeholder="Password"
-          required
-        />
-      </div>
+        {/* Password Input */}
+        <div className="relative">
+          <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
+          <input
+            type="password"
+            value={signUpPassword}
+            onChange={handlePasswordChange}
+            onFocus={() => setFocusPassword(true)}
+            onBlur={() => setFocusPassword(false)}
+            className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+            placeholder="Password"
+            required
+          />
+        </div>
+
+      {/* Password Feedback */}
+      {passwordFeedback && <p className="text-red-600 text-sm mt-1">{passwordFeedback}</p>}
 
       <button
         type="submit"
@@ -219,6 +222,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           required
         />
       </div>
+
+      {/* Password Feedback */}
+      {passwordFeedback && <p className="text-red-600 text-sm mt-1">{passwordFeedback}</p>}
 
       <div className="relative">
         <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
