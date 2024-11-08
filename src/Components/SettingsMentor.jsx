@@ -8,7 +8,7 @@ const SettingsMentor = () => {
 
   return (
     <div>
-      
+
       <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
         <div
           className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
