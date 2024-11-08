@@ -3,8 +3,16 @@ import { supabase } from './lib/helper/supabaseClient';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
-import Chats from './pages/Chats';
+import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
+import SettingsUser from './Components/SettingsUser';
+import PasswordChangeForm from './Components/PasswordChangeForm';
+
+import UserFilterForm from './Components/UserFilterForm';
+import ImageUpload from './Components/ImageUpload';
+
+import TopNavigationBar from './Components/TopNavigationBar';
+
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -91,9 +99,21 @@ export default function App() {
               email={user?.email} /> : <Navigate to="/login" />} />
               {/* Login/Register route */}
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={<Chats/>} />
+        <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
-        <Route path="/feed" element={<Feed />} />
+        <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
+        <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+
+        {/* Route to UserFilterForm */}
+        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        
+        {/* Route to UploadFoto */}
+        <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+
+        <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
+
+
       </Routes>
     </Router>
   );
