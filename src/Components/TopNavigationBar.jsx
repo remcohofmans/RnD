@@ -23,7 +23,7 @@ const TopNavigationBar = () => {
     setShowLogoutConfirm(false);
   };
 
-  // Separate the items into three groups: left, center, and right
+  // Define navigation items
   const leftItem = { icon: faHome, label: 'Home', path: '/' };
   const centerItems = [
     { icon: faHeart, label: 'Find Love', path: '/feed' },
@@ -35,14 +35,15 @@ const TopNavigationBar = () => {
 
   const NavItem = ({ item }) => (
     <div 
-      className="flex flex-col items-center cursor-pointer"
+      className="flex flex-col items-center cursor-pointer md:flex-row md:gap-2"
       onClick={() => handleNavigate(item.path)}
     >
       <FontAwesomeIcon
         icon={item.icon}
-        className="text-white text-2xl transition duration-300 hover:text-rose-700"
+        className="text-white text-xl md:text-2xl transition duration-300 hover:text-rose-700"
       />
-      <span className="text-white text-xs mt-1">{item.label}</span>
+      {/* Show label only on medium screens and above */}
+      <span className="hidden md:inline text-white text-xs mt-1">{item.label}</span>
     </div>
   );
 
@@ -50,30 +51,30 @@ const TopNavigationBar = () => {
     <div>
       {/* Top Navigation Bar */}
       <div
-        className="fixed top-0 left-0 right-0 flex items-center py-4"
-        style={{ backgroundColor: '#f43f5e', zIndex: 10 }} // zIndex ensures it stays on top of other elements
+        className="fixed top-0 left-0 right-0 flex items-center py-2 md:py-4 px-4"
+        style={{ backgroundColor: '#f43f5e', zIndex: 10 }}
       >
         {/* Left item (Home) */}
-        <div className="w-24 pl-4">
+        <div className="w-16 md:w-24">
           <NavItem item={leftItem} />
         </div>
   
         {/* Center items */}
-        <div className="flex-1 flex justify-center gap-12">
+        <div className="flex-1 flex justify-center gap-4 md:gap-12">
           {centerItems.map((item, index) => (
             <NavItem key={index} item={item} />
           ))}
         </div>
   
         {/* Right item (Logout) */}
-        <div className="w-24 flex justify-end pr-4">
+        <div className="w-16 md:w-24 flex justify-end">
           <NavItem item={rightItem} />
         </div>
       </div>
   
       {/* Padding for other components below the navigation bar */}
-      <div className="pt-5">
-        {/* Main Content goes here */}
+      <div className="pt-16 md:pt-20">
+        {/* Main Content */}
         {showLogoutConfirm && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-4 rounded shadow-lg">
@@ -99,7 +100,6 @@ const TopNavigationBar = () => {
       </div>
     </div>
   );
-  
 };
 
 export default TopNavigationBar;
