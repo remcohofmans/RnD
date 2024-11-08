@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/helper/supabaseClient';
-import TopNavigationBar from '../Components/TopNavigationBar.jsx';
+import { supabase } from '../lib/helper/supabaseClient'; 
+import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
 
 const SettingsUser = () => {
   const navigate = useNavigate();
@@ -25,10 +25,13 @@ const SettingsUser = () => {
   const handleOptionClick = (option) => {
     if (option === "Wachtwoord Bewerken") {
       navigate('/PasswordChangeForm');
+    } else if (option === "Foto's Aanpassen") {
+      navigate('/uploadFoto'); // Navigate to /uploadFoto when this option is clicked
     } else if (option === "Profiel Pauzeren") {
       setIsConfirming(true);
     }
   };
+
 
   const handleConfirmPause = async () => {
     if (!userId) {
@@ -112,8 +115,9 @@ const SettingsUser = () => {
             </button>
           ))}
         </div>
-      </div>
 
+      </div>
+  
       {/* Confirmation Dialog */}
       {isConfirming && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -150,6 +154,6 @@ const SettingsUser = () => {
       )}
     </div>
   );
-};
+};  
 
 export default SettingsUser;

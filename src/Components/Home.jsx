@@ -2,12 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient'; 
-
+import TopNavigationBar from './TopNavigationBar';
 
 const Home = ({ loggedIn, logout, email }) => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
-
 
   const handleButtonClick = useCallback(() => {
     if (loggedIn) {
@@ -64,19 +63,13 @@ const Home = ({ loggedIn, logout, email }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navigation Bar */}
-      <nav className="flex justify-between items-center bg-white shadow-md p-4">
-        <h1 className="text-[#f43f5e] text-3xl font-bold">V(l)inder</h1>
-        <div className="flex space-x-4">
-          <button className="text-gray-700 hover:text-[#f43f5e] font-medium" onClick={handleGoToFeed}>Feed</button>
-          <button className="text-gray-700 hover:text-[#f43f5e] font-medium" onClick={handleButtonClick}>
-            {loggedIn ? 'Log out' : 'Login'}
-          </button>
-        </div>
-      </nav>
+      {/* Use the new TopNavigationBar */}
+      <div className="relative z-50">
+        <TopNavigationBar />
+      </div>
 
-       {/* Modal Overlay */}
-       {isPausedModalOpen && (
+      {/* Modal Overlay */}
+      {isPausedModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-auto shadow-lg">
             <h2 className="text-2xl font-bold text-[#f43f5e] mb-4">Account Paused</h2>
@@ -98,7 +91,7 @@ const Home = ({ loggedIn, logout, email }) => {
       )}
 
       {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
+      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative pt-20">
         <div className="w-full h-full opacity-40 bg-cover bg-center absolute" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
         <div className="relative z-10 w-full flex items-center justify-center text-center font-poppins py-20 px-4">
           <div className="text-gray-800 space-y-4 max-w-xl mx-auto">

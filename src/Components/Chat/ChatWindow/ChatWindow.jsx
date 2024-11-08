@@ -5,25 +5,21 @@ import { MessageInput } from './MessageInput';
 import { ChatHeader } from './ChatHeader';
 
 export const ChatWindow = ({ matchId, otherUserName }) => {
-  // State management
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState(null);
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
-  // Effect to handle initial setup
   useEffect(() => {
     fetchCurrentUser();
     fetchMessages();
     setupRealtimeSubscription();
   }, [matchId]);
 
-  // Effect to handle auto-scrolling
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Function to fetch the current user's data
   const fetchCurrentUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error) {
@@ -34,7 +30,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     }
   };
 
-  // Function to fetch existing messages
   const fetchMessages = async () => {
     const { data, error } = await supabase
       .from('chats')
@@ -50,7 +45,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     }
   };
 
-  // Function to set up real-time message subscription
   const setupRealtimeSubscription = () => {
     const channel = supabase
       .channel(`match_${matchId}`)
@@ -67,17 +61,14 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
         console.log("Subscription status:", status);
       });
 
-    // Cleanup subscription on component unmount
     return () => {
       channel.unsubscribe();
     };
   };
 
-  // Function to handle new messages from real-time subscription
   const handleNewMessage = (payload) => {
     console.log("New message received:", payload);
     setMessages(prevMessages => {
-      // Check if the message is already in the list to prevent duplicates
       const messageExists = prevMessages.some(msg => msg.id === payload.new.id);
       if (!messageExists) {
         return [...prevMessages, payload.new];
@@ -86,7 +77,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     });
   };
 
-  // Function to send a new message
   const sendMessage = async (messageText) => {
     if (!messageText.trim() || !currentUser) return;
 
@@ -104,36 +94,30 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       if (error) throw error;
 
       console.log("Message sent successfully:", data);
-      
-      // Note: We don't need to manually update messages here
-      // because the real-time subscription will handle it
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Failed to send message');
     }
   };
 
-  // Function to scroll to the bottom of the message list
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Error handling
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;
   }
 
-  // Render component
-return (
-  <div className="bg-white shadow-lg rounded-lg flex flex-col h-full border border-rose-200">
-    <ChatHeader otherUserName={otherUserName} />
-    <MessageList 
-      messages={messages}
-      currentUser={currentUser}
-      messagesEndRef={messagesEndRef}
-    />
-    <MessageInput onSendMessage={sendMessage} />
-  </div>
-);
-
+  return (
+    <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
+      <ChatHeader otherUserName={otherUserName} />
+      <div className="flex-grow overflow-auto p-4" ref={messagesContainerRef}>
+        <MessageList 
+          messages={messages}
+          currentUser={currentUser}
+        />
+      </div>
+      <MessageInput onSendMessage={sendMessage} />
+    </div>
+  );
 };
