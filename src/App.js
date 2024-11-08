@@ -4,30 +4,28 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import ChatsPage from './pages/ChatsPage';
-import Feed from './Components/Feed'
+import Feed from './Components/Feed';
 import SettingsUser from './Components/SettingsUser';
 import PasswordChangeForm from './Components/PasswordChangeForm';
-
 import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
-
 import TopNavigationBar from './Components/TopNavigationBar';
 
-
 export default function App() {
-  // Employ useState -a React built-in webhook- to  store the user object in the component's state
-  const [user, setUser] = useState(null); 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // State initialization
+  const [user, setUser] = useState(null); // User state to track login state
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   // Function for email/password login
   async function loginWithEmail(email, password) {
-    setLoading(true); // disable submit button while waiting for the response
+    setLoading(true);
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
+
     if (error) {
       setError(error.message);
       console.error('Error logging in with email/password:', error.message);
@@ -36,7 +34,7 @@ export default function App() {
       setUser(data.user); // Set the user after successful login
     }
 
-    setLoading(false); // enable submit button (and other UI elements) after response
+    setLoading(false);
   }
 
   // Function for email/password sign-up
@@ -59,17 +57,16 @@ export default function App() {
 
   // Logout function
   const logout = async () => {
-  setLoading(true);
-  const { error } = await supabase.auth.signOut(); // Ensure we handle any errors from signOut
-  if (error) {
-    console.error('Error logging out:', error);
-  } else {
-    setUser(null);  // Reset user state on successful logout
-  }
-  setLoading(false);
-};
-
-
+    setLoading(true);
+    const { error } = await supabase.auth.signOut(); 
+    if (error) {
+      console.error('Error logging out:', error);
+    } else {
+      setUser(null);  // Reset user state on successful logout
+    }
+    setLoading(false);
+  };
+  
   // Check session on component mount
   useEffect(() => {
     const checkSession = async () => {
@@ -87,6 +84,11 @@ export default function App() {
     checkSession();
   }, []); // Run only on mount
 
+  // If the user is not loaded yet, show a loading spinner or placeholder
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Router>
       <Routes>
@@ -97,23 +99,21 @@ export default function App() {
               loggedIn={!!user}  // Boolean to indicate logged-in status
               logout={logout} 
               email={user?.email} /> : <Navigate to="/login" />} />
-              {/* Login/Register route */}
+        {/* Login/Register route */}
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/chats" element={user ? <ChatsPage /> : <Navigate to="/login" />} />
         {/* Route to Feed */}
         <Route path="/settings" element={<SettingsUser />} />
         <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
-        <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/feed" element={user ? <Feed /> : <Navigate to="/login" />} />
 
         {/* Route to UserFilterForm */}
-        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <Navigate to="/login" />} />
         
         {/* Route to UploadFoto */}
-        <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/uploadFoto" element={user ? <ImageUpload /> : <Navigate to="/login" />} />
 
-        <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
-
-
+        <Route path="/bar" element={<TopNavigationBar />} /> {/* Optional navigation bar */}
       </Routes>
     </Router>
   );

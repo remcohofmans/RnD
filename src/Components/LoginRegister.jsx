@@ -3,8 +3,8 @@ import { Mail, Lock } from 'lucide-react';
 
 const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,7 +28,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     loginWithEmail(loginEmail, loginPassword);
   };
 
-  const handleSignUpSubmit = (e) => {
+  const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed) {
       console.error("Please provide email, password, confirm password, and agree to the terms for sign up.");
@@ -38,12 +38,37 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       console.error("Passwords do not match.");
       return;
     }
-    signUpWithEmail(signUpEmail, signUpPassword);
+  
+    try {
+      // Call your signUpWithEmail function (assumed to use Supabase)
+      const response = await signUpWithEmail(signUpEmail, signUpPassword);
+      if (response?.error) {
+        if (response.error.message.includes('duplicate key value violates unique constraint')) {
+          setEmailFeedback('This email address is already registered.');
+          console.log("Email already registered.");
+        } else {
+          setEmailFeedback('An error occurred. Please try again later.');
+          console.error("Error signing up: ", response.error.message);
+        }
+      } else {
+        console.log('User signed up successfully!');
+      }
+    } catch (err) {
+      setEmailFeedback('An error occurred during sign up. Please try again later.');
+      console.error('Sign up error:', err);
+    }
   };
+  
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
-    setSignUpEmail(email);
+    if(isLogin) {
+      console.log("jeuj");
+      setLoginEmail(email);
+    }
+    else {
+      setSignUpEmail(email);
+    }
     // Simple email validation feedback
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailFeedback('Please enter a valid email address.');
@@ -82,64 +107,64 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           <h1 className="text-xl font-bold text-[#be123c]">V(l)inder</h1>
         </div>
       </nav>
-      
-{/* Split Layout Container */}
-<div className="flex flex-1">
-  {/* Left Half */}
-  <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
-    <div
-      className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
-      style={{ backgroundImage: `url('/api/placeholder/800/600')` }}
-    ></div>
+        
+      {/* Split Layout Container */}
+      <div className="flex flex-1">
+      {/* Left Half */}
+      <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
+        <div
+          className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
+          style={{ backgroundImage: `url('/api/placeholder/800/600')` }}
+        >
+      </div>
 
-    {/* Title with Animation */}
-    <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
-      <h1 className="text-[#ffe4e6] text-6xl font-bold mb-4">V(l)inder</h1>
-      <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
+      {/* Title with Animation */}
+      <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
+        <h1 className="text-[#ffe4e6] text-6xl font-bold mb-4">V(l)inder</h1>
+        <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
 
-      {/* Registration Info Prompt */}
-      {showRegisterInfo && (
-        <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-full mx-auto">
-          <h2 className="font-bold text-lg text-center text-[#e11d48]">Join us and let your love story unfold...</h2>
-          <div className="flex justify-center items-center mt-2 gap-4 w-full">
-            <span className="flex items-center">
-              ❤️ <strong className="ml-2">Inclusive</strong>
-            </span>
-            <span className="flex items-center">
-              ❤️ <strong className="ml-2">Supportive Community</strong>
-            </span>
-            <span className="flex items-center">
-              ❤️ <strong className="ml-2">Safe & Secure</strong>
-            </span>
+        {/* Registration Info Prompt */}
+        {showRegisterInfo && (
+          <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-full mx-auto">
+            <h2 className="font-bold text-lg text-center text-[#e11d48]">Join us and let your love story unfold...</h2>
+            <div className="flex justify-center items-center mt-2 gap-4 w-full">
+              <span className="flex items-center">
+                ❤️ <strong className="ml-2">Inclusive</strong>
+              </span>
+              <span className="flex items-center">
+                ❤️ <strong className="ml-2">Supportive Community</strong>
+              </span>
+              <span className="flex items-center">
+                ❤️ <strong className="ml-2">Safe & Secure</strong>
+              </span>
+            </div>
           </div>
+        )}
+
+      </div>
+    </div>
+
+    {/* Right Half */}
+    <div className="w-1/2 flex flex-col justify-center p-12 bg-white shadow-lg">
+    <div className="w-full max-w-md mx-auto">
+    <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Login' : 'Sign Up'}</h2>
+
+    {isLogin ? (
+      <form onSubmit={handleLoginSubmit} className="space-y-6">
+        {/* Email Input */}
+        <div className="relative">
+          <Mail className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
+            <input
+              type="email"
+              value={loginEmail}
+              onChange={handleEmailChange}
+              onFocus={() => setFocusEmail(true)}
+              onBlur={() => setFocusEmail(false)}
+              className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+              placeholder="Email"
+              required
+            />
         </div>
-      )}
-
-    </div>
-  </div>
-
-
-{/* Right Half */}
-<div className="w-1/2 flex flex-col justify-center p-12 bg-white shadow-lg">
-<div className="w-full max-w-md mx-auto">
-<h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Login' : 'Sign Up'}</h2>
-
-{isLogin ? (
-  <form onSubmit={handleLoginSubmit} className="space-y-6">
-    {/* Email Input */}
-    <div className="relative">
-      <Mail className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
-        <input
-          type="email"
-          value={loginEmail}
-          onChange={handleEmailChange}
-          onFocus={() => setFocusEmail(true)}
-          onBlur={() => setFocusEmail(false)}
-          className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-          placeholder="Email"
-          required
-        />
-    </div>
 
       {/* Password Input */}
       <div className="relative">
