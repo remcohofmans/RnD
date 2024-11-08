@@ -89,41 +89,51 @@ const SettingsUser = () => {
   return (
     <div>
       <TopNavigationBar />
-    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
-      <div
-        className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
-        style={{
-          backgroundColor: '#FFFFFF',
-          border: '4px solid #fda4af',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        {error && (
-          <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
-            {success}
-          </div>
-        )}
-
-        {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
-          <button
-            key={option}
-            className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
-            style={{ backgroundColor: '#f43f5e' }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
-            onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
-            onClick={() => handleOptionClick(option)}
+      <div className="pt-20 grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
+        
+        {/* Left Sidebar (4 columns) */}
+        <div className="col-span-4 flex items-center justify-center">
+          <div
+            className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
+            style={{
+              backgroundColor: '#FFFFFF',
+              border: '4px solid #fda4af',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            }}
           >
-            {option}
-          </button>
-        ))}
+            {error && (
+              <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
+                {success}
+              </div>
+            )}
+  
+            {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
+              <button
+                key={option}
+                className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
+                style={{ backgroundColor: '#f43f5e' }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
+                onClick={() => handleOptionClick(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Right Content Area (8 columns) */}
+        <div className="col-span-8">
+          {/* Additional content can go here, or leave this section empty for now */}
+        </div>
+        
       </div>
-      </div>
-
+  
       {/* Confirmation Dialog */}
       {isConfirming && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -148,6 +158,6 @@ const SettingsUser = () => {
       )}
     </div>
   );
-};
+};  
 
 export default SettingsUser;
