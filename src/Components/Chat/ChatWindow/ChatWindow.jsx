@@ -7,11 +7,13 @@ import { ChatHeader } from './ChatHeader';
 export const ChatWindow = ({ matchId, otherUserName }) => {
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [matchedUserId, setMatchedUserId] = useState(null);
   const [error, setError] = useState(null);
   const messagesContainerRef = useRef(null);
 
   useEffect(() => {
     fetchCurrentUser();
+    fetchMatchedUser();
     fetchMessages();
     setupRealtimeSubscription();
   }, [matchId]);
@@ -27,6 +29,28 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       setError('Failed to fetch user data');
     } else {
       setCurrentUser(user);
+    }
+  };
+
+  const fetchMatchedUser = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('matches')
+        .select('id, matched_user_id')
+        .eq('match_id', matchId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Determine which ID is the matched user's ID
+        const { data: { user } } = await supabase.auth.getUser();
+        const otherUserId = data.id === user.id ? data.matched_user_id : data.id;
+        setMatchedUserId(otherUserId);
+      }
+    } catch (error) {
+      console.error('Error fetching matched user:', error);
+      setError('Failed to fetch matched user data');
     }
   };
 
@@ -110,7 +134,7 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
 
   return (
     <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
-      <ChatHeader otherUserName={otherUserName} />
+      <ChatHeader otherUserName={otherUserName} otherUserId={matchedUserId}/>
       <div className="flex-grow overflow-auto p-4" ref={messagesContainerRef}>
         <MessageList 
           messages={messages}
