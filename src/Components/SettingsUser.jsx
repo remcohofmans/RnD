@@ -59,7 +59,8 @@ const SettingsUser = () => {
         setStatus('PAUSED');
         setSuccess("Your profile has been paused.");
         setIsConfirming(false);
-
+        
+        {/*
         const { error: signOutError } = await supabase.auth.signOut();
         if (signOutError) {
           console.error("Error signing out:", signOutError);
@@ -68,6 +69,8 @@ const SettingsUser = () => {
           console.log("Attempt");
           navigate('/login'); // Navigate to /login after signing out
         }
+          */}
+        
       }
     } catch (err) {
       console.error("Error updating status:", err);
