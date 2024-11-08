@@ -17,7 +17,6 @@ const TopNavigationBar = () => {
 
   const confirmLogout = (confirm) => {
     if (confirm) {
-      // Add your logout logic here
       navigate('/login');
     }
     setShowLogoutConfirm(false);
@@ -35,15 +34,17 @@ const TopNavigationBar = () => {
 
   const NavItem = ({ item }) => (
     <div 
-      className="flex flex-col items-center cursor-pointer md:flex-row md:gap-2"
+      className="group flex flex-col items-center cursor-pointer relative"
       onClick={() => handleNavigate(item.path)}
     >
       <FontAwesomeIcon
         icon={item.icon}
         className="text-white text-xl md:text-2xl transition duration-300 hover:text-rose-700"
       />
-      {/* Show label only on medium screens and above */}
-      <span className="hidden md:inline text-white text-xs mt-1">{item.label}</span>
+      {/* Show label only on medium screens and above or on hover for small screens */}
+      <span className="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 text-white text-xs mt-1 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0">
+        {item.label}
+      </span>
     </div>
   );
 
