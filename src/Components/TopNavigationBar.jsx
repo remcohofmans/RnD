@@ -28,7 +28,7 @@ const TopNavigationBar = () => {
   const centerItems = [
     { icon: faHeart, label: 'Find Love', path: '/feed' },
     { icon: faUserFriends, label: 'Friends', path: '/feed' },
-    { icon: faComment, label: 'Messages', path: '/messages' },
+    { icon: faComment, label: 'Messages', path: '/chats' },
     { icon: faCog, label: 'Settings', path: '/settings' }
   ];
   const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };

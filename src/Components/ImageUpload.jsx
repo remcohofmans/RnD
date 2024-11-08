@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
+import { supabase } from '../supabaseClient';
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -13,6 +15,7 @@ const CATEGORIES = {
 };
 
 const ImageUpload = ({ onUploadComplete }) => {
+  const { currentUser, loading, error } = useSupabaseAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
   );
@@ -41,13 +44,23 @@ const ImageUpload = ({ onUploadComplete }) => {
     }
 
     try {
-      const base64 = await readFileAsDataURL(file);
+      const { data, error: uploadError } = await supabase.storage
+        .from('pictures')
+        .upload(`${currentUser.id}/${category}/${file.name}`, file);
+
+      if (uploadError) {
+        setErrors((prev) => ({
+          ...prev,
+          [category]: 'Error uploading image. Please try again.',
+        }));
+        return;
+      }
+
       setImages((prev) => ({
         ...prev,
         [category]: {
           file,
-          preview: URL.createObjectURL(file),
-          base64,
+          preview: `${supabase.storage.getPublicUrl('pictures')}/${data.Key}`,
         },
       }));
     } catch (err) {
@@ -58,23 +71,23 @@ const ImageUpload = ({ onUploadComplete }) => {
     }
   };
 
-  const readFileAsDataURL = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  const handleImageDelete = (category) => async () => {
+    try {
+      const { data, error: deleteError } = await supabase.storage
+        .from('pictures')
+        .remove([`${currentUser.id}/${category}/${images[category].file.name}`]);
 
-  const handleImageDelete = (category) => () => {
-    setImages((prev) => {
-      if (prev[category]?.preview) {
-        URL.revokeObjectURL(prev[category].preview);
+      if (deleteError) {
+        console.error('Error deleting image:', deleteError);
+      } else {
+        setImages((prev) => {
+          return { ...prev, [category]: null };
+        });
+        setErrors((prev) => ({ ...prev, [category]: null }));
       }
-      return { ...prev, [category]: null };
-    });
-    setErrors((prev) => ({ ...prev, [category]: null }));
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
   };
 
   const handleUpload = async () => {
@@ -87,6 +100,14 @@ const ImageUpload = ({ onUploadComplete }) => {
       console.error('Upload failed:', error);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
