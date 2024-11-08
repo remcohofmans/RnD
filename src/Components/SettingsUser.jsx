@@ -25,10 +25,13 @@ const SettingsUser = () => {
   const handleOptionClick = (option) => {
     if (option === "Wachtwoord Bewerken") {
       navigate('/PasswordChangeForm');
+    } else if (option === "Foto's Aanpassen") {
+      navigate('/uploadFoto'); // Navigate to /uploadFoto when this option is clicked
     } else if (option === "Profiel Pauzeren") {
       setIsConfirming(true);
     }
   };
+
 
   const handleConfirmPause = async () => {
     if (!userId) {
