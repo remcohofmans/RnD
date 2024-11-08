@@ -6,6 +6,7 @@ import Home from './Components/Home';
 import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
 import TopNavigationBar from './Components/TopNavigationBar';
+import SubscriptionPlans from './Components/SubscriptionPlans';
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -96,6 +97,7 @@ export default function App() {
         {/* Route to Feed */}
         <Route path="/feed" element={<Feed />} />
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
+        <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
       </Routes>
     </Router>
