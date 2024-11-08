@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/helper/supabaseClient'; 
+import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
 
 const SettingsUser = () => {
   const navigate = useNavigate();
@@ -86,6 +87,8 @@ const SettingsUser = () => {
   };
 
   return (
+    <div>
+      <TopNavigationBar />
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
       <div
         className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
@@ -118,6 +121,7 @@ const SettingsUser = () => {
             {option}
           </button>
         ))}
+      </div>
       </div>
 
       {/* Confirmation Dialog */}
