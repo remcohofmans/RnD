@@ -40,23 +40,14 @@ const SettingsUser = () => {
     }
 
     try {
-      // First, log the attempt
       console.log("Attempting to update user with ID:", userId);
 
       const { data, error } = await supabase
         .from('users')
         .update({ status: "PAUSED" })
-        .eq('id', userId)
-        
-        
+        .eq('id', userId);
 
-      // Log the entire response
       console.log("Complete Supabase response:", { data, error });
-
-      // If data exists, log the first row (should be the updated user)
-      if (data && data.length > 0) {
-        console.log("Updated user data:", data[0]);
-      }
 
       if (error) {
         console.error("Error updating status:", error);
@@ -84,7 +75,6 @@ const SettingsUser = () => {
     }
   };
 
-
   const handleCancelPause = () => {
     setIsConfirming(false); // Close the confirmation dialog
   };
@@ -92,68 +82,71 @@ const SettingsUser = () => {
   return (
     <div>
       <TopNavigationBar />
-      <div className="pt-20 grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
-        
-        {/* Left Sidebar (4 columns) */}
-        <div className="col-span-4 flex items-center justify-center">
-          <div
-            className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
-            style={{
-              backgroundColor: '#FFFFFF',
-              border: '4px solid #fda4af',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            {error && (
-              <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
-                {success}
-              </div>
-            )}
-  
-            {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
-              <button
-                key={option}
-                className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
-                style={{ backgroundColor: '#f43f5e' }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
-                onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
-                onClick={() => handleOptionClick(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+      <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
+        <div
+          className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
+          style={{
+            backgroundColor: '#FFFFFF',
+            border: '4px solid #fda4af',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          {error && (
+            <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
+              {success}
+            </div>
+          )}
+
+          {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
+            <button
+              key={option}
+              className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
+              style={{ backgroundColor: '#f43f5e' }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
+              onClick={() => handleOptionClick(option)}
+            >
+              {option}
+            </button>
+          ))}
         </div>
-        
-        {/* Right Content Area (8 columns) */}
-        <div className="col-span-8">
-          {/* Additional content can go here, or leave this section empty for now */}
-        </div>
-        
+
       </div>
   
       {/* Confirmation Dialog */}
       {isConfirming && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Are you sure you want to pause your profile?</h2>
-            <div className="flex justify-between">
+          <div
+            className="p-6 bg-white rounded-lg shadow-lg w-80"
+            style={{
+              border: '4px solid #fda4af',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <h2 className="text-lg font-semibold text-gray-800">Confirm Pause</h2>
+            <p className="mt-2 text-sm text-gray-600">Are you sure you want to pause your profile? This action can be undone.</p>
+            <div className="flex justify-end gap-4 mt-4">
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                onClick={handleConfirmPause}
-              >
-                Yes
-              </button>
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                className="px-4 py-2 text-gray-800 rounded-lg"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  border: '2px solid #fda4af',
+                }}
                 onClick={handleCancelPause}
               >
                 No
+              </button>
+              <button
+                className="px-4 py-2 text-white rounded-lg"
+                style={{ backgroundColor: '#f43f5e' }}
+                onClick={handleConfirmPause}
+              >
+                Yes
               </button>
             </div>
           </div>
