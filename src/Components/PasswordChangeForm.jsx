@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../lib/helper/supabaseClient'; 
+import TopNavigationBar from './TopNavigationBar';
+
 
 
 const PasswordChangeForm = () => {
@@ -88,7 +90,12 @@ const PasswordChangeForm = () => {
   };
 
   return (
+    
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
+
+    <div className="relative z-50">
+            <TopNavigationBar />
+          </div>
       <div className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72 bg-white border-4" style={{ borderColor: '#fda4af' }}>
         {error && (
           <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
