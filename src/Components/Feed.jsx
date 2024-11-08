@@ -19,6 +19,7 @@ import {
 import { useSwipeable } from 'react-swipeable';
 import { supabase } from '../supabaseClient';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
+import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
 
 const hobbyIcons = {
   music: faMusic,
@@ -167,7 +168,9 @@ const Feed = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-[#FFBEC8] rounded-lg shadow-md relative">
+    <div className="max-w-md mx-auto pt-20 p-6 bg-[#FFBEC8] rounded-lg shadow-md relative">
+      <TopNavigationBar />
+  
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#360009]">V(l)inder</h1>
         <div className="flex space-x-4">
@@ -179,7 +182,7 @@ const Feed = () => {
           </button>
         </div>
       </div>
-
+  
       <div {...handlers} className="relative flex items-center justify-center">
         <button
           className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-[#F0E9EA] p-2 rounded-full shadow-md hover:bg-[#FB7185] transition duration-300 z-10"
@@ -187,9 +190,9 @@ const Feed = () => {
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-
+  
         {users.length > 0 && <UserCard user={users[currentIndex]} onLove={handleLove} />}
-
+  
         <button
           className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-[#F0E9EA] p-2 rounded-full shadow-md hover:bg-[#FB7185] transition duration-300 z-10"
           onClick={handleNext}
@@ -197,7 +200,7 @@ const Feed = () => {
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
-
+  
       <div className="mt-4 text-sm text-[#360009] text-center">
         {currentIndex + 1} / {users.length}
       </div>
