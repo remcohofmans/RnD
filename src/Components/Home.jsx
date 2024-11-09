@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
-import { supabase } from '../lib/helper/supabaseClient'; 
+import { supabase } from '../lib/helper/supabaseClient';
 import TopNavigationBar from './TopNavigationBar';
 
 const Home = ({ loggedIn, logout, email }) => {
@@ -91,13 +91,13 @@ const Home = ({ loggedIn, logout, email }) => {
       )}
 
       {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative pt-[60px]">
+      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
         {/* Merged Background and Content Container */}
         <div
           className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
           style={{
             backgroundImage: `url(${butterflyImage})`,
-            backgroundColor: '#fbf6f0', 
+            backgroundColor: '#fbf6f0',
             backgroundSize: 'contain',  // Ensures the entire image fits inside the container
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
