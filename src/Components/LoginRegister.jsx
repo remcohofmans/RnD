@@ -78,41 +78,41 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       </div>
 
       {/* Right Half */}
-      <div className="w-1/2 flex flex-col justify-center p-12 bg-white shadow-lg relative">
-  <div className="w-full max-w-md mx-auto">
-    <div className="flex items-center justify-center mb-8 relative">
-      {isLogin ? (
-        <>
-          <h2 className="text-3xl font-bold text-[#be123c]">Login</h2>
-        </>
-      ) : (
-        <>
-          <h2 className="text-3xl font-bold text-[#be123c]">Sign Up</h2>
-        </>
-      )}
-    </div>
+      <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fbf6f0' }} >
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex items-center justify-center mb-8 relative">
+          {isLogin ? (
+            <>
+              <h2 className="text-3xl font-bold text-[#be123c]">Login</h2>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl font-bold text-[#be123c]">Sign Up</h2>
+            </>
+          )}
+        </div>
 
-    {/* Position the butterfly icon in the top-right corner of the screen */}
-    <img 
-      src={butterflyIcon} 
-      alt="Butterfly Icon" 
-      className="absolute top-4 right-4 w-12 h-12 opacity-30" 
-    />
-{isLogin ? (
-  <form onSubmit={handleLoginSubmit} className="space-y-6">
-    <div className="relative">
-      <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
-      <input
-        type="email"
-        value={loginEmail}
-        onChange={(e) => setLoginEmail(e.target.value)}
-        onFocus={() => setFocusEmail(true)}
-        onBlur={() => setFocusEmail(false)}
-        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-        placeholder="Email"
-        required
+      {/* Position the butterfly icon in the top-right corner of the screen */}
+      <img 
+        src={butterflyIcon} 
+        alt="Butterfly Icon" 
+        className="absolute top-4 right-4 w-12 h-12 opacity-70" 
       />
-    </div>
+      {isLogin ? (
+        <form onSubmit={handleLoginSubmit} className="space-y-6">
+          <div className="relative">
+            <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
+            <input
+              type="email"
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              onFocus={() => setFocusEmail(true)}
+              onBlur={() => setFocusEmail(false)}
+              className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+              placeholder="Email"
+              required
+            />
+          </div>
     <div className="relative">
       <FaLock className={`absolute left-3 top-3 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
       <input
@@ -206,7 +206,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
                 disabled={!isTermsAgreed}
               >
-                Sign Up
+                Registreer
               </button>
             </form>
           )}
@@ -214,13 +214,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           <div className="text-center mt-8">
             {isLogin ? (
               <p className="text-gray-600">
-                Don't have an account?{' '}
+                Heb je nog geen account?{' '}
                 <button
                   className="text-[#e11d48] hover:text-[#be123c] font-bold"
                   onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
                 >
-                  Sign Up
+                  Registreer hier
                 </button>
+                <br />
+                <span className="text-sm font-semibold mt-2 block">
+                  (faciliteitscode vereist)
+                </span>
               </p>
             ) : (
               <p className="text-gray-600">
