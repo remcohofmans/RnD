@@ -224,7 +224,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         <div className="relative mt-2">
           <select
             id="facility"
-            className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+            className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
             required
           >
             <option value="" disabled selected>
