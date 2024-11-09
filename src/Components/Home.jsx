@@ -90,35 +90,37 @@ const Home = ({ loggedIn, logout, email }) => {
         </div>
       )}
 
-      {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative pt-[60px]">
-        {/* Merged Background and Content Container */}
-        <div
-          className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
-          style={{
-            backgroundImage: `url(${butterflyImage})`,
-            backgroundColor: '#fbf6f0', 
-            backgroundSize: 'contain',  // Ensures the entire image fits inside the container
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            minHeight: '100vh',   // Ensures the container scales to fill the screen height
-          }}
-        >
-          {/* Content */}
-          <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
-            <h1 className="text-5xl font-bold leading-tight text-[#881337]">Find Your Perfect Match</h1>
-            <p className="text-lg leading-relaxed max-w-lg mx-auto">
-              Discover connections that matter, whether it's friendship, romance, or networking.
-            </p>
-            <button
-              className="mt-6 py-3 px-8 bg-[#f43f5e] text-white rounded-lg text-xl hover:bg-[#e11d48] transition-transform transform hover:scale-105"
-              onClick={handleButtonClick}
-            >
-              {loggedIn ? 'Log out' : 'Get Started'}
-            </button>
-          </div>
-        </div>
-      </div>
+    {/* Hero Section */}
+<div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
+  {/* Merged Background and Content Container */}
+  <div
+    className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
+    style={{
+      backgroundImage: `url(${butterflyImage})`,
+      backgroundColor: '#fbf6f0',
+      backgroundSize: 'contain',  // Ensures the entire image fits inside the container
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',   // Ensures the container scales to fill the screen height
+    }}
+  >
+    {/* Content */}
+    <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
+      <h1 className="text-5xl font-bold leading-tight text-[#881337]">Find Your Perfect Match</h1>
+      <p className="text-lg leading-relaxed max-w-lg mx-auto">
+        Discover connections that matter, whether it's friendship, romance, or networking.
+      </p>
+      <button
+        className="mt-6 py-3 px-8 bg-[#f43f5e] text-white rounded-lg text-xl hover:bg-[#e11d48] transition-transform transform hover:scale-105"
+        onClick={handleButtonClick}
+      >
+        {loggedIn ? 'Log out' : 'Get Started'}
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
       {/* Feature Section */}
       <div className="bg-gray-50 py-16 px-4 text-center">

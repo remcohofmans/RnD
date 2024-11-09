@@ -74,7 +74,7 @@ const TopNavigationBar = () => {
       </div>
   
       {/* Padding for other components below the navigation bar */}
-      <div className="pt-16 md:pt-20">
+      <div className="pt-9 md:pt-20">
         {/* Main Content */}
         {showLogoutConfirm && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
