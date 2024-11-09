@@ -110,12 +110,6 @@ const Home = ({ loggedIn, logout, email }) => {
             <p className="text-lg leading-relaxed max-w-lg mx-auto">
               Discover connections that matter, whether it's friendship, romance, or networking.
             </p>
-            <button
-              className="mt-6 py-3 px-8 bg-[#f43f5e] text-white rounded-lg text-xl hover:bg-[#e11d48] transition-transform transform hover:scale-105"
-              onClick={handleButtonClick}
-            >
-              {loggedIn ? 'Log out' : 'Get Started'}
-            </button>
           </div>
         </div>
       </div>
