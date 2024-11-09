@@ -50,8 +50,13 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
-    setSignUpEmail(email);
-    // Simple email validation feedback
+    if (isLogin) {
+      setLoginEmail(email);  // Update loginEmail if it's the login form
+    } else {
+      setSignUpEmail(email);  // Update signUpEmail if it's the signup form
+    }
+  
+    // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailFeedback('Please enter a valid email address.');
     } else {
