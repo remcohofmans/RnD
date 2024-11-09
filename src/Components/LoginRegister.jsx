@@ -216,31 +216,31 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
 
-                {/* Facility Dropdown */}
-                <div className="mb-6">
-                  <label htmlFor="facility" className="text-lg text-[#be123c]">
-                    Duid aan in welke faciliteit u verblijft:
-                  </label>
-                  <div className="relative mt-2">
-                    <select
-                      id="facility"
-                      className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Selecteer uw faciliteit
-                      </option>
-                      <option value="facility1">Facility 1</option>
-                      <option value="facility2">Facility 2</option>
-                      <option value="facility3">Facility 3</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+      {/* Facility Dropdown */}
+      <div className="mb-6">
+        <label htmlFor="facility" className="text-lg text-[#be123c]">
+          Duid aan in welke faciliteit u verblijft:
+        </label>
+        <div className="relative mt-2">
+          <select
+            id="facility"
+            className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+            required
+          >
+            <option value="" disabled selected>
+              Selecteer uw faciliteit
+            </option>
+            <option value="facility1">Facility 1</option>
+            <option value="facility2">Facility 2</option>
+            <option value="facility3">Facility 3</option>
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
                 {/* Terms Agreement */}
                 <div className="flex items-center">
@@ -265,35 +265,35 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
               </form>
             )}
 
-            <div className="text-center mt-8">
-              {isLogin ? (
-                <p className="text-gray-600">
-                  Hebt u nog geen account?{' '}
-                  <button
-                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                    onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
-                  >
-                    Registreer hier
-                  </button>
-                  <br />
-                  <span className="text-sm font-semibold mt-2 block">
-                    (faciliteitscode vereist)
-                  </span>
-                </p>
-              ) : (
-                <p className="text-gray-600">
-                  Hebt u al een account?{' '}
-                  <button
-                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                    onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
-                  >
-                    Log in
-                  </button>
-                </p>
-              )}
-            </div>
+    <div className="text-center mt-8">
+            {isLogin ? (
+              <p className="text-gray-600">
+                Hebt u nog geen account?{' '}
+                <button
+                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                  onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
+                >
+                  Registreer hier
+                </button>
+                <br />
+                <span className="text-sm font-semibold mt-2 block">
+                  (faciliteitscode vereist)
+                </span>
+              </p>
+            ) : (
+              <p className="text-gray-600">
+                Hebt u al een account?{' '}
+                <button
+                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                  onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
+                >
+                  Login
+                </button>
+              </p>
+            )}
           </div>
-        </div>
+  </div>
+</div>
 
         {showTermsModal && (
           <div className="fixed inset-0 bg-[#881337] bg-opacity-70 flex items-center justify-center z-50">
