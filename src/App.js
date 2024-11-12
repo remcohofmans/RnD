@@ -7,12 +7,10 @@ import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
 import SettingsUser from './Components/SettingsUser';
 import PasswordChangeForm from './Components/PasswordChangeForm';
-
 import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
-
 import TopNavigationBar from './Components/TopNavigationBar';
-
+import PasswordRecovery from './Components/PasswordRecovery';
 
 export default function App() {
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -113,6 +111,9 @@ export default function App() {
 
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
 
+        <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
+
+        <Route path="/updatePassword" element={<PasswordRecovery />} /> 
 
       </Routes>
     </Router>
