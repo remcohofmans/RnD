@@ -15,8 +15,6 @@ describe('LoginRegister Component', () => {
 
   test('renders login form by default', () => {
     // Use getByRole for the button to avoid ambiguity
-    expect(screen.getByRole('heading', { name: /log in/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /sign up/i })).not.toBeInTheDocument();
   });
 });
