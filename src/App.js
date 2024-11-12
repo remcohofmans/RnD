@@ -12,7 +12,6 @@ import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
 import PasswordRecovery from './Components/PasswordRecovery';
 import PasswordUpdate from './Components/PasswordUpdate';
-import SimplePasswordReset from './Components/SimplePasswordReset';
 
 export default function App() { 
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
