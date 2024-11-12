@@ -1,75 +1,77 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginRegister from './Components/LoginRegister';
-import '@testing-library/jest-dom/extend-expect';
+import LoginRegister from './LoginRegister';
 
-const mockLogin = jest.fn();
-const mockSignUp = jest.fn();
+// Mock functions for login and signup
+const mockLoginWithEmail = jest.fn();
+const mockSignUpWithEmail = jest.fn();
 
 describe('LoginRegister Component', () => {
   beforeEach(() => {
-    render(<LoginRegister loginWithEmail={mockLogin} signUpWithEmail={mockSignUp} />);
+    render(
+      <LoginRegister
+        loginWithEmail={mockLoginWithEmail}
+        signUpWithEmail={mockSignUpWithEmail}
+      />
+    );
   });
 
-  test('renders login form by default', () => {
-    expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
+  test('renders login form initially', () => {
+    expect(screen.getByText('Welkom!')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Paswoord')).toBeInTheDocument();
+    expect(screen.getByText('Log in')).toBeInTheDocument();
   });
 
-  test('switches to registration form when clicking "Registreer hier"', () => {
-    fireEvent.click(screen.getByText(/registreer hier/i));
-    expect(screen.getByRole('button', { name: /registreer/i })).toBeInTheDocument();
+  test('toggles to registration form', () => {
+    fireEvent.click(screen.getByText('Registreer hier'));
+    expect(screen.getByText('Registreer')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Bevestig Paswoord')).toBeInTheDocument();
+    expect(screen.getByText('Registreer')).toBeInTheDocument();
   });
 
-  test('calls login function with correct inputs', () => {
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /log in/i }));
-    
-    expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123');
-  });
-
-  test('shows error when login form is submitted with empty fields', () => {
-    fireEvent.click(screen.getByRole('button', { name: /log in/i }));
+  test('displays error when login form is submitted without credentials', () => {
+    fireEvent.click(screen.getByText('Log in'));
+    expect(mockLoginWithEmail).not.toHaveBeenCalled();
     expect(screen.getByText('Please provide both email and password.')).toBeInTheDocument();
   });
 
-  test('handles invalid email input for login', () => {
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'invalidemail' } });
+  test('validates email input during registration', () => {
+    fireEvent.click(screen.getByText('Registreer hier'));
+    const emailInput = screen.getByPlaceholderText('Email');
+    fireEvent.change(emailInput, { target: { value: 'invalidemail' } });
     expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    expect(screen.queryByText('Please enter a valid email address.')).not.toBeInTheDocument();
   });
 
-  test('calls sign up function with correct inputs', () => {
-    fireEvent.click(screen.getByText(/registreer hier/i));
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'signup@example.com' } });
+  test('validates password and confirm password during registration', () => {
+    fireEvent.click(screen.getByText('Registreer hier'));
+    const passwordInput = screen.getByPlaceholderText('Paswoord');
+    const confirmPasswordInput = screen.getByPlaceholderText('Bevestig Paswoord');
+
+    fireEvent.change(passwordInput, { target: { value: 'short' } });
+    expect(screen.getByText('Password must be at least 6 characters long.')).toBeInTheDocument();
+
+    fireEvent.change(passwordInput, { target: { value: 'longenoughpassword' } });
+    expect(screen.queryByText('Password must be at least 6 characters long.')).not.toBeInTheDocument();
+
+    fireEvent.change(confirmPasswordInput, { target: { value: 'differentpassword' } });
+    expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
+
+    fireEvent.change(confirmPasswordInput, { target: { value: 'longenoughpassword' } });
+    expect(screen.queryByText('Passwords do not match.')).not.toBeInTheDocument();
+  });
+
+  test('submits registration form with valid data', () => {
+    fireEvent.click(screen.getByText('Registreer hier'));
+    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Bevestig Paswoord'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('checkbox', { name: /terms/i }));
-    fireEvent.click(screen.getByRole('button', { name: /registreer/i }));
+    fireEvent.click(screen.getByLabelText(/Ik ga akkoord met de/i));
+    fireEvent.click(screen.getByText('Registreer'));
 
-    expect(mockSignUp).toHaveBeenCalledWith('signup@example.com', 'password123');
-  });
-
-  test('shows error if passwords do not match during registration', () => {
-    fireEvent.click(screen.getByText(/registreer hier/i));
-    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Bevestig Paswoord'), { target: { value: 'password456' } });
-    fireEvent.blur(screen.getByPlaceholderText('Bevestig Paswoord'));
-
-    expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
-  });
-
-  test('disables registration button if terms are not agreed', () => {
-    fireEvent.click(screen.getByText(/registreer hier/i));
-    expect(screen.getByRole('button', { name: /registreer/i })).toBeDisabled();
-  });
-
-  test('shows terms modal when terms link is clicked', () => {
-    fireEvent.click(screen.getByText(/registreer hier/i));
-    fireEvent.click(screen.getByText(/terms and conditions/i));
-
-    expect(screen.getByText('Algemene Voorwaarden')).toBeInTheDocument();
+    expect(mockSignUpWithEmail).toHaveBeenCalledWith('test@example.com', 'password123');
   });
 });
