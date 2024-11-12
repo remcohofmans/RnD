@@ -28,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test:prod": "ng test --browsers=ChromeHeadless --watch=false --code-coverage"
+    "test:prod": "react-scripts test --browsers=ChromeHeadless --watch=false --code-coverage"
   },
   "eslintConfig": {
     "extends": [
