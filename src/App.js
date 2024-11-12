@@ -11,8 +11,9 @@ import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
 import PasswordRecovery from './Components/PasswordRecovery';
+import PasswordUpdate from './Components/PasswordUpdate';
 
-export default function App() {
+export default function App() { 
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(false);
@@ -113,8 +114,8 @@ export default function App() {
 
         <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
 
-        <Route path="/updatePassword" element={<PasswordRecovery />} /> 
-
+        <Route path="/updatePassword" element={<PasswordUpdate />} /> 
+        
       </Routes>
     </Router>
   );
