@@ -27,8 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "test:prod": "react-scripts test --browsers=ChromeHeadless --watch=false --code-coverage"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
