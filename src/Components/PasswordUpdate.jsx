@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom'; // To capture query params from URL
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/helper/supabaseClient';
 
 const PasswordUpdate = () => {
@@ -10,22 +10,21 @@ const PasswordUpdate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetToken, setResetToken] = useState(null);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // Capture URL search params (e.g., reset token)
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Get the reset token from the URL
-    const token = searchParams.get('token');
+    // Extract the access_token from the URL
+    const token = searchParams.get('access_token'); // Supabase uses `access_token` as the query param
     if (token) {
       setResetToken(token);
     } else {
-      setError('Invalid or missing reset token');
+      setError('Invalid or missing reset token.');
     }
   }, [searchParams]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validate password inputs
     if (!newPassword || !confirmPassword) {
       setError('Both password fields are required.');
       return;
@@ -46,9 +45,10 @@ const PasswordUpdate = () => {
     setMessage('');
 
     try {
-      // Reset the password using the token
-      const { error } = await supabase.auth.api.updateUser(resetToken, {
-        password: newPassword
+      // Update the password using the provided reset token
+      const { data, error } = await supabase.auth.updateUser({
+        token: resetToken,
+        password: newPassword,
       });
 
       if (error) {
@@ -56,11 +56,10 @@ const PasswordUpdate = () => {
       }
 
       setMessage('Your password has been updated successfully.');
-      // Optionally, redirect the user to login page
+      // Optionally, redirect the user to the login page
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-
     } catch (err) {
       setError('Failed to update password. Please try again.');
       console.error('Error updating password:', err);
@@ -74,11 +73,9 @@ const PasswordUpdate = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Your Password</h2>
 
-        {/* Success or error message */}
         {message && <div className="bg-green-100 text-green-800 p-4 rounded mb-4">{message}</div>}
         {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-4">{error}</div>}
 
-        {/* Form to update the password */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="newPassword" className="block text-gray-700">New Password</label>
