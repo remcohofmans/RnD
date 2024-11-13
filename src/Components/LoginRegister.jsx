@@ -227,7 +227,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 {/* Facility Code Instructions */}
                 {!isLogin && (
                   <div className="mb-4 text-sm text-gray-600">
-                    <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie.</span>
+                    <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie. (*)</span>
                   </div>
                 )}
 
