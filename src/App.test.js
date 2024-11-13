@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { act } from 'react'; // Importing act from react
-import LoginRegister from './Components/LoginRegister'; // Replace with the correct component path
+import { act } from 'react'; // Make sure you use act from 'react'
+import LoginRegister from './Components/LoginRegister'; // Import your component correctly
 
 describe('Login Page', () => {
   beforeEach(() => {
@@ -8,25 +8,25 @@ describe('Login Page', () => {
   });
 
   it('renders the form elements correctly', () => {
-    // Check for form elements
+    // Check for form elements to be present
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Paswoord')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Log in/i })).toBeInTheDocument();
   });
 
   it('submits the form with entered credentials', async () => {
-    // Mock a function for form submission (you may have to adjust based on your implementation)
     const mockHandleSubmit = jest.fn();
+    // Assume LoginRegister has an onSubmit prop (adjust this according to your implementation)
     render(<LoginRegister onSubmit={mockHandleSubmit} />);
 
-    // Perform form interaction wrapped in `act`
+    // Wrap in `act` to ensure state updates are flushed
     await act(async () => {
       fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
       fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
       fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
     });
 
-    // Ensure the form submission function was called
+    // Assert form submission occurred
     expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
   });
 
@@ -36,7 +36,7 @@ describe('Login Page', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
 
-    // Expect some kind of error message (adjust based on actual error handling)
+    // Adjust this assertion based on your actual validation logic and UI message
     expect(screen.getByText(/Please fill out this field/i)).toBeInTheDocument();
   });
 });
