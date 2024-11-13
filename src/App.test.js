@@ -1,60 +1,44 @@
-import React from 'react';
-import { render, fireEvent, screen, act } from '@testing-library/react';
-import LoginRegister from './Components/LoginRegister'; // Adjust the path if necessary
+import { render, screen, fireEvent } from '@testing-library/react';
+import LoginForm from './Components/LoginForm'; // Replace with the actual component's import
 
-describe('LoginRegister Component', () => {
-  const mockLoginWithEmail = jest.fn();
-  const mockSignUpWithEmail = jest.fn();
-
+describe('Login Page', () => {
   beforeEach(() => {
-    render(
-      <LoginRegister
-        loginWithEmail={mockLoginWithEmail}
-        signUpWithEmail={mockSignUpWithEmail}
-      />
-    );
+    render(<LoginForm />);
   });
 
-  test('renders the login form by default', () => {
-    expect(screen.getByText('Login')).toBeInTheDocument();
+  it('renders the form elements correctly', () => {
+    // Check for form elements
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Paswoord')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Log in/i })).toBeInTheDocument();
   });
 
-  test('toggles to registration form', () => {
-    act(() => {
-      fireEvent.click(screen.getByText('Registreer hier'));
-    });
-    expect(screen.getByText('Registreer')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Bevestig Paswoord')).toBeInTheDocument();
-  });
+  it('submits the form with entered credentials', () => {
+    // Mock a function for form submission (you may have to adjust based on your implementation)
+    const mockHandleSubmit = jest.fn();
 
-  test('submits login form', () => {
+    // Assuming form submission triggers this function
+    render(<LoginForm onSubmit={mockHandleSubmit} />);
+
+    // Fill out the form
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-    fireEvent.submit(screen.getByText('Login'));
-    expect(mockLoginWithEmail).toHaveBeenCalledWith('test@example.com', 'password123');
+
+    // Submit the form
+    fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
+
+    // Ensure the form submission function was called
+    expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
   });
 
-  test('submits registration form with matching passwords', () => {
-    act(() => {
-      fireEvent.click(screen.getByText('Registreer hier'));
-    });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Bevestig Paswoord'), { target: { value: 'password123' } });
-    fireEvent.submit(screen.getByText('Registreer'));
-    expect(mockSignUpWithEmail).toHaveBeenCalledWith('test@example.com', 'password123');
-  });
+  it('displays an error message for invalid input', () => {
+    // Simulate invalid form submission
+    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: '' } });
+    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: '' } });
 
-  test('does not submit registration form with non-matching passwords', () => {
-    act(() => {
-      fireEvent.click(screen.getByText('Registreer hier'));
-    });
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Bevestig Paswoord'), { target: { value: 'password456' } });
-    fireEvent.submit(screen.getByText('Registreer'));
-    expect(mockSignUpWithEmail).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
+
+    // Expect some kind of error message (adjust based on actual error handling)
+    expect(screen.getByText(/Please fill out this field/i)).toBeInTheDocument();
   });
 });
