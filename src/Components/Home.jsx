@@ -4,7 +4,7 @@ import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly im
 import { supabase } from '../lib/helper/supabaseClient';
 import TopNavigationBar from './TopNavigationBar';
 
-const Home = ({ loggedIn, logout, email }) => {
+const Home = ({ user, loggedIn, logout, email }) => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
 
@@ -65,7 +65,7 @@ const Home = ({ loggedIn, logout, email }) => {
     <div className="min-h-screen flex flex-col">
       {/* Use the new TopNavigationBar */}
       <div className="relative z-50">
-        <TopNavigationBar />
+        <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
       {/* Modal Overlay */}
@@ -135,14 +135,14 @@ const Home = ({ loggedIn, logout, email }) => {
 
       {/* Testimonials Section */}
       <div className="bg-gray-100 py-16 px-4 text-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">What Our Users Say</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">Wat Onze Gebruikers Zeggen</h2>
         <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-8">
           <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder helped me find my soulmate! The matching process was so easy and accurate."</p>
+            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder heeft me geholpen mijn soulmate te vinden! Het matchingsproces was zo eenvoudig en nauwkeurig."</p>
             <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Sarah T.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"I've made so many new friends thanks to this platform. Highly recommend!"</p>
+            <p className="text-lg text-gray-600 leading-relaxed">"Ik heb zoveel nieuwe vrienden gemaakt dankzij dit platform. Een echte aanrader!"</p>
             <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Jake L.</p>
           </div>
         </div>

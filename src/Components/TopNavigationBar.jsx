@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart, faUserFriends, faComment, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
-const TopNavigationBar = () => {
+const TopNavigationBar = ({ loggedIn, logout }) => { // Correct destructuring
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // Handle navigation with conditional for logout modal
   const handleNavigate = (path) => {
     if (path === '/logout') {
       setShowLogoutConfirm(true);
@@ -15,11 +16,14 @@ const TopNavigationBar = () => {
     navigate(path);
   };
 
-  const confirmLogout = (confirm) => {
-    if (confirm) {
-      navigate('/login');
+  // Handle logout logic
+  const handleLogOut = () => {
+    logout();
+    if (loggedIn) {
+      logout(); // Call the logout function passed as a prop
+      navigate('/login'); // Redirect to login page after logout
+      setShowLogoutConfirm(false); // Close the modal
     }
-    setShowLogoutConfirm(false);
   };
 
   // Define navigation items
@@ -32,6 +36,7 @@ const TopNavigationBar = () => {
   ];
   const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };
 
+  // Reusable NavItem component
   const NavItem = ({ item }) => (
     <div 
       className="group flex flex-col items-center cursor-pointer relative"
@@ -41,7 +46,6 @@ const TopNavigationBar = () => {
         icon={item.icon}
         className="text-white text-xl md:text-2xl transition duration-300 hover:text-rose-700"
       />
-      {/* Show label only on medium screens and above or on hover for small screens */}
       <span className="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 text-white text-xs mt-1 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0">
         {item.label}
       </span>
@@ -73,32 +77,29 @@ const TopNavigationBar = () => {
         </div>
       </div>
   
-      {/* Padding for other components below the navigation bar */}
-      <div className="pt-9 md:pt-20">
-        {/* Main Content */}
-        {showLogoutConfirm && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded shadow-lg">
-              <p>Are you sure you want to log out?</p>
-              <div className="flex justify-end gap-4 mt-4">
-                <button
-                  className="px-4 py-2 bg-gray-300 rounded"
-                  onClick={() => confirmLogout(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="px-4 py-2 text-white rounded"
-                  style={{ backgroundColor: '#f43f5e' }}
-                  onClick={() => confirmLogout(true)}
-                >
-                  Logout
-                </button>
-              </div>
+      {/* Modal for Logout Confirmation */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setShowLogoutConfirm(false)} // Close modal on cancel
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 text-white rounded"
+                style={{ backgroundColor: '#f43f5e' }}
+                onClick={handleLogOut} // Trigger logout
+              >
+                Logout
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
