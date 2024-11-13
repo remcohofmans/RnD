@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginRegister from './Components/LoginRegister'; // Replace with the actual component's import
+import { act } from 'react'; // Importing act from react
+import LoginRegister from './Components/LoginRegister'; // Replace with the correct component path
 
 describe('Login Page', () => {
   beforeEach(() => {
@@ -13,26 +14,23 @@ describe('Login Page', () => {
     expect(screen.getByRole('button', { name: /Log in/i })).toBeInTheDocument();
   });
 
-  it('submits the form with entered credentials', () => {
+  it('submits the form with entered credentials', async () => {
     // Mock a function for form submission (you may have to adjust based on your implementation)
     const mockHandleSubmit = jest.fn();
-
-    // Assuming form submission triggers this function
     render(<LoginRegister onSubmit={mockHandleSubmit} />);
 
-    // Fill out the form
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
-
-    // Submit the form
-    fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
+    // Perform form interaction wrapped in `act`
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: 'password123' } });
+      fireEvent.click(screen.getByRole('button', { name: /Log in/i }));
+    });
 
     // Ensure the form submission function was called
     expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
   });
 
   it('displays an error message for invalid input', () => {
-    // Simulate invalid form submission
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: '' } });
     fireEvent.change(screen.getByPlaceholderText('Paswoord'), { target: { value: '' } });
 
