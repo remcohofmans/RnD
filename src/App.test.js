@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
-import LoginRegister from './Components/LoginRegister'; // Adjust the path if necessary
+import LoginRegister from '../Components/LoginRegister'; // Adjust the path if necessary
 
 describe('LoginRegister Component', () => {
   const mockLoginWithEmail = jest.fn();
