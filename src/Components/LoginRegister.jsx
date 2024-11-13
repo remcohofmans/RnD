@@ -10,6 +10,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [facilityCode, setFacilityCode] = useState('');
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
@@ -35,18 +36,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
-    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed) {
-      console.error("Please provide email, password, confirm password, and agree to the terms for sign up.");
+    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode) {
+      console.error("Please fill out all fields and agree to the terms for sign up.");
       return;
     }
     if (signUpPassword !== confirmPassword) {
       console.error("Passwords do not match.");
       return;
     }
-    signUpWithEmail(signUpEmail, signUpPassword)
+    // Add your logic to handle the facility code
+    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
       .then(() => setSignupError(''))
       .catch(() => setSignupError("Sign up failed. Please try again."));
   };
+  
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
@@ -220,6 +223,25 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 </div>
 
                 {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
+                
+                {/* Facility Code Instructions */}
+                {!isLogin && (
+                  <div className="mb-4 text-sm text-gray-600">
+                    <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie.</span>
+                  </div>
+                )}
+
+                {/* Facility Code Input */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={facilityCode}
+                    onChange={(e) => setFacilityCode(e.target.value)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Faciliteitscode"
+                    required
+                  />
+                </div>
 
       {/* Facility Dropdown */}
       <div className="mb-6">
@@ -263,7 +285,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 <button
                   type="submit"
                   className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
-                  disabled={!isTermsAgreed || signUpPassword !== confirmPassword}
+                  disabled={!isTermsAgreed || signUpPassword !== confirmPassword || !facilityCode}
                 >
                   Registreer
                 </button>
