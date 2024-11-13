@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginForm from './LoginForm'; // Replace with the actual component's import
+import LoginRegister from './LoginRegister'; // Replace with the actual component's import
 
 describe('Login Page', () => {
   beforeEach(() => {
-    render(<LoginForm />);
+    render(<LoginRegister />);
   });
 
   it('renders the form elements correctly', () => {
@@ -18,7 +18,7 @@ describe('Login Page', () => {
     const mockHandleSubmit = jest.fn();
 
     // Assuming form submission triggers this function
-    render(<LoginForm onSubmit={mockHandleSubmit} />);
+    render(<LoginRegister onSubmit={mockHandleSubmit} />);
 
     // Fill out the form
     fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
