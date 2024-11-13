@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginForm from './Components/LoginForm'; // Replace with the actual component's import
+import LoginForm from './LoginForm'; // Replace with the actual component's import
 
 describe('Login Page', () => {
   beforeEach(() => {
