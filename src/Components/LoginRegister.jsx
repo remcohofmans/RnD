@@ -36,38 +36,42 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   };
 
   const handleSignUpSubmit = (e) => {
+
+    console.log("Sign up form submitted");  // Debugging line
+
     e.preventDefault();
+    let error = "";
   
+    // Check if all fields are filled
     if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
-      setSignupError("Please fill out all fields and agree to the terms for sign up.");
-      return;
+      error = "Please fill out all fields and agree to the terms for sign up.";
+    } else if (signUpPassword !== confirmPassword) {
+      // Check if passwords match
+      error = "Passwords do not match.";
+    } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
+      error = "Invalid facility code for Facility 1.";
+    } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
+      error = "Invalid facility code for Facility 2.";
+    } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
+      error = "Invalid facility code for Facility 3.";
     }
   
-    if (signUpPassword !== confirmPassword) {
-      setSignupError("Passwords do not match.");
+    console.log("Signup error:", error); // Add this line to debug
+
+    // If there is any error, set the error message and return
+    if (error) {
+      setSignupError(error);
       return;
     }
-  
-    // Validate the facility code and selected facility
-    if (selectedFacility === "facility1" && facilityCode !== "12345") {
-      setSignupError("Invalid facility code for Facility 1.");
-      return;
-    }
-    if (selectedFacility === "facility2" && facilityCode !== "67890") {
-      setSignupError("Invalid facility code for Facility 2.");
-      return;
-    }
-    if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
-      setSignupError("Invalid facility code for Facility 3.");
-      return;
-    }
-  
+
     // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
-      .then(() => setSignupError(''))
+      .then(() => {
+        setSignupError('');
+      })
       .catch(() => setSignupError("Sign up failed. Please try again."));
   };
-
+  
   const handleEmailChange = (e) => {
     const email = e.target.value;
     if (isLogin) {
@@ -75,32 +79,43 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     } else {
       setSignUpEmail(email);  // Update signUpEmail if it's the signup form
     }
-
+  
     // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailFeedback('Please enter a valid email address.');
     } else {
       setEmailFeedback('');
     }
-  };
+  };  
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
-    setSignUpPassword(password);
-    // Simple password validation feedback
-    if (password.length < 6) {
-      setPasswordFeedback('Password must be at least 6 characters long.');
-    } else {
+  
+    if (isLogin) {
+      // Update login password state if in login mode
+      setLoginPassword(password);
+      // Clear any existing feedback for login passwords
       setPasswordFeedback('');
+    } else {
+      // Update signup password state if in registration mode
+      setSignUpPassword(password);
+  
+      // Simple password validation feedback for registration
+      if (password.length < 6) {
+        setPasswordFeedback('Password must be at least 6 characters long.');
+      } else {
+        setPasswordFeedback('');
+      }
     }
-  };
+  };  
 
   const handleConfirmPasswordChange = (e) => {
     const password = e.target.value;
     setConfirmPassword(password);
-    // Confirm password feedback
-    if (password !== signUpPassword) {
-      setConfirmPasswordFeedback('Passwords do not match.');
+
+    // Simple password validation feedback for registration
+    if (password.length < 6) {
+      setConfirmPasswordFeedback('Password must be at least 6 characters long.');
     } else {
       setConfirmPasswordFeedback('');
     }
@@ -143,7 +158,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           </div>
         </div>
 
-
         {/* Right Half */}
         <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fbf6f0' }} >
           <div className="w-full max-w-md mx-auto">
@@ -173,13 +187,15 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {emailFeedback && <p className="text-red-600 text-sm">{emailFeedback}</p>}
+
                 {/* Password Input */}
                 <div className="relative">
                   <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
                   <input
                     type="password"
                     value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
                     className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
@@ -188,12 +204,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+
                 <button
                   type="submit"
                   className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
                 >
                   Log in
                 </button>
+
+                {signupError && <p className="text-red-600 text-sm">{signupError}</p>}
+
               </form>
             ) : (
               <form onSubmit={handleSignUpSubmit} className="space-y-6">
@@ -226,6 +247,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                     required
                   />
                 </div>
+
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
 
                 <div className="relative">
                   <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
@@ -308,6 +331,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 >
                   Registreer
                 </button>
+
+                {/* Error message display */}
+                {signupError && (
+                  <p className="text-red-600 text-sm mt-4">{signupError}</p>
+                )}
+                
               </form>
             )}
 
@@ -379,7 +408,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                 disabled={!isTermsAgreed}
               >
-                Sluit
+                Weiger
               </button>
             </div>
           </div>
