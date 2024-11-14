@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import happyPeople from '../Assets/happyPeople.png';
 import butterflyIcon from '../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
 
-const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
+const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -27,15 +27,22 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+  
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
+  
     loginWithEmail(loginEmail, loginPassword)
-      .catch(() => setLoginError("Ongeldige inloggegevens. Probeer het opnieuw."));
-      console.log(loginError);
+      .then(() => {
+        setLoginError(''); // Clear error if successful
+      })
+      .catch((error) => {
+        console.error("Login Error:", error);  // Debug the error here
+        setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
+      });
   };
-
+  
   const handleSignUpSubmit = (e) => {
 
     console.log("Sign up form submitted");  // Debugging line
@@ -48,16 +55,14 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
     } else if (signUpPassword !== confirmPassword) {
       // Check if passwords match
-      error = "Paswoorden komen niet overeen";
+      error = "Paswoorden komen niet overeen.";
     } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
-      error = "Ongeldige faciliteitscode voor Facility 1.";
+      error = "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
     } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
-      error = "Ongeldige faciliteitscode voor Facility 2.";
+      error = "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
     } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
-      error = "Ongeldige faciliteitscode voor Facility 3.";
+      error = "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
     }
-  
-    console.log("Aanmeldfout:", error); // Add this line to debug
 
     // If there is any error, set the error message and return
     if (error) {
@@ -95,18 +100,18 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     if (isLogin) {
       // Update login password state if in login mode
       setLoginPassword(password);
-      // Clear any existing feedback for login passwords
-      setPasswordFeedback('');
+      // // Clear any existing feedback for login passwords
+      // setPasswordFeedback('');
     } else {
       // Update signup password state if in registration mode
       setSignUpPassword(password);
-  
-      // Simple password validation feedback for registration
-      if (password.length < 6) {
-        setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
-      } else {
-        setPasswordFeedback('');
-      }
+    }
+
+    // Simple password validation feedback for registration
+    if (password.length < 6) {
+      setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+    } else {
+      setPasswordFeedback('');
     }
   };  
 
@@ -121,6 +126,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       setConfirmPasswordFeedback('');
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setLoginError(error); // Update local state if there's an error from App.js
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -209,12 +220,14 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 <button
                   type="submit"
+                  // disabled={loading}
                   className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
                 >
                   Log in
                 </button>
 
-                {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
+                {/* Display login error if any */}
+                {loginError && <p className="text-red-600 text-xs mt-4">{loginError}</p>}
 
               </form>
             ) : (
@@ -268,7 +281,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 {/* Facility Code Instructions */}
                 {!isLogin && (
                   <div className="mb-4 text-sm text-gray-600">
-                    <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie. (*)</span>
+                    <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
                   </div>
                 )}
 
@@ -286,7 +299,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 {/* Facility Dropdown */}
                 <div className="mb-6">
-                  <label htmlFor="facility" className="text-lg text-[#be123c]">
+                  <label htmlFor="facility" className="text-sm text-[#be123c]">
                     Duid aan in welke faciliteit u verblijft:
                   </label>
                   <div className="relative mt-2">
@@ -320,7 +333,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                   />
-                  <label className="ml-2 text-gray-600">
+                  <label className="ml-2 text-gray-600 text-sm">
                     Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>
                   </label>
                 </div>
@@ -335,7 +348,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
                 {/* Error message display */}
                 {signupError && (
-                  <p className="text-red-600 text-sm mt-4">{signupError}</p>
+                  <p className="text-red-600 text-xs mt-4">{signupError}</p>
                 )}
                 
               </form>

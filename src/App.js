@@ -48,10 +48,10 @@ export default function App() {
 
     if (error) {
       setError(error.message);
-      console.error('Error signing up with email/password:', error.message);
     } else {
-      console.log('Signed up successfully:', data);
-      setUser(data.user); // Set the user after successful sign-up
+      console.log('Logged in successfully with email/password:', data);
+      setUser(data.user); // Set the user after successful login
+      setError(''); // Clear any previous errors on success
     }
     setLoading(false);
   }
@@ -97,7 +97,10 @@ export default function App() {
               logout={logout} 
               email={user?.email} /> : <Navigate to="/login" />} />
               {/* Login/Register route */}
-        <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} error={error} />}
+        />
         <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
         <Route path="/settingsUser" element={<SettingsUser />} />
