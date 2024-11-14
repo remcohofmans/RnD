@@ -28,11 +28,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     if (!loginEmail || !loginPassword) {
-      setLoginError("Please provide both email and password.");
+      setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
     loginWithEmail(loginEmail, loginPassword)
-      .catch(() => setLoginError("Invalid login credentials. Please try again."));
+      .catch(() => setLoginError("Ongeldige inloggegevens. Probeer het opnieuw."));
+      console.log(loginError);
   };
 
   const handleSignUpSubmit = (e) => {
@@ -44,19 +45,19 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   
     // Check if all fields are filled
     if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
-      error = "Please fill out all fields and agree to the terms for sign up.";
+      error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
     } else if (signUpPassword !== confirmPassword) {
       // Check if passwords match
-      error = "Passwords do not match.";
+      error = "Paswoorden komen niet overeen";
     } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
-      error = "Invalid facility code for Facility 1.";
+      error = "Ongeldige faciliteitscode voor Facility 1.";
     } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
-      error = "Invalid facility code for Facility 2.";
+      error = "Ongeldige faciliteitscode voor Facility 2.";
     } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
-      error = "Invalid facility code for Facility 3.";
+      error = "Ongeldige faciliteitscode voor Facility 3.";
     }
   
-    console.log("Signup error:", error); // Add this line to debug
+    console.log("Aanmeldfout:", error); // Add this line to debug
 
     // If there is any error, set the error message and return
     if (error) {
@@ -69,7 +70,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
       .then(() => {
         setSignupError('');
       })
-      .catch(() => setSignupError("Sign up failed. Please try again."));
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
   
   const handleEmailChange = (e) => {
@@ -82,7 +83,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   
     // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailFeedback('Please enter a valid email address.');
+      setEmailFeedback('Voer een geldig e-mailadres in.');
     } else {
       setEmailFeedback('');
     }
@@ -102,7 +103,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   
       // Simple password validation feedback for registration
       if (password.length < 6) {
-        setPasswordFeedback('Password must be at least 6 characters long.');
+        setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
       } else {
         setPasswordFeedback('');
       }
@@ -115,7 +116,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
     // Simple password validation feedback for registration
     if (password.length < 6) {
-      setConfirmPasswordFeedback('Password must be at least 6 characters long.');
+      setConfirmPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
     } else {
       setConfirmPasswordFeedback('');
     }
@@ -213,7 +214,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   Log in
                 </button>
 
-                {signupError && <p className="text-red-600 text-sm">{signupError}</p>}
+                {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
 
               </form>
             ) : (
@@ -299,9 +300,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                       <option value="" disabled selected>
                         Selecteer uw faciliteit
                       </option>
-                      <option value="facility1">Facility 1</option>
-                      <option value="facility2">Facility 2</option>
-                      <option value="facility3">Facility 3</option>
+                      <option value="facility1">Faciliteit 1</option>
+                      <option value="facility2">Faciliteit 2</option>
+                      <option value="facility3">Faciliteit 3</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
