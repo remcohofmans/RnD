@@ -11,6 +11,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [signUpPassword, setSignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [facilityCode, setFacilityCode] = useState('');
+  const [selectedFacility, setSelectedFacility] = useState('');
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
@@ -36,20 +37,36 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
-    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode) {
-      console.error("Please fill out all fields and agree to the terms for sign up.");
+  
+    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
+      setSignupError("Please fill out all fields and agree to the terms for sign up.");
       return;
     }
+  
     if (signUpPassword !== confirmPassword) {
-      console.error("Passwords do not match.");
+      setSignupError("Passwords do not match.");
       return;
     }
-    // Add your logic to handle the facility code
+  
+    // Validate the facility code and selected facility
+    if (selectedFacility === "facility1" && facilityCode !== "12345") {
+      setSignupError("Invalid facility code for Facility 1.");
+      return;
+    }
+    if (selectedFacility === "facility2" && facilityCode !== "67890") {
+      setSignupError("Invalid facility code for Facility 2.");
+      return;
+    }
+    if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
+      setSignupError("Invalid facility code for Facility 3.");
+      return;
+    }
+  
+    // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
       .then(() => setSignupError(''))
       .catch(() => setSignupError("Sign up failed. Please try again."));
   };
-  
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
@@ -58,7 +75,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     } else {
       setSignUpEmail(email);  // Update signUpEmail if it's the signup form
     }
-  
+
     // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailFeedback('Please enter a valid email address.');
@@ -223,7 +240,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 </div>
 
                 {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
-                
+
                 {/* Facility Code Instructions */}
                 {!isLogin && (
                   <div className="mb-4 text-sm text-gray-600">
@@ -243,31 +260,33 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
-      {/* Facility Dropdown */}
-      <div className="mb-6">
-        <label htmlFor="facility" className="text-lg text-[#be123c]">
-          Duid aan in welke faciliteit u verblijft:
-        </label>
-        <div className="relative mt-2">
-          <select
-            id="facility"
-            className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
-            required
-          >
-            <option value="" disabled selected>
-              Selecteer uw faciliteit
-            </option>
-            <option value="facility1">Facility 1</option>
-            <option value="facility2">Facility 2</option>
-            <option value="facility3">Facility 3</option>
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
-            </svg>
-          </div>
-        </div>
-      </div>
+                {/* Facility Dropdown */}
+                <div className="mb-6">
+                  <label htmlFor="facility" className="text-lg text-[#be123c]">
+                    Duid aan in welke faciliteit u verblijft:
+                  </label>
+                  <div className="relative mt-2">
+                  <select
+                    id="facility"
+                    value={selectedFacility}
+                    onChange={(e) => setSelectedFacility(e.target.value)}
+                    className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+                    required
+>
+                      <option value="" disabled selected>
+                        Selecteer uw faciliteit
+                      </option>
+                      <option value="facility1">Facility 1</option>
+                      <option value="facility2">Facility 2</option>
+                      <option value="facility3">Facility 3</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Terms Agreement */}
                 <div className="flex items-center">
@@ -292,35 +311,35 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
               </form>
             )}
 
-    <div className="text-center mt-8">
-            {isLogin ? (
-              <p className="text-gray-600">
-                Hebt u nog geen account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
-                >
-                  Registreer hier
-                </button>
-                <br />
-                <span className="text-sm font-semibold mt-2 block">
-                  (faciliteitscode vereist)
-                </span>
-              </p>
-            ) : (
-              <p className="text-gray-600">
-                Hebt u al een account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
-                >
-                  Login
-                </button>
-              </p>
-            )}
+            <div className="text-center mt-8">
+              {isLogin ? (
+                <p className="text-gray-600">
+                  Hebt u nog geen account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
+                  >
+                    Registreer hier
+                  </button>
+                  <br />
+                  <span className="text-sm font-semibold mt-2 block">
+                    (faciliteitscode vereist)
+                  </span>
+                </p>
+              ) : (
+                <p className="text-gray-600">
+                  Hebt u al een account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
+                  >
+                    Login
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
-  </div>
-</div>
+        </div>
 
         {showTermsModal && (
           <div className="fixed inset-0 bg-[#881337] bg-opacity-70 flex items-center justify-center z-50">
