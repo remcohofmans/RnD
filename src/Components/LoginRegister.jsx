@@ -45,7 +45,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
         setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
       });
   };
-
+  
   const handleSignUpSubmit = (e) => {
 
     console.log("Sign up form submitted");  // Debugging line
@@ -81,6 +81,14 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
 
+    // Call signUpWithEmail function if all validations pass
+    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
+      .then(() => {
+        setSignupError('');
+      })
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
+  };
+  
   const handleEmailChange = (e) => {
     const email = e.target.value;
     if (isLogin) {
@@ -95,7 +103,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     } else {
       setEmailFeedback('');
     }
-  };
+  };  
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
@@ -116,7 +124,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     } else {
       setPasswordFeedback('');
     }
-  };
+  };  
 
   const handleConfirmPasswordChange = (e) => {
     const password = e.target.value;

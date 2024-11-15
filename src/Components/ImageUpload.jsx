@@ -16,7 +16,7 @@ const CATEGORIES = {
   favorieteHobby: { label: 'Favoriete Hobby', icon: '🎨' },
 };
 
-const ImageUpload = ({ onUploadComplete }) => {
+const ImageUpload = ({ onUploadComplete ,user, loggedIn, logout, email}) => {
   const { currentUser, loading, error } = useSupabaseAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
@@ -190,7 +190,7 @@ const ImageUpload = ({ onUploadComplete }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TopNavigationBar />
+      <TopNavigationBar  loggedIn={!!user} logout={logout}/>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">

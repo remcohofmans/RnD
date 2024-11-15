@@ -8,6 +8,9 @@ export const Message = ({ message, isOwnMessage }) => {
     day: 'numeric',
   });
 
+
+  
+
   return (
     <div className={`flex items-center my-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
       {/* Timestamp on the left for own messages */}
