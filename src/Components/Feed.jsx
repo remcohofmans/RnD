@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useCheckUserProfile from '../hooks/useCheckUserProfile';
 import {
   faHeart,
   faTimes,
@@ -90,6 +91,8 @@ const UserCard = ({ user, onLove }) => (
 );
 
 const Feed = () => {
+
+
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);

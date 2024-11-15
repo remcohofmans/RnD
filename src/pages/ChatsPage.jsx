@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatsList } from '../Components/Chat/ChatsList/ChatsList.jsx';
 import { ChatWindow } from '../Components/Chat/ChatWindow/ChatWindow.jsx';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
 import { useMatches } from '../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../Components/common/LoadingSpinner.jsx';
-import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
+import TopNavigationBar from '../Components/TopNavigationBar.jsx';
+import useCheckUserProfile from '../hooks/useCheckUserProfile';
 
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const { currentUser, loading: authLoading, error: authError } = useSupabaseAuth();
+  const { checkUserProfile } = useCheckUserProfile(currentUser);
   const { matches, loading: matchesLoading, error: matchesError } = useMatches(currentUser?.id);
+
+  useEffect(() => {
+    checkUserProfile();
+  }, [checkUserProfile]);
 
   if (authLoading || matchesLoading) return <LoadingSpinner />;
   if (authError || matchesError) return <div className="text-red-500 text-center p-4">{authError || matchesError}</div>;
