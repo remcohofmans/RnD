@@ -19,6 +19,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [signupError, setSignupError] = useState('');
+  const [isMentor, setIsMentor] = useState(false); // Tracks whether user is a mentor
+  const [mentorCode, setMentorCode] = useState('');
+
 
   // State for feedback
   const [emailFeedback, setEmailFeedback] = useState('');
@@ -27,12 +30,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-  
+
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
-  
+
     loginWithEmail(loginEmail, loginPassword)
       .then(() => {
         setLoginError(''); // Clear error if successful
@@ -49,7 +52,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
     e.preventDefault();
     let error = "";
-  
+
     // Check if all fields are filled
     if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
       error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
@@ -77,6 +80,14 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       })
       .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
+
+    // Call signUpWithEmail function if all validations pass
+    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
+      .then(() => {
+        setSignupError('');
+      })
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
+  };
   
   const handleEmailChange = (e) => {
     const email = e.target.value;
@@ -85,7 +96,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     } else {
       setSignUpEmail(email);  // Update signUpEmail if it's the signup form
     }
-  
+
     // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailFeedback('Voer een geldig e-mailadres in.');
@@ -96,7 +107,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
-  
+
     if (isLogin) {
       // Update login password state if in login mode
       setLoginPassword(password);
@@ -286,26 +297,67 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                   />
                 </div>
 
-                {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
+                {/* Mentor Checkbox */}
+                <div className="mt-4 mb-6">
+                  <label className="mb-6 flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={isMentor}
+                      onChange={() => setIsMentor(!isMentor)}
+                    />
+                    <span><b>Ik ben een mentor</b></span>
+                  </label>
 
-                {/* Facility Code Instructions */}
-                {!isLogin && (
-                  <div className="mb-4 text-sm text-gray-600">
-                    <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
-                  </div>
+                {/* Facility Code (only for non-mentors) */}
+                {!isMentor && (
+                  <>
+                    {/* Facility Code Instructions */}
+                    {!isLogin && (
+                      <div className="mb-4 text-lg text-gray-600">
+                        <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                      </div>
+                    )}
+
+                    {/* Facility Code Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={facilityCode}
+                        onChange={(e) => setFacilityCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Faciliteitscode"
+                        required
+                      />
+                    </div>
+                  </>
                 )}
 
-                {/* Facility Code Input */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={facilityCode}
-                    onChange={(e) => setFacilityCode(e.target.value)}
-                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                    placeholder="Faciliteitscode"
-                    required
-                  />
+                {/* Facility Code (only for non-mentors) */}
+                {isMentor && (
+                  <>
+                    {/* Facility Code Instructions */}
+                    {!isLogin && (
+                      <div className="mb-4 text-lg text-gray-600">
+                        <span>Geef uw mentor ID in. (*)</span>
+                      </div>
+                    )}
+
+                    {/* Mentor Code Input */}
+                    <div className="relative mb-6">
+                      <input
+                        type="text"
+                        value={mentorCode}
+                        onChange={(e) => setMentorCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Mentorcode"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
                 </div>
+
+                {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
 
                 {/* Facility Dropdown */}
                 <div className="mb-6">
@@ -313,13 +365,13 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     Duid aan in welke faciliteit u verblijft:
                   </label>
                   <div className="relative mt-2">
-                  <select
-                    id="facility"
-                    value={selectedFacility}
-                    onChange={(e) => setSelectedFacility(e.target.value)}
-                    className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
-                    required
->
+                    <select
+                      id="facility"
+                      value={selectedFacility}
+                      onChange={(e) => setSelectedFacility(e.target.value)}
+                      className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+                      required
+                    >
                       <option value="" disabled selected>
                         Selecteer uw faciliteit
                       </option>
@@ -360,7 +412,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                 {signupError && (
                   <p className="text-red-600 text-xs mt-4">{signupError}</p>
                 )}
-                
+
               </form>
             )}
 
