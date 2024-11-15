@@ -94,7 +94,7 @@ const PasswordChangeForm = () => {
     <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
 
     <div className="relative z-50">
-            <TopNavigationBar />
+
           </div>
       <div className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72 bg-white border-4" style={{ borderColor: '#fda4af' }}>
         {error && (

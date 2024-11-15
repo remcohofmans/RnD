@@ -189,25 +189,25 @@ const ImageUpload = ({ onUploadComplete ,user, loggedIn, logout, email}) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <TopNavigationBar  loggedIn={!!user} logout={logout}/>
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-rose-50 mt-12">
+      
+      <div className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            <h1 className="text-3xl font-bold text-center mb-12">
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <h1 className="text-3xl font-bold text-center mb-8">
               Upload je favoriete foto's 📸
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {Object.entries(CATEGORIES).map(([category, { label, icon }]) => (
-                <div key={category} className="flex flex-col items-center space-y-4">
+                <div key={category} className="flex flex-col items-center space-y-2">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     {icon} {label}
                   </h3>
                   
                   <div className="w-full flex flex-col items-center">
                     <div
-                      className={`w-40 h-40 border-2 border-dashed rounded-xl cursor-pointer flex items-center justify-center transition-colors duration-200 ${
+                      className={`w-36 h-36 border-2 border-dashed rounded-xl cursor-pointer flex items-center justify-center transition-colors duration-200 ${
                         errors[category] 
                           ? 'border-red-500' 
                           : 'border-gray-300 hover:border-gray-400'
@@ -244,7 +244,7 @@ const ImageUpload = ({ onUploadComplete ,user, loggedIn, logout, email}) => {
                     </div>
                     
                     {errors[category] && (
-                      <p className="text-red-500 text-sm mt-2 text-center" role="alert">
+                      <p className="text-red-500 text-sm mt-1 text-center" role="alert">
                         {errors[category]}
                       </p>
                     )}

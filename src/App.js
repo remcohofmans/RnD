@@ -13,6 +13,7 @@ import TopNavigationBar from './Components/TopNavigationBar';
 import SubscriptionPlans from './Components/SubscriptionPlans';
 import PasswordRecovery from './Components/PasswordRecovery';
 import PasswordUpdate from './Components/PasswordUpdate';
+import ProfielPauzeren from './Components/ProfielPauzeren';
 
 
 export default function App() { 
@@ -121,6 +122,8 @@ export default function App() {
         <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
 
         <Route path="/updatePassword" element={<PasswordUpdate />} /> 
+
+        <Route path="/pp" element={<ProfielPauzeren />} />
         
       </Routes>
     </Router>

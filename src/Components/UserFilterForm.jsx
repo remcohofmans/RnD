@@ -138,8 +138,7 @@ const FilterForm = () => {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <TopNavigationBar />
+    <div className="max-w-2xl mx-auto p-6 mt-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
       <form
         onSubmit={handleSubmit}
