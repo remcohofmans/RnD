@@ -4,6 +4,9 @@ import AgeRangeControl from './AgeRangeControl';
 import { supabase } from '../supabaseClient';
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../Components/filter/AvailableHobbiesPage';
 
+// Define a global variable for currentID (this can be dynamically set based on your app logic)
+let currentID = 1; // Set the initial ID, this can be dynamically set based on logged-in user or session
+
 const FilterForm = () => {
   const [formState, setFormState] = useState({
     interest: '',
@@ -47,16 +50,20 @@ const FilterForm = () => {
       try {
         const { data, error } = await supabase
           .from('userpreferences') // replace 'userpreferences' with the actual table name
-          .select('id')
-          .eq('id', 1)
+          .select('*')
+          .eq('id', currentID) // Use the global variable currentID
           .single();
+
+        if (error && error.code !== 'PGRST100') {
+          console.error('Error fetching data:', error);
+        }
 
         if (data) {
           // Update existing entry
           const { data: updateData, error: updateError } = await supabase
-            .from('userpreferences') // replace 'userpreferences' with the actual table name
+            .from('userpreferences')
             .update(dataToSubmit)
-            .eq('id', 1);
+            .eq('id', currentID);
 
           if (updateError) {
             console.error('Error updating data:', updateError);
@@ -67,7 +74,7 @@ const FilterForm = () => {
         } else {
           // Insert new entry
           const { data: insertData, error: insertError } = await supabase
-            .from('userpreferences') // replace 'userpreferences' with the actual table name
+            .from('userpreferences')
             .insert([dataToSubmit]);
 
           if (insertError) {
@@ -108,12 +115,12 @@ const FilterForm = () => {
       const { data, error } = await supabase
         .from('userpreferences') // replace 'userpreferences' with the actual table name
         .select('*')
-        .eq('id', 1)
+        .eq('id', currentID) // Use the global variable currentID
         .single();
 
       if (error) {
         console.error('Error fetching data:', error);
-      } else {
+      } else if (data) {
         setFormState({
           interest: data.interest || '',
           distance: (data.distance || 5).toString(),
@@ -203,10 +210,9 @@ const FilterForm = () => {
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-rose-500 text-white hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none"
             >
-              <span className="mr-2">+</span>
-              Hobby's toevoegen
+              + Voeg hobby toe
             </button>
           </div>
           {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
@@ -214,7 +220,7 @@ const FilterForm = () => {
 
         <button
           type="submit"
-          className="w-full py-3 px-4 rounded-md text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+          className="w-full py-3 text-lg font-semibold rounded-md text-white bg-rose-500 hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
         >
           Opslaan
         </button>
