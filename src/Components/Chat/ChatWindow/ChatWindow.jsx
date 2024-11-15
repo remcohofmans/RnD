@@ -3,6 +3,7 @@ import { supabase } from '../../../supabaseClient';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { ChatHeader } from './ChatHeader';
+import { RefreshCw } from 'lucide-react';
 
 export const ChatWindow = ({ matchId, otherUserName }) => {
   const [messages, setMessages] = useState([]);
@@ -10,6 +11,7 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   const [matchedUserId, setMatchedUserId] = useState(null);
   const [error, setError] = useState(null);
   const [showSuggestion, setShowSuggestion] = useState(false);
+  const [currentSuggestion, setCurrentSuggestion] = useState(null);
   const messagesContainerRef = useRef(null);
 
   const suggestedMessages = [
@@ -24,9 +26,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     "Wat is het mooiste reisbestemming die je ooit hebt bezocht?",
     "Heb je een favoriete hobby waar je veel tijd mee doorbrengt?"
   ];
-  
-
-  const randomSuggestion = suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)];
 
   useEffect(() => {
     fetchCurrentUser();
@@ -41,7 +40,10 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
 
   useEffect(() => {
     setShowSuggestion(messages.length === 0);
-  }, [messages]);
+    if (showSuggestion) {
+      setCurrentSuggestion(suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]);
+    }
+  }, [messages, showSuggestion]);
 
   const fetchCurrentUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -146,8 +148,12 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   };
 
   const handleSendSuggestion = () => {
-    sendMessage(randomSuggestion);
+    sendMessage(currentSuggestion);
     setShowSuggestion(false);
+  };
+
+  const handleRefreshSuggestion = () => {
+    setCurrentSuggestion(suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]);
   };
 
   const scrollToBottom = () => {
@@ -165,12 +171,18 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
         {showSuggestion && (
           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center mb-4">
             <p className="text-gray-600 text-sm">
-              Suggested message to start the conversation:
+            Als je niets weet te zeggen, gebruik een gespreksstarter:
             </p>
             <div className="flex items-center justify-center space-x-3 mt-2">
               <p className="text-gray-800 font-medium">
-                "{randomSuggestion}"
+                "{currentSuggestion} "
               </p>
+              <button
+                onClick={handleRefreshSuggestion}
+                className="px-2 py-1.5 text-gray-600 hover:bg-rose-200 rounded-lg focus:outline-none"
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
               <button 
                 onClick={handleSendSuggestion}
                 className="px-4 py-1.5 bg-rose-500 text-white text-sm rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
