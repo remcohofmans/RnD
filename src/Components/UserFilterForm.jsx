@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import DistanceControl from './DistanceControl';
 import AgeRangeControl from './AgeRangeControl';
 import { supabase } from '../supabaseClient';
+import TopNavigationBar from '../Components/TopNavigationBar.jsx';
+
 
 //import AvailableHobbiesPage from '../Components/filter/AvailableHobbiesPage'
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../Components/filter/AvailableHobbiesPage';
@@ -137,6 +139,7 @@ const FilterForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <TopNavigationBar />
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
       <form
         onSubmit={handleSubmit}

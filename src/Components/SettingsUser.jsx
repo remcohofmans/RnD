@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/helper/supabaseClient'; 
-import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
+import TopNavigationBar from '../Components/TopNavigationBar.jsx';
 
 const SettingsUser = () => {
   const navigate = useNavigate();
@@ -16,22 +16,23 @@ const SettingsUser = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setUserId(session.user.id);
-        console.log("Session user ID:", session.user.id); // Log the user ID when fetched
+        console.log("Session user ID:", session.user.id);
       }
     };
     fetchUserData();
   }, []);
 
   const handleOptionClick = (option) => {
-    if (option === "Wachtwoord Bewerken") {
+    if (option === "Info Aanpassen") {
+      navigate('/userFilterForm'); // Navigate to /userFilterForm
+    } else if (option === "Wachtwoord Bewerken") {
       navigate('/PasswordChangeForm');
     } else if (option === "Foto's Aanpassen") {
-      navigate('/uploadFoto'); // Navigate to /uploadFoto when this option is clicked
+      navigate('/uploadFoto');
     } else if (option === "Profiel Pauzeren") {
       setIsConfirming(true);
     }
   };
-
 
   const handleConfirmPause = async () => {
     if (!userId) {
@@ -59,18 +60,6 @@ const SettingsUser = () => {
         setStatus('PAUSED');
         setSuccess("Your profile has been paused.");
         setIsConfirming(false);
-        
-        {/*
-        const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) {
-          console.error("Error signing out:", signOutError);
-          setError("Error signing out: " + signOutError.message);
-        } else {
-          console.log("Attempt");
-          navigate('/login'); // Navigate to /login after signing out
-        }
-          */}
-        
       }
     } catch (err) {
       console.error("Error updating status:", err);
@@ -79,7 +68,7 @@ const SettingsUser = () => {
   };
 
   const handleCancelPause = () => {
-    setIsConfirming(false); // Close the confirmation dialog
+    setIsConfirming(false);
   };
 
   return (
@@ -118,9 +107,8 @@ const SettingsUser = () => {
             </button>
           ))}
         </div>
-
       </div>
-  
+
       {/* Confirmation Dialog */}
       {isConfirming && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -132,7 +120,9 @@ const SettingsUser = () => {
             }}
           >
             <h2 className="text-lg font-semibold text-gray-800">Confirm Pause</h2>
-            <p className="mt-2 text-sm text-gray-600">Are you sure you want to pause your profile? This action can be undone.</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to pause your profile? This action can be undone.
+            </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
                 className="px-4 py-2 text-gray-800 rounded-lg"
@@ -157,6 +147,6 @@ const SettingsUser = () => {
       )}
     </div>
   );
-};  
+};
 
 export default SettingsUser;
