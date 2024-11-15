@@ -80,14 +80,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       })
       .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
-
-    // Call signUpWithEmail function if all validations pass
-    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
-      .then(() => {
-        setSignupError('');
-      })
-      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
-  };
   
   const handleEmailChange = (e) => {
     const email = e.target.value;
