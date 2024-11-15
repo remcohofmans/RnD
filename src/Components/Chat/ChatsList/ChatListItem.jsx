@@ -97,7 +97,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
           </h3>
           {lastMessage && (
             <p className="text-sm text-rose-500 truncate">
-              {lastMessage.message}
+              {lastMessage.message.length > 30 ? lastMessage.message.slice(0, 30) + '...' : lastMessage.message}
             </p>
           )}
         </div>
