@@ -175,7 +175,7 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
             </p>
             <div className="flex items-center justify-center space-x-3 mt-2">
               <p className="text-gray-800 font-medium">
-                "{currentSuggestion}"
+                "{currentSuggestion} "
               </p>
               <button
                 onClick={handleRefreshSuggestion}
