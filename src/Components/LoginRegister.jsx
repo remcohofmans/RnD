@@ -379,7 +379,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                   </div>
                 </div>
 
-                {/* Terms Agreement */}
+                {/* Terms & Conditions Agreement */}
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -388,7 +388,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                   />
                   <label className="ml-2 text-gray-600 text-sm">
-                    Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>
+                    Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>.
+                  </label>
+                </div>
+                
+                {/* Privacy Policy Agreement */}
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={isTermsAgreed}
+                    onChange={(e) => setIsTermsAgreed(e.target.checked)}
+                    className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
+                  />
+                  <label className="ml-2 text-gray-600 text-sm">
+                    Ik heb acht genomen van en ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Privacy Policy</a>.
                   </label>
                 </div>
 
