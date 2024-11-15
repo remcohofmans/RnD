@@ -218,6 +218,16 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
                 {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
 
+                             {/* Forgot Password Link */}
+                             <div className="text-right mt-2">
+                  <a
+                    href="/forgotPassword"
+                    className="text-[#e11d48] hover:text-[#be123c] text-sm"
+                  >
+                    Wachtwoord vergeten?
+                  </a>
+                </div>
+
                 <button
                   type="submit"
                   // disabled={loading}
