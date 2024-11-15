@@ -1,235 +1,418 @@
-import React, { useState } from 'react';
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
-import butterflyImage from '../Assets/Butterfly.png';
+import React, { useState, useEffect } from 'react';
+import happyPeople from '../Assets/happyPeople.png';
+import butterflyIcon from '../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
+import { Mail, Lock } from 'lucide-react';
 
-const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
+const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [facilityCode, setFacilityCode] = useState('');
+  const [selectedFacility, setSelectedFacility] = useState('');
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [signupError, setSignupError] = useState('');
+
+  // State for feedback
+  const [emailFeedback, setEmailFeedback] = useState('');
+  const [passwordFeedback, setPasswordFeedback] = useState('');
+  const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+  
     if (!loginEmail || !loginPassword) {
-      console.error("Please provide email and password for login.");
+      setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
-    loginWithEmail(loginEmail, loginPassword);
+  
+    loginWithEmail(loginEmail, loginPassword)
+      .then(() => {
+        setLoginError(''); // Clear error if successful
+      })
+      .catch((error) => {
+        console.error("Login Error:", error);  // Debug the error here
+        setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
+      });
+  };
+  
+  const handleSignUpSubmit = (e) => {
+
+    console.log("Sign up form submitted");  // Debugging line
+
+    e.preventDefault();
+    let error = "";
+  
+    // Check if all fields are filled
+    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
+      error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
+    } else if (signUpPassword !== confirmPassword) {
+      // Check if passwords match
+      error = "Paswoorden komen niet overeen.";
+    } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
+      error = "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
+    } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
+      error = "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
+    } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
+      error = "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
+    }
+
+    // If there is any error, set the error message and return
+    if (error) {
+      setSignupError(error);
+      return;
+    }
+
+    // Call signUpWithEmail function if all validations pass
+    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
+      .then(() => {
+        setSignupError('');
+      })
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
+  };
+  
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    if (isLogin) {
+      setLoginEmail(email);  // Update loginEmail if it's the login form
+    } else {
+      setSignUpEmail(email);  // Update signUpEmail if it's the signup form
+    }
+  
+    // Simple email validation feedback for both fields
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailFeedback('Voer een geldig e-mailadres in.');
+    } else {
+      setEmailFeedback('');
+    }
+  };  
+
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
+  
+    if (isLogin) {
+      // Update login password state if in login mode
+      setLoginPassword(password);
+      // // Clear any existing feedback for login passwords
+      // setPasswordFeedback('');
+    } else {
+      // Update signup password state if in registration mode
+      setSignUpPassword(password);
+    }
+
+    // Simple password validation feedback for registration
+    if (password.length < 6) {
+      setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+    } else {
+      setPasswordFeedback('');
+    }
+  };  
+
+  const handleConfirmPasswordChange = (e) => {
+    const password = e.target.value;
+    setConfirmPassword(password);
+
+    // Simple password validation feedback for registration
+    if (password.length < 6) {
+      setConfirmPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+    } else {
+      setConfirmPasswordFeedback('');
+    }
   };
 
-  const handleSignUpSubmit = (e) => {
-    e.preventDefault();
-    if (!signUpEmail || !signUpPassword || !isTermsAgreed) {
-      console.error("Please provide email, password and agree to the terms for sign up.");
-      return;
+  useEffect(() => {
+    if (error) {
+      setLoginError(error); // Update local state if there's an error from App.js
     }
-    signUpWithEmail(signUpEmail, signUpPassword);
-  };
+  }, [error]);
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Half */}
-      <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
-        <div
-          className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
-          style={{ backgroundImage: `url(${butterflyImage})`, filter: 'blur(5px)' }}
-        ></div>
+    <div className="min-h-screen flex flex-col">
 
-        {/* Title with Animation */}
-        <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
-          <h1 className="text-[#ffe4e6] text-6xl font-bold mb-4 font-cursive">V(l)inder</h1>
-          <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
+      {/* Split Layout Container */}
+      <div className="flex flex-1">
+        {/* Left Half */}
+        <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
+          <div
+            className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
+            style={{ backgroundImage: `url(${happyPeople})`, filter: 'blur(5px)' }}
+          ></div>
 
-          {/* Registration Info Prompt */}
-          {showRegisterInfo && (
-            <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-md mx-auto">
-              <h2 className="font-bold text-lg text-center text-[#e11d48]">Join us and let your love story unfold...</h2>
-              <ul className="list-disc list-inside text-left mt-2">
-                <li>❤️ <strong>Inclusive:</strong> Designed with accessibility in mind.</li>
-                <li>❤️ <strong>Supportive Community:</strong> Meet people who understand your journey.</li>
-                <li>❤️ <strong>Safe & Secure:</strong> Your privacy is our priority.</li>
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+          {/* Title with Animation */}
+          <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
+            <h1 className="text-[#ffe4e6] text-6xl font-bold mb-4">V(l)inder</h1>
+            <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
 
-      {/* Right Half */}
-      <div className="w-1/2 flex flex-col justify-center p-12 bg-[#fffff] shadow-lg">
-        <div className="w-full max-w-md mx-auto">
-          <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Login' : 'Sign Up'}</h2>
-
-          {isLogin ? (
-            <form onSubmit={handleLoginSubmit} className="space-y-6">
-              {/* Email Input */}
-              <div className="relative">
-                <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  onFocus={() => setFocusEmail(true)}
-                  onBlur={() => setFocusEmail(false)}
-                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                  placeholder="Email"
-                  required
-                />
-              </div>
-
-              {/* Password Input */}
-              <div className="relative">
-                <FaLock className={`absolute left-3 top-3 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
-                <input
-                  type="password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  onFocus={() => setFocusPassword(true)}
-                  onBlur={() => setFocusPassword(false)}
-                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
-              >
-                Login
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignUpSubmit} className="space-y-6">
-              {/* Email Input */}
-              <div className="relative">
-                <FaEnvelope className={`absolute left-3 top-3 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
-                <input
-                  type="email"
-                  value={signUpEmail}
-                  onChange={(e) => setSignUpEmail(e.target.value)}
-                  onFocus={() => setFocusEmail(true)}
-                  onBlur={() => setFocusEmail(false)}
-                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                  placeholder="Email"
-                  required
-                />
-              </div>
-
-              {/* Password Input */}
-              <div className="relative">
-                <FaLock className={`absolute left-3 top-3 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
-                <input
-                  type="password"
-                  value={signUpPassword}
-                  onChange={(e) => setSignUpPassword(e.target.value)}
-                  onFocus={() => setFocusPassword(true)}
-                  onBlur={() => setFocusPassword(false)}
-                  className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-
-              {/* Facility Dropdown */}
-              <div className="mb-6">
-                <label htmlFor="facility" className="text-lg text-[#be123c]">
-                  Choose your nearest facility:
-                </label>
-                <div className="relative mt-2">
-                  <select
-                    id="facility"
-                    className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none"
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Select a facility
-                    </option>
-                    <option value="facility1">Facility 1</option>
-                    <option value="facility2">Facility 2</option>
-                    <option value="facility3">Facility 3</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
-                    </svg>
-                  </div>
+            {/* Registration Info Prompt */}
+            {showRegisterInfo && (
+              <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-full mx-auto">
+                <h2 className="font-bold text-lg text-center text-[#e11d48]">Sluit je nu aan en fladder het geluk tegemoet...</h2>
+                <div className="flex justify-center items-center mt-2 gap-4 w-full">
+                  <span className="flex items-center">
+                    ❤️ <strong className="ml-2">Inclusief</strong>
+                  </span>
+                  <span className="flex items-center">
+                    ❤️ <strong className="ml-2">Veilig</strong>
+                  </span>
+                  <span className="flex items-center">
+                    ❤️ <strong className="ml-2">Betrouwbaar</strong>
+                  </span>
                 </div>
               </div>
-
-              {/* Terms Agreement */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={isTermsAgreed}
-                  onChange={(e) => setIsTermsAgreed(e.target.checked)}
-                  className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
-                />
-                <label className="ml-2 text-gray-600">
-                  I agree to the <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
-                disabled={!isTermsAgreed}
-              >
-                Sign Up
-              </button>
-            </form>
-          )}
-
-          <div className="text-center mt-8">
-            {isLogin ? (
-              <p className="text-gray-600">
-                Don't have an account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
-                >
-                  Sign Up
-                </button>
-              </p>
-            ) : (
-              <p className="text-gray-600">
-                Already have an account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
-                >
-                  Login
-                </button>
-              </p>
             )}
           </div>
         </div>
 
-        {/* Modal for Terms and Conditions */}
+        {/* Right Half */}
+        <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fbf6f0' }} >
+          <div className="w-full max-w-md mx-auto">
+            <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
+
+            {/* Position the butterfly icon in the top-right corner of the screen */}
+            <img
+              src={butterflyIcon}
+              alt="Butterfly Icon"
+              className="absolute top-4 right-4 w-12 h-12 opacity-70"
+            />
+
+            {isLogin ? (
+              <form onSubmit={handleLoginSubmit} className="space-y-6">
+                {/* Email Input */}
+                <div className="relative">
+                  <Mail className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={handleEmailChange}
+                    onFocus={() => setFocusEmail(true)}
+                    onBlur={() => setFocusEmail(false)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+
+                {emailFeedback && <p className="text-red-600 text-sm">{emailFeedback}</p>}
+
+                {/* Password Input */}
+                <div className="relative">
+                  <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
+                  <input
+                    type="password"
+                    value={loginPassword}
+                    onChange={handlePasswordChange}
+                    onFocus={() => setFocusPassword(true)}
+                    onBlur={() => setFocusPassword(false)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Paswoord"
+                    required
+                  />
+                </div>
+
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+
+                {/* Forgot Password Link */}
+                <div className="text-right mt-2">
+                  <a
+                    href="/forgotPassword"
+                    className="text-[#e11d48] hover:text-[#be123c] text-sm"
+                  >
+                    Wachtwoord vergeten?
+                  </a>
+                </div>
+
+                <button
+                  type="submit"
+                  // disabled={loading}
+                  className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
+                >
+                  Log in
+                </button>
+
+                {/* Display login error if any */}
+                {loginError && <p className="text-red-600 text-xs mt-4">{loginError}</p>}
+
+              </form>
+            ) : (
+              <form onSubmit={handleSignUpSubmit} className="space-y-6">
+                {/* Email Input */}
+                <div className="relative">
+                  <Mail className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
+                  <input
+                    type="email"
+                    value={signUpEmail}
+                    onChange={handleEmailChange}
+                    onFocus={() => setFocusEmail(true)}
+                    onBlur={() => setFocusEmail(false)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+
+                {/* Password Input */}
+                <div className="relative">
+                  <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
+                  <input
+                    type="password"
+                    value={signUpPassword}
+                    onChange={handlePasswordChange}
+                    onFocus={() => setFocusPassword(true)}
+                    onBlur={() => setFocusPassword(false)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Paswoord"
+                    required
+                  />
+                </div>
+
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+
+                <div className="relative">
+                  <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Bevestig Paswoord"
+                    required
+                  />
+                </div>
+
+                {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
+
+                {/* Facility Code Instructions */}
+                {!isLogin && (
+                  <div className="mb-4 text-sm text-gray-600">
+                    <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                  </div>
+                )}
+
+                {/* Facility Code Input */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={facilityCode}
+                    onChange={(e) => setFacilityCode(e.target.value)}
+                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    placeholder="Faciliteitscode"
+                    required
+                  />
+                </div>
+
+                {/* Facility Dropdown */}
+                <div className="mb-6">
+                  <label htmlFor="facility" className="text-sm text-[#be123c]">
+                    Duid aan in welke faciliteit u verblijft:
+                  </label>
+                  <div className="relative mt-2">
+                  <select
+                    id="facility"
+                    value={selectedFacility}
+                    onChange={(e) => setSelectedFacility(e.target.value)}
+                    className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+                    required
+>
+                      <option value="" disabled selected>
+                        Selecteer uw faciliteit
+                      </option>
+                      <option value="facility1">Faciliteit 1</option>
+                      <option value="facility2">Faciliteit 2</option>
+                      <option value="facility3">Faciliteit 3</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Terms Agreement */}
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={isTermsAgreed}
+                    onChange={(e) => setIsTermsAgreed(e.target.checked)}
+                    className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
+                  />
+                  <label className="ml-2 text-gray-600 text-sm">
+                    Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
+                  disabled={!isTermsAgreed || signUpPassword !== confirmPassword || !facilityCode}
+                >
+                  Registreer
+                </button>
+
+                {/* Error message display */}
+                {signupError && (
+                  <p className="text-red-600 text-xs mt-4">{signupError}</p>
+                )}
+                
+              </form>
+            )}
+
+            <div className="text-center mt-8">
+              {isLogin ? (
+                <p className="text-gray-600">
+                  Hebt u nog geen account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
+                  >
+                    Registreer hier
+                  </button>
+                  <br />
+                  <span className="text-sm font-semibold mt-2 block">
+                    (faciliteitscode vereist)
+                  </span>
+                </p>
+              ) : (
+                <p className="text-gray-600">
+                  Hebt u al een account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
+                  >
+                    Login
+                  </button>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
         {showTermsModal && (
           <div className="fixed inset-0 bg-[#881337] bg-opacity-70 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg w-11/12 max-w-lg p-6">
-              <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Terms and Conditions</h2>
+              <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Algemene Voorwaarden</h2>
               <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
                 <p className="text-gray-600">
-                  Welcome to our platform. By accessing and using our services, you agree to comply with the following terms and conditions:
+                  Welkom op ons platform. Door onze diensten te gebruiken, stemt u ermee in zich te houden aan de volgende voorwaarden:
                   <br /><br />
-                  1. <strong>Acceptance of Terms:</strong> By creating an account, you agree to be bound by these terms and any amendments.
+                  1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, gaat u akkoord met deze voorwaarden en eventuele wijzigingen.
                   <br /><br />
-                  2. <strong>Privacy Policy:</strong> Your personal data is protected under our privacy policy.
+                  2. <strong>Privacybeleid:</strong> Uw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
                   <br /><br />
-                  3. <strong>Account Responsibilities:</strong> You are responsible for maintaining the confidentiality of your account.
+                  3. <strong>Accountverantwoordelijkheden:</strong> U zowel als de begeleider die u toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van uw account.
                   <br /><br />
-                  4. <strong>Prohibited Activities:</strong> You may not engage in illegal or harmful activities on this platform.
+                  4. <strong>Verboden Activiteiten:</strong> U mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
                   <br /><br />
-                  5. <strong>Termination:</strong> We reserve the right to suspend or terminate your account at any time.
+                  5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om uw account op elk moment te schorsen of te beëindigen.
                   <br /><br />
-                  And so on...
+                  Enzovoort...
                 </p>
               </div>
               <div className="flex items-center mb-6">
@@ -241,7 +424,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   onChange={() => setIsTermsAgreed(!isTermsAgreed)}
                 />
                 <label htmlFor="agreeTerms" className="text-gray-600">
-                  I have read and agree to the terms and conditions
+                  Ik heb de algemene voorwaarden gelezen en ga akkoord
                 </label>
               </div>
               <button
@@ -249,7 +432,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                 disabled={!isTermsAgreed}
               >
-                Close
+                Weiger
               </button>
             </div>
           </div>

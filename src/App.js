@@ -5,10 +5,17 @@ import LoginRegister from './Components/LoginRegister';
 import Home from './Components/Home';
 import ChatsPage from './pages/ChatsPage';
 import Feed from './Components/Feed'
+import SettingsUser from './Components/SettingsUser';
+import PasswordChangeForm from './Components/PasswordChangeForm';
+import UserFilterForm from './Components/UserFilterForm';
+import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
 import SubscriptionPlans from './Components/SubscriptionPlans';
+import PasswordRecovery from './Components/PasswordRecovery';
+import PasswordUpdate from './Components/PasswordUpdate';
 
-export default function App() {
+
+export default function App() { 
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(false);
@@ -43,10 +50,10 @@ export default function App() {
 
     if (error) {
       setError(error.message);
-      console.error('Error signing up with email/password:', error.message);
     } else {
-      console.log('Signed up successfully:', data);
-      setUser(data.user); // Set the user after successful sign-up
+      console.log('Logged in successfully with email/password:', data);
+      setUser(data.user); // Set the user after successful login
+      setError(''); // Clear any previous errors on success
     }
     setLoading(false);
   }
@@ -92,13 +99,29 @@ export default function App() {
               logout={logout} 
               email={user?.email} /> : <Navigate to="/login" />} />
               {/* Login/Register route */}
-        <Route path="/login" element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/chats" element={<ChatsPage/>} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} error={error} />}
+        />
+        <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
-        <Route path="/feed" element={<Feed />} />
+        <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
+        <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+
+        {/* Route to UserFilterForm */}
+        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        
+        {/* Route to UploadFoto */}
+        <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
         <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
+        <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
+
+        <Route path="/updatePassword" element={<PasswordUpdate />} /> 
+        
       </Routes>
     </Router>
   );
