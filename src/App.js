@@ -10,8 +10,10 @@ import PasswordChangeForm from './Components/PasswordChangeForm';
 import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
+import SubscriptionPlans from './Components/SubscriptionPlans';
 import PasswordRecovery from './Components/PasswordRecovery';
 import PasswordUpdate from './Components/PasswordUpdate';
+
 
 export default function App() { 
   // Employ useState -a React built-in webhook- to  store the user object in the component's state
@@ -114,6 +116,7 @@ export default function App() {
         <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
+        <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
         <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
 
