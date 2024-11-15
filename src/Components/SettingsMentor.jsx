@@ -34,16 +34,11 @@ const SettingsMentor = ({ logout }) => {
         throw new Error('Failed to delete user data.');
       }
 
-      setLoading(true);
-      const { error } = await supabase.auth.signOut(); // Ensure we handle any errors from signOut
-      if (error) {
-        console.error('Error logging out:', error);
-      } else {
-        setUser(null);  // Reset user state on successful logout
-      }
-      setLoading(false);
-      navigate('/login');
-
+      logout();
+      setTimeout(() => {
+        navigate('/login');
+        setSuccess('Your account has been deleted.');
+      }, 2000);
       setSuccess('Your account has been deleted.');
     } catch (err) {
       setError(err.message);
