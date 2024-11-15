@@ -9,7 +9,24 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [matchedUserId, setMatchedUserId] = useState(null);
   const [error, setError] = useState(null);
+  const [showSuggestion, setShowSuggestion] = useState(false);
   const messagesContainerRef = useRef(null);
+
+  const suggestedMessages = [
+    "Wat doe je graag in je vrije tijd?",
+    "Heb je een favoriete plek om te ontspannen?",
+    "Wat was het leukste dat je deze week hebt gedaan?",
+    "Heb je onlangs een goede film gezien?",
+    "Wat voor muziek luister je het liefst?",
+    "Heb je leuke plannen voor het weekend?",
+    "Wat is je favoriete manier om een dag door te brengen?",
+    "Als je één ding zou kunnen leren, wat zou dat zijn?",
+    "Wat is het mooiste reisbestemming die je ooit hebt bezocht?",
+    "Heb je een favoriete hobby waar je veel tijd mee doorbrengt?"
+  ];
+  
+
+  const randomSuggestion = suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)];
 
   useEffect(() => {
     fetchCurrentUser();
@@ -20,6 +37,10 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    setShowSuggestion(messages.length === 0);
   }, [messages]);
 
   const fetchCurrentUser = async () => {
@@ -43,7 +64,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       if (error) throw error;
 
       if (data) {
-        // Determine which ID is the matched user's ID
         const { data: { user } } = await supabase.auth.getUser();
         const otherUserId = data.id === user.id ? data.matched_user_id : data.id;
         setMatchedUserId(otherUserId);
@@ -66,6 +86,7 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       setError('Failed to load messages');
     } else {
       setMessages(data);
+      setShowSuggestion(data.length === 0);
     }
   };
 
@@ -124,6 +145,11 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     }
   };
 
+  const handleSendSuggestion = () => {
+    sendMessage(randomSuggestion);
+    setShowSuggestion(false);
+  };
+
   const scrollToBottom = () => {
     messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -136,9 +162,28 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
       <ChatHeader otherUserName={otherUserName} otherUserId={matchedUserId}/>
       <div className="flex-grow overflow-auto p-4" ref={messagesContainerRef}>
+        {showSuggestion && (
+          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center mb-4">
+            <p className="text-gray-600 text-sm">
+              Suggested message to start the conversation:
+            </p>
+            <div className="flex items-center justify-center space-x-3 mt-2">
+              <p className="text-gray-800 font-medium">
+                "{randomSuggestion}"
+              </p>
+              <button 
+                onClick={handleSendSuggestion}
+                className="px-4 py-1.5 bg-rose-500 text-white text-sm rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        )}
         <MessageList 
           messages={messages}
           currentUser={currentUser}
+          matchId={matchId}
         />
       </div>
       <MessageInput onSendMessage={sendMessage} />
