@@ -4,9 +4,6 @@ import AgeRangeControl from './AgeRangeControl';
 import { supabase } from '../supabaseClient';
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../Components/filter/AvailableHobbiesPage';
 
-// Define a global variable for currentID (this can be dynamically set based on your app logic)
-let currentID = 1; // Set the initial ID, this can be dynamically set based on logged-in user or session
-
 const FilterForm = () => {
   const [formState, setFormState] = useState({
     interest: '',
@@ -15,15 +12,64 @@ const FilterForm = () => {
     maxAge: '35',
   });
   const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]);  // Initialize as empty array
+  const [selectedHobbies, setSelectedHobbies] = useState([]); 
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const interestOptions = [
     { value: 'man', label: 'Man 🤷‍♂️' },
     { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
     { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
   ];
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUserId(session.user.id);
+        console.log("Session user ID:", session.user.id);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const fetchData = async () => {
+    if (!userId) return;
+  
+    console.log('Fetching preferences for user:', userId);
+  
+    try {
+      const { data, error } = await supabase
+        .from('userpreferences')
+        .select('*')
+        .eq('id', userId)
+        .single();
+  
+      if (error) {
+        console.error('Error fetching data:', error);
+      } else {
+        console.log('Fetched data:', data);
+        setFormState({
+          interest: data.interest || '',
+          distance: (data.distance || 5).toString(),
+          minAge: (data.min_age || 18).toString(),
+          maxAge: (data.max_age || 35).toString(),
+        });
+  
+        // Parse the hobbies from the stringified JSON array to an actual array
+        const hobbies = data.hobbies ? JSON.parse(data.hobbies) : [];
+        setSelectedHobbies(hobbies);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -40,30 +86,26 @@ const FilterForm = () => {
     e.preventDefault();
     if (validateForm()) {
       const dataToSubmit = {
+        id: userId,
         interest: formState.interest,
         min_age: parseInt(formState.minAge),
         max_age: parseInt(formState.maxAge),
         distance: parseInt(formState.distance),
-        hobbies: selectedHobbies, // storing hobbies as an array
+        hobbies: selectedHobbies,
       };
 
       try {
         const { data, error } = await supabase
-          .from('userpreferences') // replace 'userpreferences' with the actual table name
-          .select('*')
-          .eq('id', currentID) // Use the global variable currentID
+          .from('userpreferences')
+          .select('id')
+          .eq('id', userId)
           .single();
 
-        if (error && error.code !== 'PGRST100') {
-          console.error('Error fetching data:', error);
-        }
-
         if (data) {
-          // Update existing entry
           const { data: updateData, error: updateError } = await supabase
             .from('userpreferences')
             .update(dataToSubmit)
-            .eq('id', currentID);
+            .eq('id', userId);
 
           if (updateError) {
             console.error('Error updating data:', updateError);
@@ -72,7 +114,6 @@ const FilterForm = () => {
             console.log('Form updated:', dataToSubmit);
           }
         } else {
-          // Insert new entry
           const { data: insertData, error: insertError } = await supabase
             .from('userpreferences')
             .insert([dataToSubmit]);
@@ -105,38 +146,14 @@ const FilterForm = () => {
     setSelectedHobbies((prev) => prev.filter((h) => h !== hobby));
   };
 
+  const handleAddHobby = (hobby) => {
+    setSelectedHobbies((prev) => [...prev, hobby]);
+  };
+
   const getHobbyIcon = (hobbyName) => {
     const hobby = availableHobbies.find((h) => h.name === hobbyName);
     return hobby ? hobby.icon : '🎯';
   };
-
-  const fetchData = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('userpreferences') // replace 'userpreferences' with the actual table name
-        .select('*')
-        .eq('id', currentID) // Use the global variable currentID
-        .single();
-
-      if (error) {
-        console.error('Error fetching data:', error);
-      } else if (data) {
-        setFormState({
-          interest: data.interest || '',
-          distance: (data.distance || 5).toString(),
-          minAge: (data.min_age || 18).toString(),
-          maxAge: (data.max_age || 35).toString(),
-        });
-        setSelectedHobbies(data.hobbies || []); // Ensure it's an array
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -189,32 +206,34 @@ const FilterForm = () => {
           {errors.distance && <div className="text-red-500 text-sm">{errors.distance}</div>}
         </div>
 
+
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Wat zijn jou hobby's?</label>
+          <label className="block text-sm font-medium text-gray-700">Jouw hobby's</label>
           <div className="flex flex-wrap gap-2">
-            {selectedHobbies.map((hobby) => (
-              <span
-                key={hobby}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-rose-100 text-rose-800"
-              >
-                {getHobbyIcon(hobby)} {hobby}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveHobby(hobby)}
-                  className="ml-2 text-rose-500 hover:text-rose-700 focus:outline-none"
-                >
-                  &times;
-                </button>
-              </span>
-            ))}
-            <button
-              type="button"
-              onClick={() => setShowModal(true)}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none"
-            >
-              + Voeg hobby toe
-            </button>
+            {selectedHobbies.length > 0 ? (
+              selectedHobbies.map((hobby) => (
+                <div key={hobby} className="flex items-center bg-rose-100 text-rose-500 text-sm py-1 px-3 rounded-full">
+                  {getHobbyIcon(hobby)} {hobby}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveHobby(hobby)}
+                    className="ml-2 text-rose-500 hover:text-rose-700"
+                  >
+                    <span className="text-xl">x</span>
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">Je hebt nog geen hobby's geselecteerd</p>
+            )}
           </div>
+          <button
+            type="button"
+            onClick={() => setShowModal(true)}
+            className="text-blue-500 hover:text-blue-700"
+          >
+            Voeg hobby toe
+          </button>
           {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
         </div>
 
