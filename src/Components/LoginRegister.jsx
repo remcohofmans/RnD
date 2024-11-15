@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import happyPeople from '../Assets/happyPeople.png';
 import butterflyIcon from '../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
 
-const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
+const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [facilityCode, setFacilityCode] = useState('');
+  const [selectedFacility, setSelectedFacility] = useState('');
   const [focusEmail, setFocusEmail] = useState(false);
   const [focusPassword, setFocusPassword] = useState(false);
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
@@ -17,6 +19,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [signupError, setSignupError] = useState('');
+  const [isMentor, setIsMentor] = useState(false); // Tracks whether user is a mentor
+  const [mentorCode, setMentorCode] = useState('');
+
 
   // State for feedback
   const [emailFeedback, setEmailFeedback] = useState('');
@@ -25,35 +30,68 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+
     if (!loginEmail || !loginPassword) {
-      setLoginError("Please provide both email and password.");
+      setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
+
     loginWithEmail(loginEmail, loginPassword)
-      .catch(() => setLoginError("Invalid login credentials. Please try again."));
+      .then(() => {
+        setLoginError(''); // Clear error if successful
+      })
+      .catch((error) => {
+        console.error("Login Error:", error);  // Debug the error here
+        setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
+      });
   };
 
   const handleSignUpSubmit = (e) => {
+
+    console.log("Sign up form submitted");  // Debugging line
+
     e.preventDefault();
-    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed) {
-      console.error("Please provide email, password, confirm password, and agree to the terms for sign up.");
+    let error = "";
+
+    // Check if all fields are filled
+    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !facilityCode || !selectedFacility) {
+      error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
+    } else if (signUpPassword !== confirmPassword) {
+      // Check if passwords match
+      error = "Paswoorden komen niet overeen.";
+    } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
+      error = "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
+    } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
+      error = "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
+    } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
+      error = "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
+    }
+
+    // If there is any error, set the error message and return
+    if (error) {
+      setSignupError(error);
       return;
     }
-    if (signUpPassword !== confirmPassword) {
-      console.error("Passwords do not match.");
-      return;
-    }
-    signUpWithEmail(signUpEmail, signUpPassword)
-      .then(() => setSignupError(''))
-      .catch(() => setSignupError("Sign up failed. Please try again."));
+
+    // Call signUpWithEmail function if all validations pass
+    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
+      .then(() => {
+        setSignupError('');
+      })
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
-    setSignUpEmail(email);
-    // Simple email validation feedback
+    if (isLogin) {
+      setLoginEmail(email);  // Update loginEmail if it's the login form
+    } else {
+      setSignUpEmail(email);  // Update signUpEmail if it's the signup form
+    }
+
+    // Simple email validation feedback for both fields
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailFeedback('Please enter a valid email address.');
+      setEmailFeedback('Voer een geldig e-mailadres in.');
     } else {
       setEmailFeedback('');
     }
@@ -61,10 +99,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
-    setSignUpPassword(password);
-    // Simple password validation feedback
+
+    if (isLogin) {
+      // Update login password state if in login mode
+      setLoginPassword(password);
+      // // Clear any existing feedback for login passwords
+      // setPasswordFeedback('');
+    } else {
+      // Update signup password state if in registration mode
+      setSignUpPassword(password);
+    }
+
+    // Simple password validation feedback for registration
     if (password.length < 6) {
-      setPasswordFeedback('Password must be at least 6 characters long.');
+      setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
     } else {
       setPasswordFeedback('');
     }
@@ -73,13 +121,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const handleConfirmPasswordChange = (e) => {
     const password = e.target.value;
     setConfirmPassword(password);
-    // Confirm password feedback
-    if (password !== signUpPassword) {
-      setConfirmPasswordFeedback('Passwords do not match.');
+
+    // Simple password validation feedback for registration
+    if (password.length < 6) {
+      setConfirmPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
     } else {
       setConfirmPasswordFeedback('');
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setLoginError(error); // Update local state if there's an error from App.js
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -118,7 +173,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           </div>
         </div>
 
-
         {/* Right Half */}
         <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fbf6f0' }} >
           <div className="w-full max-w-md mx-auto">
@@ -148,13 +202,15 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {emailFeedback && <p className="text-red-600 text-sm">{emailFeedback}</p>}
+
                 {/* Password Input */}
                 <div className="relative">
                   <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
                   <input
                     type="password"
                     value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
                     className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
@@ -163,12 +219,29 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+
+                {/* Forgot Password Link */}
+                <div className="text-right mt-2">
+                  <a
+                    href="/forgotPassword"
+                    className="text-[#e11d48] hover:text-[#be123c] text-sm"
+                  >
+                    Wachtwoord vergeten?
+                  </a>
+                </div>
+
                 <button
                   type="submit"
+                  // disabled={loading}
                   className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
                 >
                   Log in
                 </button>
+
+                {/* Display login error if any */}
+                {loginError && <p className="text-red-600 text-xs mt-4">{loginError}</p>}
+
               </form>
             ) : (
               <form onSubmit={handleSignUpSubmit} className="space-y-6">
@@ -202,6 +275,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+
                 <div className="relative">
                   <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
                   <input
@@ -214,33 +289,95 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   />
                 </div>
 
+                {/* Mentor Checkbox */}
+                <div className="mt-4 mb-6">
+                  <label className="mb-6 flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={isMentor}
+                      onChange={() => setIsMentor(!isMentor)}
+                    />
+                    <span><b>Ik ben een mentor</b></span>
+                  </label>
+
+                {/* Facility Code (only for non-mentors) */}
+                {!isMentor && (
+                  <>
+                    {/* Facility Code Instructions */}
+                    {!isLogin && (
+                      <div className="mb-4 text-lg text-gray-600">
+                        <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                      </div>
+                    )}
+
+                    {/* Facility Code Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={facilityCode}
+                        onChange={(e) => setFacilityCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Faciliteitscode"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Facility Code (only for non-mentors) */}
+                {isMentor && (
+                  <>
+                    {/* Facility Code Instructions */}
+                    {!isLogin && (
+                      <div className="mb-4 text-lg text-gray-600">
+                        <span>Geef uw mentor ID in. (*)</span>
+                      </div>
+                    )}
+
+                    {/* Mentor Code Input */}
+                    <div className="relative mb-6">
+                      <input
+                        type="text"
+                        value={mentorCode}
+                        onChange={(e) => setMentorCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Mentorcode"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+                </div>
+
                 {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
 
-      {/* Facility Dropdown */}
-      <div className="mb-6">
-        <label htmlFor="facility" className="text-lg text-[#be123c]">
-          Duid aan in welke faciliteit u verblijft:
-        </label>
-        <div className="relative mt-2">
-          <select
-            id="facility"
-            className="w-full py-4 pl-4 pr-10 text-lg border border-gray-300 rounded-lg bg-gray-100 appearance-none"
-            required
-          >
-            <option value="" disabled selected>
-              Selecteer uw faciliteit
-            </option>
-            <option value="facility1">Facility 1</option>
-            <option value="facility2">Facility 2</option>
-            <option value="facility3">Facility 3</option>
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
-            </svg>
-          </div>
-        </div>
-      </div>
+                {/* Facility Dropdown */}
+                <div className="mb-6">
+                  <label htmlFor="facility" className="text-sm text-[#be123c]">
+                    Duid aan in welke faciliteit u verblijft:
+                  </label>
+                  <div className="relative mt-2">
+                    <select
+                      id="facility"
+                      value={selectedFacility}
+                      onChange={(e) => setSelectedFacility(e.target.value)}
+                      className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Selecteer uw faciliteit
+                      </option>
+                      <option value="facility1">Faciliteit 1</option>
+                      <option value="facility2">Faciliteit 2</option>
+                      <option value="facility3">Faciliteit 3</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Terms Agreement */}
                 <div className="flex items-center">
@@ -250,7 +387,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                   />
-                  <label className="ml-2 text-gray-600">
+                  <label className="ml-2 text-gray-600 text-sm">
                     Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>
                   </label>
                 </div>
@@ -258,42 +395,48 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 <button
                   type="submit"
                   className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
-                  disabled={!isTermsAgreed || signUpPassword !== confirmPassword}
+                  disabled={!isTermsAgreed || signUpPassword !== confirmPassword || !facilityCode}
                 >
                   Registreer
                 </button>
+
+                {/* Error message display */}
+                {signupError && (
+                  <p className="text-red-600 text-xs mt-4">{signupError}</p>
+                )}
+
               </form>
             )}
 
-    <div className="text-center mt-8">
-            {isLogin ? (
-              <p className="text-gray-600">
-                Hebt u nog geen account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
-                >
-                  Registreer hier
-                </button>
-                <br />
-                <span className="text-sm font-semibold mt-2 block">
-                  (faciliteitscode vereist)
-                </span>
-              </p>
-            ) : (
-              <p className="text-gray-600">
-                Hebt u al een account?{' '}
-                <button
-                  className="text-[#e11d48] hover:text-[#be123c] font-bold"
-                  onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
-                >
-                  Login
-                </button>
-              </p>
-            )}
+            <div className="text-center mt-8">
+              {isLogin ? (
+                <p className="text-gray-600">
+                  Hebt u nog geen account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
+                  >
+                    Registreer hier
+                  </button>
+                  <br />
+                  <span className="text-sm font-semibold mt-2 block">
+                    (faciliteitscode vereist)
+                  </span>
+                </p>
+              ) : (
+                <p className="text-gray-600">
+                  Hebt u al een account?{' '}
+                  <button
+                    className="text-[#e11d48] hover:text-[#be123c] font-bold"
+                    onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
+                  >
+                    Login
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
-  </div>
-</div>
+        </div>
 
         {showTermsModal && (
           <div className="fixed inset-0 bg-[#881337] bg-opacity-70 flex items-center justify-center z-50">
@@ -333,7 +476,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                 disabled={!isTermsAgreed}
               >
-                Sluit
+                Weiger
               </button>
             </div>
           </div>
