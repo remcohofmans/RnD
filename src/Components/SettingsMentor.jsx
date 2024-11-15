@@ -1,14 +1,51 @@
 import React, { useState } from 'react';
+import { supabase } from '../lib/helper/supabaseClient'; 
+import { useNavigate } from 'react-router-dom';
 import TopNavigationBar from './TopNavigationBar.jsx';
 
-const SettingsMentor = () => {
+const SettingsMentor = ({ logout }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const navigate = useNavigate();
+
+  const handleDeleteAccount = async () => {
+    try {
+      setError(null);
+      setSuccess(null);
+
+      // Fetch the current user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('Unable to fetch user.');
+      }
+
+      // Delete the user's data from the database
+      const { error: deleteError } = await supabase
+        .from('users') // Replace 'users' with your actual table name
+        .delete()
+        .eq('id', user.id); // Assumes 'id' is the primary key and matches the user ID
+
+      if (deleteError) {
+        throw new Error('Failed to delete user data.');
+      }
+
+      // Sign the user out after deletion
+      logout();
+      navigate('/login');
+
+      setSuccess('Your account has been deleted.');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div>
-
       <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
         <div
           className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
@@ -55,7 +92,9 @@ const SettingsMentor = () => {
             }}
           >
             <h2 className="text-lg font-semibold text-gray-800">Confirm Deletion</h2>
-            <p className="mt-2 text-sm text-gray-600">Are you sure you want to delete your account? This action cannot be undone.</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete your account? This action cannot be undone.
+            </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
                 className="px-4 py-2 text-gray-800 rounded-lg"
@@ -72,7 +111,7 @@ const SettingsMentor = () => {
                 style={{ backgroundColor: '#f43f5e' }}
                 onClick={() => {
                   setShowConfirmation(false);
-                  setSuccess('Account deletion confirmed! (frontend only)');
+                  handleDeleteAccount();
                 }}
               >
                 Confirm
