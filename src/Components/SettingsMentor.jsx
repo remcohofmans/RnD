@@ -5,16 +5,17 @@ import TopNavigationBar from './TopNavigationBar.jsx';
 
 const SettingsMentor = ({ logout }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleDeleteAccount = async () => {
     try {
       setError(null);
       setSuccess(null);
 
-      // Fetch the current user
       const {
         data: { user },
         error: userError,
@@ -24,18 +25,23 @@ const SettingsMentor = ({ logout }) => {
         throw new Error('Unable to fetch user.');
       }
 
-      // Delete the user's data from the database
       const { error: deleteError } = await supabase
-        .from('users') // Replace 'users' with your actual table name
+        .from('users') // Replace with your table name
         .delete()
-        .eq('id', user.id); // Assumes 'id' is the primary key and matches the user ID
+        .eq('id', user.id);
 
       if (deleteError) {
         throw new Error('Failed to delete user data.');
       }
 
-      // Sign the user out after deletion
-      logout();
+      setLoading(true);
+      const { error } = await supabase.auth.signOut(); // Ensure we handle any errors from signOut
+      if (error) {
+        console.error('Error logging out:', error);
+      } else {
+        setUser(null);  // Reset user state on successful logout
+      }
+      setLoading(false);
       navigate('/login');
 
       setSuccess('Your account has been deleted.');
