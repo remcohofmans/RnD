@@ -106,9 +106,12 @@ const Home = ({ user, loggedIn, logout, email }) => {
         >
           {/* Content */}
           <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
-            <h1 className="text-5xl font-bold leading-tight text-[#881337]">Find Your Perfect Match</h1>
+            <h1 className="text-5xl font-bold leading-tight text-[#881337]">Vlinder</h1>
+            <h2 className="text-xl leading-relaxed max-w-lg mx-auto">
+              <b>Find Your Perfect Match</b>
+            </h2>
             <p className="text-lg leading-relaxed max-w-lg mx-auto">
-              Discover connections that matter, whether it's friendship, romance, or networking.
+              Smeed nieuwe vriendschappen, vind de liefde of ontdek spannende avonturen!
             </p>
           </div>
         </div>
