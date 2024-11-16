@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatsList } from '../Components/Chat/ChatsList/ChatsList.jsx';
 import { ChatWindow } from '../Components/Chat/ChatWindow/ChatWindow.jsx';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
 import { useMatches } from '../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../Components/common/LoadingSpinner.jsx';
+import TopNavigationBar from '../Components/TopNavigationBar.jsx';
+import useCheckUserProfile from '../hooks/useCheckUserProfile';
 
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const { currentUser, loading: authLoading, error: authError } = useSupabaseAuth();
+  const { checkUserProfile } = useCheckUserProfile(currentUser);
   const { matches, loading: matchesLoading, error: matchesError } = useMatches(currentUser?.id);
+
+  useEffect(() => {
+    checkUserProfile();
+  }, [checkUserProfile]);
 
   if (authLoading || matchesLoading) return <LoadingSpinner />;
   if (authError || matchesError) return <div className="text-red-500 text-center p-4">{authError || matchesError}</div>;
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-8">
+      {/* Top Navigation Bar */}
+      <TopNavigationBar />
+
+      {/* Main Content Container with padding to avoid overlay */}
+      <div className="container mx-auto py-8 mt-16"> {/* Added mt-16 for spacing below the navbar */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* ChatsList - Positioned to the left */}
           <div className="md:col-span-3">
