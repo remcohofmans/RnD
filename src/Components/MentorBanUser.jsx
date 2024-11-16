@@ -16,25 +16,6 @@ const MentorBanUser = () => {
   const usersPerPage = 10; // Users per page
   const navigate = useNavigate();
 
-  const sendGridMail = require('@sendgrid/mail');
-  sendGridMail.setApiKey('YOUR_SENDGRID_API_KEY'); // Replace with your actual SendGrid API key
-
-  const sendBanEmail = async (userEmail, userName) => {
-    const message = {
-      to: userEmail,
-      from: 'your-email@example.com', // Replace with your email or the sender's email
-      subject: 'Account Banned',
-      text: `Dear ${userName},\n\nYour account has been banned. If you have any questions, please contact support.`,
-    };
-
-    try {
-      await sendGridMail.send(message);
-      console.log('Email sent');
-    } catch (error) {
-      console.error('Error sending email:', error);
-    }
-  };
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -57,49 +38,34 @@ const MentorBanUser = () => {
   }, []);
 
   const handleBanUser = async (userId) => {
-    try {
-      // Fetch user details from the database using the userId
-      const { data: user, error: fetchError } = await supabase
-        .from('users')
-        .select('email, username')
-        .eq('id', userId)
-        .single(); // Assuming you want only one user
-  
-      if (fetchError || !user) {
-        throw new Error('Failed to fetch user details');
-      }
-  
-      // Delete the user from the database
-      const { error: banError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId);
-  
-      if (banError) {
-        throw new Error('Failed to ban user');
-      }
-  
-      // Update users list after banning
-      const { data } = await supabase.from('users').select('*');
-      setUsers(data);
-      setFilteredUsers(data); // Update the filtered list
-      setShowConfirmation(false);
-  
-      // Send the ban email notification
-      sendBanEmail(user.email, user.username);
-  
-      // Display success message
-      setSuccessMessage('User has been successfully banned.');
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 2000);
-  
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  try {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId);
+
+    if (error) {
+      throw new Error('Failed to ban user');
     }
-  };
+
+    const { data } = await supabase.from('users').select('*');
+    setUsers(data);
+    setFilteredUsers(data); // Update the filtered list
+    setShowConfirmation(false);
+
+    // Set success message
+    setSuccessMessage('User has been successfully banned.');
+
+    // Remove the success message after 2 seconds
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 2000); // 2000ms = 2 seconds
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const isMatchInSequence = (text, query) => {
     if (!text || !query) return false;
