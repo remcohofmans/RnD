@@ -1,232 +1,187 @@
 import React, { useState, useEffect } from 'react';
-import { useSwipeable } from 'react-swipeable';
+import { Wheel } from 'react-custom-roulette';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
-import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-
-const calculateAge = (birthday) => {
-  const birthDate = new Date(birthday);
-  const ageDiff = Date.now() - birthDate.getTime();
-  const ageDate = new Date(ageDiff);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
-
-const createPieSegment = (startAngle, endAngle, radius) => {
-  const start = {
-    x: Math.cos(startAngle) * radius,
-    y: Math.sin(startAngle) * radius,
-  };
-  const end = {
-    x: Math.cos(endAngle) * radius,
-    y: Math.sin(endAngle) * radius,
-  };
-  const largeArcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
-
-  return `M 0 0 L ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y} Z`;
-};
-
-const generateColors = (count) => {
-  const baseColors = [
-    '#fff1f2', // Rose 50 (light)
-    '#881337', // Rose 900 (dark)
-  ];
-
-  const colors = [];
-  for (let i = 0; i < count; i++) {
-    colors.push(baseColors[i % baseColors.length]);
-  }
-
-  return colors;
-};
 
 const Feed = () => {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isRandomizing, setIsRandomizing] = useState(false);
-  const [wheelRotation, setWheelRotation] = useState(0);
+  const [mustSpin, setMustSpin] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch users first
-        const { data: fetchedUsers, error: usersError } = await supabase
-          .from('users')
-          .select('id, birthday, facility, city, name, profilepictureBASE64')
-          .limit(10);
-        
-        if (usersError) throw usersError;
+  const USERS_TO_FETCH = 10;
 
-        // Fetch hobbies for each user
-        const usersWithHobbies = await Promise.all(
-          fetchedUsers.map(async (user) => {
-            try {
-              const { data: preferencesData, error: hobbiesError } = await supabase
-                .from('userpreferences')
-                .select('hobbies')
-                .eq('id', user.id)
-                .single();
-
-              // Ensure hobbies is an array and handle potential string/JSON parsing
-              let hobbies = [];
-              if (preferencesData?.hobbies) {
-                if (typeof preferencesData.hobbies === 'string') {
-                  try {
-                    hobbies = JSON.parse(preferencesData.hobbies);
-                  } catch (e) {
-                    console.warn('Failed to parse hobbies JSON:', e);
-                  }
-                } else if (Array.isArray(preferencesData.hobbies)) {
-                  hobbies = preferencesData.hobbies;
-                }
-              }
-
-              return {
-                id: user.id,
-                name: user.name,
-                location: user.city,
-                facility: user.facility,
-                birthday: user.birthday,
-                age: calculateAge(user.birthday),
-                profilePicture: user.profilepictureBASE64,
-                hobbies: hobbies
-              };
-            } catch (error) {
-              console.warn(`Error fetching hobbies for user ${user.id}:`, error);
-              return {
-                ...user,
-                age: calculateAge(user.birthday),
-                hobbies: []
-              };
-            }
-          })
-        );
-
-        setUsers(usersWithHobbies);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const handleRandomize = () => {
-    if (isRandomizing) return;
-
-    setIsRandomizing(true);
-    const spins = 3;
-    const segments = users.length;
-    const segmentAngle = 360 / segments;
-    const newIndex = Math.floor(Math.random() * users.length);
-
-    const targetRotation = (360 * spins) - segmentAngle * newIndex - 90;
-    setWheelRotation((prevRotation) => prevRotation + targetRotation);
-
-    setTimeout(() => {
-      setCurrentIndex(newIndex);
-      setIsRandomizing(false);
-    }, 3000);
+  const calculateAge = (birthday) => {
+    if (!birthday) return null;
+    const birthDate = new Date(birthday);
+    const ageDiff = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDiff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
-  const handlers = useSwipeable({
-    onSwipedLeft: handleRandomize,
-    onSwipedRight: handleRandomize,
-  });
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data: fetchedUsers, error: usersError } = await supabase
+        .from('users')
+        .select('id, birthday, facility, city, name, profilepictureBASE64')
+        .limit(USERS_TO_FETCH);
+      
+      if (usersError) throw usersError;
 
-  if (loading) return <div className="loading flex justify-center items-center h-screen">Loading...</div>;
-  if (error) return <div className="error flex justify-center items-center h-screen">Error: {error}</div>;
+      const usersWithHobbies = await Promise.all(
+        fetchedUsers.map(async (user) => {
+          const { data: preferencesData } = await supabase
+            .from('userpreferences')
+            .select('hobbies')
+            .eq('id', user.id)
+            .single();
 
-  const colors = generateColors(users.length);
-  const segmentAngle = (2 * Math.PI) / users.length;
+          return {
+            id: user.id,
+            name: user.name || 'Anonymous',
+            location: user.city,
+            facility: user.facility,
+            birthday: user.birthday,
+            age: calculateAge(user.birthday),
+            profilePicture: user.profilepictureBASE64,
+            hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : []
+          };
+        })
+      );
+
+      const validUsers = usersWithHobbies
+        .filter(user => user && user.name && user.profilePicture)
+        .slice(0, USERS_TO_FETCH);
+
+      setUsers(validUsers);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [retryCount]);
+
+  const wheelData = users.map((user, index) => ({
+    option: user.name,
+    style: { 
+      backgroundColor: index % 2 === 0 ? '#fff1f2' : '#881337',
+      textColor: index % 2 === 0 ? '#881337' : '#fff1f2'
+    },
+    optionSize: 20,
+    imageURI: `data:image/jpeg;base64,${user.profilePicture}`
+  }));
+
+  const handleSpinClick = () => {
+    if (!mustSpin) {
+      const newIndex = Math.floor(Math.random() * users.length);
+      setCurrentIndex(newIndex);
+      setMustSpin(true);
+    }
+  };
+
+  const handleWheelStop = () => {
+    setMustSpin(false); // Stop spinning after it completes
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
+        <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+      </div>
+    );
+  }
+
+  if (error || users.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
+        <div className="text-center p-4 bg-white rounded-lg">
+          <p className="text-gray-800">
+            {error ? `Error loading users: ${error}` : 'No users found. Please try again later.'}
+          </p>
+          <button 
+            onClick={() => setRetryCount(c => c + 1)}
+            className="mt-2 text-[#fb7185] underline hover:no-underline"
+          >
+            {error ? 'Retry' : 'Refresh'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="feed max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
-      <div className="grid grid-cols-2 gap-8">
-        {/* Wheel column */}
-        <div className="flex flex-col items-center justify-center">
+    <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
+      {/* Welcome message */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
+        <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex flex-col items-center justify-center order-2 md:order-1">
           <div className="relative w-full max-w-md">
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-20">
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className="text-[#fb7185] text-4xl filter drop-shadow-lg"
-              />
-            </div>
-
-            <div className="wheel-container relative aspect-square">
-              <button
-                className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                  z-20 bg-white text-[#fb7185] px-6 py-3 rounded-full shadow-lg 
-                  hover:bg-gray-50 transition-all duration-300 font-bold
-                  ${isRandomizing ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
-                onClick={handleRandomize}
-                disabled={isRandomizing}
-              >
-                {isRandomizing ? 'Spinning...' : 'Spin'}
-              </button>
-
-              <motion.svg
-                className="w-full h-full"
-                viewBox="-150 -150 300 300"
-                initial={{ rotate: -90 }}
-                animate={{ rotate: wheelRotation - 90 }}
-                transition={{ duration: 3, ease: 'circOut' }}
-              >
-                {users.map((_, index) => {
-                  const startAngle = index * segmentAngle;
-                  const endAngle = (index + 1) * segmentAngle;
-                  const pathD = createPieSegment(startAngle, endAngle, 150);
-
-                  return (
-                    <path
-                      key={index}
-                      d={pathD}
-                      fill={colors[index]}
-                      stroke="white"
-                      strokeWidth="2"
-                    />
-                  );
-                })}
-
-                {users.map((user, index) => {
-                  const angle = index * segmentAngle + segmentAngle / 2;
-                  const radius = 100;
-                  const x = Math.cos(angle) * radius;
-                  const y = Math.sin(angle) * radius;
-
-                  return (
-                    <g
-                      key={user.id}
-                      transform={`translate(${x}, ${y}) rotate(${(angle * 180) / Math.PI + 90})`}
-                    >
-                      <circle r="15" fill="white" stroke="#fb7185" strokeWidth="2" />
-                      <image
-                        href={`data:image/jpeg;base64,${user.profilePicture}`}
-                        x="-14"
-                        y="-14"
-                        width="28"
-                        height="28"
-                        clipPath="circle(14px at center)"
-                      />
-                    </g>
-                  );
-                })}
-              </motion.svg>
-            </div>
+            <Wheel
+              mustStartSpinning={mustSpin}
+              prizeNumber={currentIndex}
+              data={wheelData}
+              backgroundColors={['#fff1f2', '#881337']}
+              textColors={['#881337', '#fff1f2']}
+              onStopSpinning={handleWheelStop} // Handle the stop of the wheel
+              radiusLineWidth={1}
+              radiusLineColor="#fff"
+              outerBorderWidth={2}
+              outerBorderColor="#fb7185"
+              fontSize={16}
+              perpendicularText={true}
+              textDistance={70}
+            />
+            <motion.button
+              className="absolute inset-0 m-auto w-24 h-24 rounded-full bg-white shadow-lg z-20 text-[#fb7185] font-bold transition-transform"
+              onClick={handleSpinClick}
+              disabled={mustSpin}
+              style={{ pointerEvents: mustSpin ? 'none' : 'auto' }} // Prevent hover effect when spinning
+              whileHover={{ scale: mustSpin ? 1 : 1.05 }} // Apply hover only when not spinning
+            >
+              {mustSpin ? 'Spinning...' : 'Spin'}
+            </motion.button>
           </div>
         </div>
 
-        {/* UserCard column */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center order-1 md:order-2">
           <div className="w-full max-w-md">
-            {users.length > 0 && <UserCard user={users[currentIndex]} />}
-            <div className="mt-4 text-sm text-[#360009] text-center">
-              {currentIndex + 1} / {users.length}
-            </div>
+            <AnimatePresence mode="wait">
+              {mustSpin ? (
+                <motion.div
+                  className="text-xl text-center text-[#360009]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Searching...
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={users[currentIndex]?.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <UserCard user={users[currentIndex]} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
