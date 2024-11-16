@@ -4,13 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
 
-const Feed = () => {
+const Feed = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState(user?.id); // Use user prop
 
   const USERS_TO_FETCH = 10;
 
@@ -86,6 +87,10 @@ const Feed = () => {
       const newIndex = Math.floor(Math.random() * users.length);
       setCurrentIndex(newIndex);
       setMustSpin(true);
+
+      // Log both the logged-in user ID and the selected user ID
+      console.log('Logged-in user ID:', currentUserId);  // Using the state to access current user ID
+      console.log('Selected user ID:', users[newIndex]?.id);
     }
   };
 
@@ -178,7 +183,7 @@ const Feed = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <UserCard user={users[currentIndex]} />
+                  <UserCard user={users[currentIndex]} currentUserId={currentUserId} />
                 </motion.div>
               )}
             </AnimatePresence>

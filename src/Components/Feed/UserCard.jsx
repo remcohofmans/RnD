@@ -9,9 +9,10 @@ import {
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
-import { availableHobbies } from '../filter/AvailableHobbiesPage';
+import { availableHobbies } from '../filter/AvailableHobbiesPage';  // Ensure this path is correct
+import { supabase } from '../../supabaseClient';
 
-
+// Map the available hobbies to icons
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
   return acc;
@@ -20,9 +21,30 @@ const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
 // Fallback icon for hobbies without specific mappings
 const defaultHobbyIcon = faStar;
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, currentUserId }) => {
   // Ensure hobbies is always an array
   const hobbies = Array.isArray(user?.hobbies) ? user.hobbies : [];
+
+  // Function to handle the 'Love' button click
+  const handleLoveClick = async () => {
+    try {
+      console.log("Logged-in user ID: ", currentUserId, "liked_user_id: ", user.id);
+      const { data, error } = await supabase
+        .from('likes')
+        .insert([{ user_id: currentUserId, liked_user_id: user.id }]);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        alert('Error liking user, please try again.');
+      } else {
+        console.log('Insert result:', data);
+        alert('User liked successfully!');
+      }
+    } catch (error) {
+      console.error('Error liking user:', error.message || error);
+      alert('Error liking user, please try again.');
+    }
+  };
 
   return (
     <div className="user-card bg-[#fff1f2] rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto transition-transform duration-300 hover:scale-105">
@@ -72,7 +94,10 @@ const UserCard = ({ user }) => {
       
       {/* Action Buttons */}
       <div className="actions flex justify-between mt-6">
-        <button className="love-button flex items-center bg-[#fb7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] transition-all duration-300">
+        <button 
+          className="love-button flex items-center bg-[#fb7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] transition-all duration-300"
+          onClick={handleLoveClick}
+        >
           <FontAwesomeIcon icon={faHeart} className="mr-2" /> Love
         </button>
         <button className="skip-button flex items-center bg-[#ffccd3] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] transition-all duration-300">
