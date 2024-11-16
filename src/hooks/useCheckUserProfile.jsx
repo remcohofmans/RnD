@@ -10,10 +10,10 @@ const useCheckUserProfile = (user) => {
       const hobbies= user.hobbies;
       console.log(birthday, name);
       if (!birthday || !name) {
-        navigate('/profile');
+        // navigate('/profile');
       }
       if (!hobbies){
-        navigate('/userFilterForm');
+        // navigate('/userFilterForm');
       }
     }
   };

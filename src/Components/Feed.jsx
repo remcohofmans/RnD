@@ -126,14 +126,14 @@ const Feed = ({ user, logout }) => {
   }
 
   return (
-<div className="min-h-screen flex flex-col pt-8"> {/* Add padding-top to create spacing */}
+<div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> {/* Add padding-top to create spacing */}
 {/* Integrate TopNavigationBar */}
       <div className="relative z-50">
         <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
       {/* Main Feed Content */}
-      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] rounded-lg shadow-md pt-10"> {/* Adjusted padding for top margin */}
+      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10"> {/* Adjusted padding for top margin */}
       {/* Welcome message */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
