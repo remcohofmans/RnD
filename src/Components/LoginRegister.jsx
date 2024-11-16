@@ -62,6 +62,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       return null;
     };
   
+    const isValidMentorCode = (mentorCode) => {
+      // Example mentor code validation: it should be exactly 6 characters and alphanumeric
+      const mentorCodeRegex = /^[A-Za-z0-9]{8}$/;
+      if (!mentorCodeRegex.test(mentorCode)) {
+        return "Ongeldige mentor code. De code moet precies 8 alfanumerieke tekens bevatten.";
+      }
+      // You can also add additional checks, such as checking if the code exists in a predefined list of mentor codes.
+      const validMentorCodes = ["MENTOR01", "MENTOR02", "MENTOR03"];  // Example valid codes
+      if (!validMentorCodes.includes(mentorCode)) {
+        return "Ongeldige mentor code. De code komt niet overeen met een geldige mentor.";
+      }
+      return null;
+    };
+  
     const validateFields = () => {
       if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || !selectedFacility) {
         return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
@@ -79,9 +93,20 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
         return "Faciliteitscode is verplicht.";
       }
   
-      const facilityCodeError = isValidFacilityCode(facilityCode, selectedFacility);
-      if (facilityCodeError) {
-        return facilityCodeError;
+      // Validate mentor code if applicable
+      if (isMentor) {
+        const mentorCodeError = isValidMentorCode(mentorCode);
+        if (mentorCodeError) {
+          return mentorCodeError;
+        }
+      }
+  
+      // Validate facility code if applicable
+      else {
+        const facilityCodeError = isValidFacilityCode(facilityCode, selectedFacility);
+        if (facilityCodeError) {
+          return facilityCodeError;
+        }
       }
   
       if (isMentor && facilityCode) {
@@ -104,7 +129,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       .then(() => {
         setSignupError('');
       })
-      .catch(() => setSignupError("Aanmelden mislukt. Probeer het later opnieuw."));
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
   
   const handleEmailChange = (e) => {
