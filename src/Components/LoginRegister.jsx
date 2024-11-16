@@ -56,7 +56,7 @@
       let error = "";
 
       // Check if all fields are filled
-      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || !facilityCode || !selectedFacility) {
+      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (!facilityCode || !mentorCode) || !selectedFacility) {
         error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
       } else if (signUpPassword !== confirmPassword) {
         // Check if passwords match
