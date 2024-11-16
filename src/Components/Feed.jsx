@@ -41,25 +41,6 @@ const generateColors = (count) => {
   return colors;
 };
 
-const fetchHobbies = async (userId) => {
-  try {
-    const { data, error } = await supabase
-      .from('userpreferences')
-      .select('hobbies')
-      .eq('id', userId)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data.hobbies || [];
-  } catch (error) {
-    console.error('Error fetching hobbies:', error.message);
-    return [];
-  }
-};
-
 const Feed = () => {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -71,25 +52,58 @@ const Feed = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: fetchedData, error } = await supabase
+        // Fetch users first
+        const { data: fetchedUsers, error: usersError } = await supabase
           .from('users')
           .select('id, birthday, facility, city, name, profilepictureBASE64')
           .limit(10);
-        if (error) throw error;
+        
+        if (usersError) throw usersError;
 
-        const usersWithHobbies = await Promise.all(fetchedData.map(async (item) => {
-          const hobbies = await fetchHobbies(item.id);
-          return {
-            id: item.id,
-            name: item.name,
-            location: item.city,
-            facility: item.facility,
-            birthday: item.birthday,
-            age: calculateAge(item.birthday),
-            profilePicture: item.profilepictureBASE64,
-            hobbies: hobbies
-          };
-        }));
+        // Fetch hobbies for each user
+        const usersWithHobbies = await Promise.all(
+          fetchedUsers.map(async (user) => {
+            try {
+              const { data: preferencesData, error: hobbiesError } = await supabase
+                .from('userpreferences')
+                .select('hobbies')
+                .eq('id', user.id)
+                .single();
+
+              // Ensure hobbies is an array and handle potential string/JSON parsing
+              let hobbies = [];
+              if (preferencesData?.hobbies) {
+                if (typeof preferencesData.hobbies === 'string') {
+                  try {
+                    hobbies = JSON.parse(preferencesData.hobbies);
+                  } catch (e) {
+                    console.warn('Failed to parse hobbies JSON:', e);
+                  }
+                } else if (Array.isArray(preferencesData.hobbies)) {
+                  hobbies = preferencesData.hobbies;
+                }
+              }
+
+              return {
+                id: user.id,
+                name: user.name,
+                location: user.city,
+                facility: user.facility,
+                birthday: user.birthday,
+                age: calculateAge(user.birthday),
+                profilePicture: user.profilepictureBASE64,
+                hobbies: hobbies
+              };
+            } catch (error) {
+              console.warn(`Error fetching hobbies for user ${user.id}:`, error);
+              return {
+                ...user,
+                age: calculateAge(user.birthday),
+                hobbies: []
+              };
+            }
+          })
+        );
 
         setUsers(usersWithHobbies);
       } catch (error) {
@@ -136,7 +150,6 @@ const Feed = () => {
         {/* Wheel column */}
         <div className="flex flex-col items-center justify-center">
           <div className="relative w-full max-w-md">
-            {/* Fixed pointer arrow at top */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-20">
               <FontAwesomeIcon
                 icon={faChevronDown}

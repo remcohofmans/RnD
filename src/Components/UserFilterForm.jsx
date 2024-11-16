@@ -230,7 +230,7 @@ const FilterForm = () => {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="text-blue-500 hover:text-blue-700"
+            className="text-rose-500 hover:text-rose-700"
           >
             Voeg hobby toe
           </button>
