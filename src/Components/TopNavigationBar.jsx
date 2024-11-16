@@ -52,7 +52,7 @@ const TopNavigationBar = ({ loggedIn, logout }) => {
     <div>
       <div
         className="fixed top-0 left-0 right-0 flex items-center py-1 md:py-2 px-2 md:px-4"
-        style={{ backgroundColor: '#f43f5e', zIndex: 10 }}
+        style={{ backgroundColor: '#f43f5e', zIndex: 10, borderRadius: '8px' }} // Added borderRadius here
       >
         <div className="w-12 md:w-20">
           <NavItem item={leftItem} />
