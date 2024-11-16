@@ -119,19 +119,19 @@ const Home = ({ user, loggedIn, logout, email }) => {
 
       {/* Feature Section */}
       <div className="bg-gray-50 py-16 px-4 text-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">Why Choose V(l)inder?</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">Waarom Kiezen Voor V(l)inder?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
             <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Smart Matching</h3>
-            <p className="text-gray-600 leading-relaxed">Our advanced algorithm ensures you're paired with like-minded individuals for meaningful connections.</p>
+            <p className="text-gray-600 leading-relaxed">Ons geavanceerde algoritme zorgt ervoor dat er mensen in uw feed verschijnen die aan uw verwachtingen kunnen voldoen.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Privacy First</h3>
-            <p className="text-gray-600 leading-relaxed">We prioritize your privacy and security, so you can connect with peace of mind.</p>
+            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Privacy Eerst</h3>
+            <p className="text-gray-600 leading-relaxed">We geven prioriteit aan uw privacy en veiligheid, zodat u met een gerust hart connecties kunt maken.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Seamless Experience</h3>
-            <p className="text-gray-600 leading-relaxed">Our platform is designed to provide a smooth and enjoyable user experience from start to finish.</p>
+            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Onvergetelijke Ervaring</h3>
+            <p className="text-gray-600 leading-relaxed">Ons platform is ontworpen om u een zalige en ongeëvenaarde ervaring te bieden.</p>
           </div>
         </div>
       </div>
