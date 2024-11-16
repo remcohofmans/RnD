@@ -49,44 +49,64 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   };
 
   const handleSignUpSubmit = (e) => {
-
-    console.log("Sign up form submitted");  // Debugging line
-
     e.preventDefault();
+    console.log("Sign up form submitted");  // Debugging line
+  
     let error = "";
-
-    // Check if all fields are filled
-    if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (!isMentor ? !facilityCode : !mentorCode) || !selectedFacility) {
-      error = "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
-    } else if (signUpPassword !== confirmPassword) {
-      // Check if passwords match
-      error = "Paswoorden komen niet overeen.";
-    } else if (selectedFacility === "facility1" && facilityCode !== "12345") {
-      error = "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
-    } else if (selectedFacility === "facility2" && facilityCode !== "67890") {
-      error = "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
-    } else if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") {
-      error = "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
-    }
-
-    if (isMentor) {
-      // Check if mentor code is valid
-    }
-
-    // If there is any error, set the error message and return
+  
+    // Helper functions for validation
+    const isValidFacilityCode = (facilityCode, selectedFacility) => {
+      if (selectedFacility === "facility1" && facilityCode !== "12345") return "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
+      if (selectedFacility === "facility2" && facilityCode !== "67890") return "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
+      if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") return "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
+      return null;
+    };
+  
+    const validateFields = () => {
+      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || !selectedFacility) {
+        return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
+      }
+  
+      if (signUpPassword !== confirmPassword) {
+        return "Paswoorden komen niet overeen.";
+      }
+  
+      if (isMentor && !mentorCode) {
+        return "Mentor code is verplicht.";
+      }
+  
+      if (!isMentor && !facilityCode) {
+        return "Faciliteitscode is verplicht.";
+      }
+  
+      const facilityCodeError = isValidFacilityCode(facilityCode, selectedFacility);
+      if (facilityCodeError) {
+        return facilityCodeError;
+      }
+  
+      if (isMentor && facilityCode) {
+        return "Faciliteitscode mag niet ingevuld worden als u een mentor bent.";
+      }
+  
+      return null;
+    };
+  
+    // Run validation
+    error = validateFields();
+  
     if (error) {
       setSignupError(error);
       return;
     }
-
+  
     // Call signUpWithEmail function if all validations pass
-    signUpWithEmail(signUpEmail, signUpPassword, facilityCode)
+    signUpWithEmail(signUpEmail, signUpPassword, isMentor ? mentorCode : facilityCode)
       .then(() => {
         setSignupError('');
       })
-      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
+      .catch(() => setSignupError("Aanmelden mislukt. Probeer het later opnieuw."));
   };
-
+  
   const handleEmailChange = (e) => {
     const email = e.target.value;
     if (isLogin) {
@@ -94,14 +114,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     } else {
       setSignUpEmail(email);  // Update signUpEmail if it's the signup form
     }
-
-    // Simple email validation feedback for both fields
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailFeedback('Voer een geldig e-mailadres in.');
-    } else {
-      setEmailFeedback('');
-    }
+  
+    // Improved email validation with regex
+    const emailFeedback = !/\S+@\S+\.\S+/.test(email) ? 'Voer een geldig e-mailadres in.' : '';
+    setEmailFeedback(emailFeedback);
   };
+  
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
