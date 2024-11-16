@@ -12,8 +12,28 @@ const MentorBanUser = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [userIdToBan, setUserIdToBan] = useState(null);
   const [currentPage, setCurrentPage] = useState(1); // State for the current page
+  const [successMessage, setSuccessMessage] = useState(null); // State for success message
   const usersPerPage = 10; // Users per page
   const navigate = useNavigate();
+
+  const sendGridMail = require('@sendgrid/mail');
+  sendGridMail.setApiKey('YOUR_SENDGRID_API_KEY'); // Replace with your actual SendGrid API key
+
+  const sendBanEmail = async (userEmail, userName) => {
+    const message = {
+      to: userEmail,
+      from: 'your-email@example.com', // Replace with your email or the sender's email
+      subject: 'Account Banned',
+      text: `Dear ${userName},\n\nYour account has been banned. If you have any questions, please contact support.`,
+    };
+
+    try {
+      await sendGridMail.send(message);
+      console.log('Email sent');
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -38,19 +58,42 @@ const MentorBanUser = () => {
 
   const handleBanUser = async (userId) => {
     try {
-      const { error } = await supabase
+      // Fetch user details from the database using the userId
+      const { data: user, error: fetchError } = await supabase
         .from('users')
-        .update({ banned: true })
+        .select('email, username')
+        .eq('id', userId)
+        .single(); // Assuming you want only one user
+  
+      if (fetchError || !user) {
+        throw new Error('Failed to fetch user details');
+      }
+  
+      // Delete the user from the database
+      const { error: banError } = await supabase
+        .from('users')
+        .delete()
         .eq('id', userId);
-
-      if (error) {
+  
+      if (banError) {
         throw new Error('Failed to ban user');
       }
-
+  
+      // Update users list after banning
       const { data } = await supabase.from('users').select('*');
       setUsers(data);
       setFilteredUsers(data); // Update the filtered list
       setShowConfirmation(false);
+  
+      // Send the ban email notification
+      sendBanEmail(user.email, user.username);
+  
+      // Display success message
+      setSuccessMessage('User has been successfully banned.');
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 2000);
+  
     } catch (err) {
       setError(err.message);
     } finally {
@@ -100,7 +143,7 @@ const MentorBanUser = () => {
         className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-80"
         style={{
           backgroundColor: '#FFFFFF',
-          border: '2px solid #f1f5f8',
+          border: '4px solid #fda4af', 
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
           height: '90vh', // Limit the height to 90% of the viewport height
           maxHeight: '1000px', // Max height limit for bigger screens
@@ -108,6 +151,13 @@ const MentorBanUser = () => {
       >
         {loading && <div>Loading...</div>}
         {error && <div className="p-2 text-sm text-red-600 bg-red-100 rounded">{error}</div>}
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="p-2 text-sm text-green-600 bg-green-100 rounded mb-4">
+            {successMessage}
+          </div>
+        )}
 
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban gebruikers</h2>
         <p className="text-sm text-gray-600 mb-4">
@@ -173,7 +223,7 @@ const MentorBanUser = () => {
           <div
             className="p-6 bg-white rounded-lg shadow-lg w-80"
             style={{
-              border: '4px solid #fda4af',
+              border: '4px solid #fda4af', // Same pink border for the confirmation modal
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
             }}
           >
