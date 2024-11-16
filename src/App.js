@@ -106,23 +106,23 @@ export default function App() {
         />
         <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
+        <Route 
+          path="/feed" 
+          element={user ? <Feed user={user} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} 
+        />
+        {/* Add other routes here */}
         <Route path="/settingsUser" element={<SettingsUser />} />
         <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
         <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-
-        {/* Route to UserFilterForm */}
-        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        
+        <Route 
+          path="/userFilterForm" 
+          element={user ? <UserFilterForm userId={user.id} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to UploadFoto */}
         <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
         <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-
         <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
-
         <Route path="/updatePassword" element={<PasswordUpdate />} /> 
-
         <Route path="/pp" element={<ProfielPauzeren />} />
         
       </Routes>
