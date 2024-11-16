@@ -3,8 +3,9 @@ import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
+import TopNavigationBar from './TopNavigationBar'; // Import TopNavigationBar
 
-const Feed = ({ user }) => {
+const Feed = ({ user, logout }) => {
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -125,68 +126,76 @@ const Feed = ({ user }) => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
-      {/* Welcome message */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
-        <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
+<div className="min-h-screen flex flex-col pt-8"> {/* Add padding-top to create spacing */}
+{/* Integrate TopNavigationBar */}
+      <div className="relative z-50">
+        <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="flex flex-col items-center justify-center order-2 md:order-1">
-          <div className="relative w-full max-w-md">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={currentIndex}
-              data={wheelData}
-              backgroundColors={['#fff1f2', '#881337']}
-              textColors={['#881337', '#fff1f2']}
-              onStopSpinning={handleWheelStop} // Handle the stop of the wheel
-              radiusLineWidth={1}
-              radiusLineColor="#fff"
-              outerBorderWidth={2}
-              outerBorderColor="#fb7185"
-              fontSize={16}
-              perpendicularText={true}
-              textDistance={70}
-            />
-            <motion.button
-              className="absolute inset-0 m-auto w-24 h-24 rounded-full bg-white shadow-lg z-20 text-[#fb7185] font-bold transition-transform"
-              onClick={handleSpinClick}
-              disabled={mustSpin}
-              style={{ pointerEvents: mustSpin ? 'none' : 'auto' }} // Prevent hover effect when spinning
-              whileHover={{ scale: mustSpin ? 1 : 1.05 }} // Apply hover only when not spinning
-            >
-              {mustSpin ? 'Spinning...' : 'Spin'}
-            </motion.button>
-          </div>
+      {/* Main Feed Content */}
+      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] rounded-lg shadow-md pt-10"> {/* Adjusted padding for top margin */}
+      {/* Welcome message */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
+          <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
         </div>
 
-        <div className="flex flex-col items-center order-1 md:order-2">
-          <div className="w-full max-w-md">
-            <AnimatePresence mode="wait">
-              {mustSpin ? (
-                <motion.div
-                  className="text-xl text-center text-[#360009]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  Searching...
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={users[currentIndex]?.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <UserCard user={users[currentIndex]} currentUserId={currentUserId} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col items-center justify-center order-2 md:order-1">
+            <div className="relative w-full max-w-md">
+              <Wheel
+                mustStartSpinning={mustSpin}
+                prizeNumber={currentIndex}
+                data={wheelData}
+                backgroundColors={['#fff1f2', '#881337']}
+                textColors={['#881337', '#fff1f2']}
+                onStopSpinning={handleWheelStop} // Handle the stop of the wheel
+                radiusLineWidth={1}
+                radiusLineColor="#fff"
+                outerBorderWidth={2}
+                outerBorderColor="#fb7185"
+                fontSize={16}
+                perpendicularText={true}
+                textDistance={70}
+              />
+              <motion.button
+                className="absolute inset-0 m-auto w-24 h-24 rounded-full bg-white shadow-lg z-20 text-[#fb7185] font-bold transition-transform"
+                onClick={handleSpinClick}
+                disabled={mustSpin}
+                style={{ pointerEvents: mustSpin ? 'none' : 'auto' }} // Prevent hover effect when spinning
+                whileHover={{ scale: mustSpin ? 1 : 1.05 }} // Apply hover only when not spinning
+              >
+                {mustSpin ? 'Spinning...' : 'Spin'}
+              </motion.button>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center order-1 md:order-2">
+            <div className="w-full max-w-md">
+              <AnimatePresence mode="wait">
+                {mustSpin ? (
+                  <motion.div
+                    className="text-xl text-center text-[#360009]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Searching...
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={users[currentIndex]?.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <UserCard user={users[currentIndex]} currentUserId={currentUserId} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
