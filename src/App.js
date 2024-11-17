@@ -12,6 +12,10 @@ import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
 import MentorBanUser from './Components/MentorBanUser';
 import SettingsMentor from './Components/SettingsMentor';
+import SubscriptionPlans from './Components/SubscriptionPlans';
+import PasswordRecovery from './Components/PasswordRecovery';
+import PasswordUpdate from './Components/PasswordUpdate';
+import ProfielPauzeren from './Components/ProfielPauzeren';
 
 
 export default function App() { 
@@ -104,19 +108,27 @@ export default function App() {
         />
         <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
-        <Route path="/settingsUser" element={<SettingsUser />} />
         <Route path="/settingsMentor" element={<SettingsMentor />} />
         <Route path="/mentorBanUser" element={<MentorBanUser />} />
-        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
-        <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
 
-        {/* Route to UserFilterForm */}
-        <Route path="/userFilterForm" element={user ? <UserFilterForm /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        
+        <Route 
+          path="/feed" 
+          element={user ? <Feed user={user} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} 
+        />
+        {/* Add other routes here */}
+        <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
+        <Route 
+          path="/userFilterForm" 
+          element={user ? <UserFilterForm userId={user.id} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to UploadFoto */}
         <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-
         <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
+
+        <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
+        <Route path="/updatePassword" element={<PasswordUpdate />} /> 
+        <Route path="/pp" element={<ProfielPauzeren />} />
         
       </Routes>
     </Router>

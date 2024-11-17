@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
-import { supabase } from '../lib/helper/supabaseClient'; 
+import { supabase } from '../lib/helper/supabaseClient';
+import TopNavigationBar from './TopNavigationBar';
 
-
-const Home = ({ loggedIn, logout, email }) => {
+const Home = ({ user, loggedIn, logout, email }) => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
-
 
   const handleButtonClick = useCallback(() => {
     if (loggedIn) {
@@ -64,19 +63,13 @@ const Home = ({ loggedIn, logout, email }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navigation Bar */}
-      <nav className="flex justify-between items-center bg-white shadow-md p-4">
-        <h1 className="text-[#f43f5e] text-3xl font-bold">V(l)inder</h1>
-        <div className="flex space-x-4">
-          <button className="text-gray-700 hover:text-[#f43f5e] font-medium" onClick={handleGoToFeed}>Feed</button>
-          <button className="text-gray-700 hover:text-[#f43f5e] font-medium" onClick={handleButtonClick}>
-            {loggedIn ? 'Log out' : 'Login'}
-          </button>
-        </div>
-      </nav>
+      {/* Use the new TopNavigationBar */}
+      <div className="relative z-50">
+        <TopNavigationBar loggedIn={!!user} logout={logout} />
+      </div>
 
-       {/* Modal Overlay */}
-       {isPausedModalOpen && (
+      {/* Modal Overlay */}
+      {isPausedModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-auto shadow-lg">
             <h2 className="text-2xl font-bold text-[#f43f5e] mb-4">Account Paused</h2>
@@ -99,50 +92,60 @@ const Home = ({ loggedIn, logout, email }) => {
 
       {/* Hero Section */}
       <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
-        <div className="w-full h-full opacity-40 bg-cover bg-center absolute" style={{ backgroundImage: `url(${butterflyImage})` }}></div>
-        <div className="relative z-10 w-full flex items-center justify-center text-center font-poppins py-20 px-4">
-          <div className="text-gray-800 space-y-4 max-w-xl mx-auto">
-            <h1 className="text-5xl font-bold leading-tight text-[#881337]">Find Your Perfect Match</h1>
-            <p className="text-lg leading-relaxed max-w-lg mx-auto">Discover connections that matter, whether it's friendship, romance, or networking.</p>
-            <button
-              className="mt-6 py-3 px-8 bg-[#f43f5e] text-white rounded-lg text-xl hover:bg-[#e11d48] transition-transform transform hover:scale-105"
-              onClick={handleButtonClick}
-            >
-              {loggedIn ? 'Log out' : 'Get Started'}
-            </button>
+        {/* Merged Background and Content Container */}
+        <div
+          className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
+          style={{
+            backgroundImage: `url(${butterflyImage})`,
+            backgroundColor: '#fbf6f0',
+            backgroundSize: 'contain',  // Ensures the entire image fits inside the container
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            minHeight: '100vh',   // Ensures the container scales to fill the screen height
+          }}
+        >
+          {/* Content */}
+          <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
+            <h1 className="text-5xl font-bold leading-tight text-[#881337]">Vlinder</h1>
+            <h2 className="text-xl leading-relaxed max-w-lg mx-auto">
+              <b>Find Your Perfect Match</b>
+            </h2>
+            <p className="text-lg leading-relaxed max-w-lg mx-auto">
+              Smeed nieuwe vriendschappen, vind de liefde of ontdek spannende avonturen!
+            </p>
           </div>
         </div>
       </div>
 
       {/* Feature Section */}
       <div className="bg-gray-50 py-16 px-4 text-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">Why Choose V(l)inder?</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">Waarom Kiezen Voor V(l)inder?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
             <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Smart Matching</h3>
-            <p className="text-gray-600 leading-relaxed">Our advanced algorithm ensures you're paired with like-minded individuals for meaningful connections.</p>
+            <p className="text-gray-600 leading-relaxed">Ons geavanceerde algoritme zorgt ervoor dat er mensen in uw feed verschijnen die aan uw verwachtingen kunnen voldoen.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Privacy First</h3>
-            <p className="text-gray-600 leading-relaxed">We prioritize your privacy and security, so you can connect with peace of mind.</p>
+            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Privacy Eerst</h3>
+            <p className="text-gray-600 leading-relaxed">We geven prioriteit aan uw privacy en veiligheid, zodat u met een gerust hart connecties kunt maken.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Seamless Experience</h3>
-            <p className="text-gray-600 leading-relaxed">Our platform is designed to provide a smooth and enjoyable user experience from start to finish.</p>
+            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Onvergetelijke Ervaring</h3>
+            <p className="text-gray-600 leading-relaxed">Ons platform is ontworpen om u een zalige en ongeëvenaarde ervaring te bieden.</p>
           </div>
         </div>
       </div>
 
       {/* Testimonials Section */}
       <div className="bg-gray-100 py-16 px-4 text-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-8">What Our Users Say</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">Wat Onze Gebruikers Zeggen</h2>
         <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-8">
           <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder helped me find my soulmate! The matching process was so easy and accurate."</p>
+            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder heeft me geholpen mijn soulmate te vinden! Het matchingsproces was zo eenvoudig en nauwkeurig."</p>
             <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Sarah T.</p>
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"I've made so many new friends thanks to this platform. Highly recommend!"</p>
+            <p className="text-lg text-gray-600 leading-relaxed">"Ik heb zoveel nieuwe vrienden gemaakt dankzij dit platform. Een echte aanrader!"</p>
             <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Jake L.</p>
           </div>
         </div>
@@ -163,3 +166,5 @@ const Home = ({ loggedIn, logout, email }) => {
 };
 
 export default Home;
+
+{/** test change #2 */}

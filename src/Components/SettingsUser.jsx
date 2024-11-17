@@ -1,151 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/helper/supabaseClient'; 
-import  TopNavigationBar from '../Components/TopNavigationBar.jsx'
+import TopNavigationBar from '../Components/TopNavigationBar.jsx';
+import ImageUpload from '../Components/ImageUpload'; // Assuming you have this component
+import PasswordChangeForm from '../Components/PasswordChangeForm'; // Assuming you have this component
+import UserFilterForm from '../Components/UserFilterForm'; // Assuming you have this component
+import ProfielPauzeren from '../Components/ProfielPauzeren'; // Import ProfielPauzeren component
 
 const SettingsUser = () => {
-  const navigate = useNavigate();
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [status, setStatus] = useState("ACTIVE");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [activeComponent, setActiveComponent] = useState(null);
+  const [isConfirming, setIsConfirming] = useState(false); // State for modal visibility
 
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setUserId(session.user.id);
-        console.log("Session user ID:", session.user.id); // Log the user ID when fetched
+        console.log("Session user ID:", session.user.id);
       }
     };
     fetchUserData();
   }, []);
 
   const handleOptionClick = (option) => {
-    if (option === "Wachtwoord Bewerken") {
-      navigate('/PasswordChangeForm');
+    if (option === "Info Aanpassen") {
+      setActiveComponent("UserFilterForm");
+    } else if (option === "Wachtwoord Bewerken") {
+      setActiveComponent("PasswordChangeForm");
+    } else if (option === "Foto's Aanpassen") {
+      setActiveComponent("ImageUpload");
     } else if (option === "Profiel Pauzeren") {
-      setIsConfirming(true);
+      setIsConfirming(true); // Show ProfielPauzeren modal
     }
   };
 
-  const handleConfirmPause = async () => {
-    if (!userId) {
-      setError("User ID is not available.");
-      return;
-    }
-
-    try {
-      // First, log the attempt
-      console.log("Attempting to update user with ID:", userId);
-
-      const { data, error } = await supabase
-        .from('users')
-        .update({ status: "PAUSED" })
-        .eq('id', userId)
-        
-        
-
-      // Log the entire response
-      console.log("Complete Supabase response:", { data, error });
-
-      // If data exists, log the first row (should be the updated user)
-      if (data && data.length > 0) {
-        console.log("Updated user data:", data[0]);
-      }
-
-      if (error) {
-        console.error("Error updating status:", error);
-        setError("Error pausing your profile: " + error.message);
-      } else {
-        if (!data || data.length === 0) {
-          console.warn("Update succeeded but no data returned");
-        }
-        setStatus('PAUSED');
-        setSuccess("Your profile has been paused.");
-        setIsConfirming(false);
-
-        const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) {
-          console.error("Error signing out:", signOutError);
-          setError("Error signing out: " + signOutError.message);
-        } else {
-          console.log("Attempt");
-          navigate('/login'); // Navigate to /login after signing out
-        }
-      }
-    } catch (err) {
-      console.error("Error updating status:", err);
-      setError("Error pausing your profile.");
-    }
+  const handleSuccess = (message) => {
+    setSuccess(message);
+    setError(null);
   };
 
-
-  const handleCancelPause = () => {
-    setIsConfirming(false); // Close the confirmation dialog
+  const handleError = (message) => {
+    setError(message);
+    setSuccess(null);
   };
 
   return (
     <div>
-      <TopNavigationBar />
-    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
-      <div
-        className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72"
-        style={{
-          backgroundColor: '#FFFFFF',
-          border: '4px solid #fda4af',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        {error && (
-          <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
-            {success}
-          </div>
-        )}
-
-        {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
-          <button
-            key={option}
-            className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300"
-            style={{ backgroundColor: '#f43f5e' }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
-            onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
-            onClick={() => handleOptionClick(option)}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-      </div>
-
-      {/* Confirmation Dialog */}
-      {isConfirming && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Are you sure you want to pause your profile?</h2>
-            <div className="flex justify-between">
-              <button
-                className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                onClick={handleConfirmPause}
-              >
-                Yes
-              </button>
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                onClick={handleCancelPause}
-              >
-                No
-              </button>
-            </div>
-          </div>
+      <TopNavigationBar/>
+      <div className="grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
+       {/* Left Menu */}
+    <div
+      className="col-span-3 flex flex-col items-center justify-center gap-4 p-6 rounded-xl shadow-lg bg-white border-4 border-rose-300 h-96 mt-24"
+    >
+      {error && (
+        <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+          {error}
         </div>
       )}
+      {success && (
+        <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
+          {success}
+        </div>
+      )}
+
+      {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
+        <button
+          key={option}
+          className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 bg-rose-600 hover:bg-rose-800"
+          onClick={() => handleOptionClick(option)}
+        >
+          {option}
+        </button>
+      ))}
+    </div>
+
+        {/* Right Section */}
+        <div className="col-span-9 p-6">
+          {activeComponent === "UserFilterForm" && <UserFilterForm />}
+          {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
+          {activeComponent === "ImageUpload" && <ImageUpload />}
+          {isConfirming && (
+            <ProfielPauzeren
+              userId={userId}
+              onSuccess={handleSuccess}
+              onError={handleError}
+              setIsConfirming={setIsConfirming} // Pass down the function to close modal
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
