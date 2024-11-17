@@ -83,7 +83,8 @@ const MentorBanUser = () => {
       const filtered = users.filter(
         (user) =>
           (user.username && isMatchInSequence(user.username, query)) ||
-          (user.email && isMatchInSequence(user.email, query))
+          (user.name && isMatchInSequence(user.name, query)) || // Added name search
+          (user.email && isMatchInSequence(user.email, query)) // Added email search
       );
       setFilteredUsers(filtered);
     }
@@ -133,7 +134,7 @@ const MentorBanUser = () => {
         {/* Search Bar */}
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search users by name or email"
           value={searchQuery}
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
@@ -144,7 +145,7 @@ const MentorBanUser = () => {
           {currentUsers.map((user) => (
             <div key={user.id} className="flex items-center justify-between p-2 border-b border-gray-300">
               <div className="flex flex-col">
-                <span>{user.username}</span>
+                <span>{user.name || user.username}</span> {/* Display name or username */}
                 <span className="text-sm text-gray-500">
                   <button
                     className="text-[#f43f5e] hover:underline" // Ensures the email button is pink

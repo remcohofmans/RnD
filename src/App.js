@@ -11,6 +11,7 @@ import UserFilterForm from './Components/UserFilterForm';
 import ImageUpload from './Components/ImageUpload';
 import TopNavigationBar from './Components/TopNavigationBar';
 import MentorBanUser from './Components/MentorBanUser';
+import SettingsMentor from './Components/SettingsMentor';
 
 
 export default function App() { 
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         {/* Route to Feed */}
         <Route path="/settingsUser" element={<SettingsUser />} />
+        <Route path="/settingsMentor" element={<SettingsMentor />} />
         <Route path="/mentorBanUser" element={<MentorBanUser />} />
         <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
         <Route path="/feed" element={user ? <Feed /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
