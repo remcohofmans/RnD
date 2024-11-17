@@ -38,34 +38,34 @@ const MentorBanUser = () => {
   }, []);
 
   const handleBanUser = async (userId) => {
-  try {
-    const { error } = await supabase
-      .from('users')
-      .delete()
-      .eq('id', userId);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
 
-    if (error) {
-      throw new Error('Failed to ban user');
+      if (error) {
+        throw new Error('Failed to ban user');
+      }
+
+      const { data } = await supabase.from('users').select('*');
+      setUsers(data);
+      setFilteredUsers(data); // Update the filtered list
+      setShowConfirmation(false);
+
+      // Set success message
+      setSuccessMessage('User has been successfully banned.');
+
+      // Remove the success message after 2 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 2000); // 2000ms = 2 seconds
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const { data } = await supabase.from('users').select('*');
-    setUsers(data);
-    setFilteredUsers(data); // Update the filtered list
-    setShowConfirmation(false);
-
-    // Set success message
-    setSuccessMessage('User has been successfully banned.');
-
-    // Remove the success message after 2 seconds
-    setTimeout(() => {
-      setSuccessMessage(null);
-    }, 2000); // 2000ms = 2 seconds
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const isMatchInSequence = (text, query) => {
     if (!text || !query) return false;
@@ -181,6 +181,14 @@ const MentorBanUser = () => {
             Next
           </button>
         </div>
+
+        {/* Go Back Button */}
+        <button
+          onClick={() => navigate('/settingsMentor')} // Navigate to the settingsMentor page
+          className="mt-4 px-4 py-2 text-white bg-[#f43f5e] rounded-lg hover:bg-[#be123c]"
+        >
+          Ga terug naar instellingen
+        </button>
       </div>
 
       {/* Confirmation Modal */}

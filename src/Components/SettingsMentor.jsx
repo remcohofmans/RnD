@@ -74,7 +74,13 @@ const SettingsMentor = ({ logout }) => {
               style={{ backgroundColor: '#f43f5e' }}
               onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
               onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
-              onClick={() => option === "Verwijder profiel" ? setShowConfirmation(true) : null}
+              onClick={() => {
+                if (option === "Verwijder profiel") {
+                  setShowConfirmation(true);
+                } else if (option === "Ban gebruiker") {
+                  navigate('/mentorBanUser'); // Navigate to /mentorBanUser
+                }
+              }}
             >
               {option}
             </button>
