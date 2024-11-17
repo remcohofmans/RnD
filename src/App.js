@@ -44,12 +44,27 @@ export default function App() {
   }
 
   // Function for email/password sign-up
-  async function signUpWithEmail(email, password) {
+  async function signUpWithEmail(email, password, isMentor) {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
     });
+
+    if (error) {
+      throw new Error(error.message); // Handle errors from signUp
+    }
+
+    const role = isMentor ? 'STAFF_MEMBER' : 'USER';
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ role })
+      .eq('email', email);
+
+    if (updateError) {
+      throw new Error(updateError.message); // Handle errors from update query
+    }
+
 
     if (error) {
       setError(error.message);
