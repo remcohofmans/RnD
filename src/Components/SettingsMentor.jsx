@@ -3,13 +3,11 @@ import { supabase } from '../lib/helper/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import TopNavigationBar from './TopNavigationBar.jsx';
 
-const SettingsMentor = ({ logout }) => {
+const SettingsMentor = ({ logout, loggedIn }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [success, setSuccess] = useState(null);
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null); 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
     try {
@@ -34,7 +32,7 @@ const SettingsMentor = ({ logout }) => {
         throw new Error('Failed to delete user data.');
       }
 
-      logout();
+      logout(); // Log the user out after account deletion
       setTimeout(() => {
         navigate('/login');
         setSuccess('Your account has been deleted.');
@@ -42,6 +40,15 @@ const SettingsMentor = ({ logout }) => {
       setSuccess('Your account has been deleted.');
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  // Logout handler
+  const handleLogOut = () => {
+    logout();
+    if (loggedIn) {
+      logout();
+      navigate('/login');
     }
   };
 
@@ -85,6 +92,17 @@ const SettingsMentor = ({ logout }) => {
               {option}
             </button>
           ))}
+          
+          {/* Logout Button */}
+          <button
+            className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 mt-4"
+            style={{ backgroundColor: '#f43f5e' }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
+            onClick={handleLogOut}
+          >
+            Log out
+          </button>
         </div>
       </div>
 
