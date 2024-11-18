@@ -32,16 +32,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-
+  
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
-
-    // Returns a Promise  
+  
+    // Now login attempt
     loginWithEmail(loginEmail, loginPassword)
       .then(() => {
-        setLoginError(null); // Clear error if successful
+        // Clear the error only if login is successful
+        // setLoginError(null); // Clear error on successful login
       })
       .catch((error) => {
         console.error("Login Error:", error);  // Debug the error here
