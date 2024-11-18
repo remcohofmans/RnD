@@ -32,33 +32,43 @@ const Feed = ({ user, logout }) => {
       // Fetch user preferences for the logged-in user
       const { data: userPreferences, error: userPreferencesError } = await supabase
         .from('userpreferences')
-        .select('min_age, max_age')
+        .select('interest, min_age, max_age')
         .eq('id', user.id) // Reference to the logged-in user
         .single();
   
       if (userPreferencesError) throw userPreferencesError;
   
-      const { min_age, max_age } = userPreferences;
+      const { interest, min_age, max_age } = userPreferences;
   
-      // Fetch users data
+      // Fetch users data from 'users' table
       const { data: fetchedUsers, error: usersError } = await supabase
         .from('users')
-        .select('id, birthday, name, profilepictureBASE64, city, facility')
+        .select('id, birthday, name, profilepictureBASE64, city, facility, gender') // Include gender now
         .not('name', 'is', null) // Ensure 'name' is not NULL
         .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
-        .not('birthday', 'is', null) // Ensure 'm  n mn n jm birthday' is not NULL
+        .not('birthday', 'is', null) // Ensure 'birthday' is not NULL
         .limit(USERS_TO_FETCH);
   
       if (usersError) throw usersError;
   
-      // Filter users by age
-      const usersWithValidAge = fetchedUsers.filter(user => {
+      // Filter users by both age and interest (gender-based)
+      const usersWithValidFilters = fetchedUsers.filter(user => {
         const age = calculateAge(user.birthday);
-        return age >= min_age && age <= max_age; // Filter by min and max age from user preferences
+  
+        // Filter by age
+        const isAgeValid = age >= min_age && age <= max_age;
+  
+        // Filter by interest (gender)
+        let isGenderValid = true; // Default is true, meaning no filter on gender if interest is 'geen-voorkeur'
+        if (interest !== 'geen-voorkeur') {
+          isGenderValid = user.gender === interest; // Only allow matching gender if interest is not 'geen-voorkeur'
+        }
+  
+        return isAgeValid && isGenderValid;
       });
   
-      // Map the users to include additional properties like age
-      const usersWithAge = usersWithValidAge.map(user => ({
+      // Map the filtered users with additional details
+      const usersWithAgeAndInterest = usersWithValidFilters.map(user => ({
         id: user.id,
         name: user.name || 'Anonymous',
         location: user.city,
@@ -69,7 +79,7 @@ const Feed = ({ user, logout }) => {
       }));
   
       // Update state with the filtered and processed user data
-      setUsers(usersWithAge);
+      setUsers(usersWithAgeAndInterest);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -77,9 +87,7 @@ const Feed = ({ user, logout }) => {
     }
   };
   
-  
-  
-
+    
 
   useEffect(() => {
     fetchUserData();
