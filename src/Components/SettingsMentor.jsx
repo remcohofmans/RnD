@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import { supabase } from '../lib/helper/supabaseClient'; 
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from './TopNavigationBar.jsx';
 
 const SettingsMentor = ({ logout, loggedIn }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -82,10 +81,12 @@ const SettingsMentor = ({ logout, loggedIn }) => {
               onMouseOver={(e) => (e.target.style.backgroundColor = '#be123c')}
               onMouseOut={(e) => (e.target.style.backgroundColor = '#f43f5e')}
               onClick={() => {
-                if (option === "Verwijder profiel") {
-                  setShowConfirmation(true);
+                if (option === "Toegangsverzoeken") {
+                  navigate('/accessRequests'); // Navigate to /accessRequests
                 } else if (option === "Ban gebruiker") {
                   navigate('/mentorBanUser'); // Navigate to /mentorBanUser
+                } else if (option === "Verwijder profiel") {
+                  setShowConfirmation(true);
                 }
               }}
             >
