@@ -17,7 +17,7 @@ const PasswordUpdate = () => {
     if (token) {
       setResetToken(token);
     } else {
-      setError('Invalid or missing reset token.');
+      setError('Ongeldige of ontbrekende reset token.');
     }
   }, [searchParams]);
 
@@ -25,17 +25,17 @@ const PasswordUpdate = () => {
     event.preventDefault();
 
     if (!newPassword || !confirmPassword) {
-      setError('Both password fields are required.');
+      setError('Beide paswoordvelden zijn verplicht.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Paswoorden komen niet overeen.');
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError('Paswoord moet minstens 6 characters lang zijn.');
       return;
     }
 
@@ -53,13 +53,13 @@ const PasswordUpdate = () => {
         throw error;
       }
 
-      setMessage('Your password has been updated successfully.');
+      setMessage('Uw paswoord is succesvol gewijzigd.');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
-      setError('Failed to update password. Please try again.');
-      console.error('Error updating password:', err);
+      setError('Paswoord wijziging mislukt. Probeer later opnieuw.');
+      console.error('Error wijzigen password:', err);
     } finally {
       setIsLoading(false);
     }
