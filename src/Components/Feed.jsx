@@ -97,7 +97,6 @@ const Feed = ({ user, logout }) => {
       const newIndex = Math.floor(Math.random() * users.length);
       setCurrentIndex(newIndex);
       setMustSpin(true);
-
       // Log both the logged-in user ID and the selected user ID
       console.log('Logged-in user ID:', currentUserId);  // Using the state to access current user ID
       console.log('Selected user ID:', users[newIndex]?.id);
@@ -153,8 +152,8 @@ const Feed = ({ user, logout }) => {
       <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10"> {/* Adjusted padding for top margin */}
         {/* Welcome message */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
-          <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
+          <h1 className="text-3xl font-semibold text-[#360009]">Gebruik de spin knop om een nieuwe liefde te ontdekken!</h1>
+          {/* <p className="text-lg text-[#881337]">Gebruik de draaiknop om een nieuwe liefde te ontdekken!</p> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -198,7 +197,7 @@ const Feed = ({ user, logout }) => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    Searching...
+                    Onze vinder is opzoek naar een moglijke vlinder...
                   </motion.div>
                 ) : (
                   <motion.div
