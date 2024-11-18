@@ -28,49 +28,58 @@ const Feed = ({ user, logout }) => {
     try {
       setLoading(true);
       setError(null);
-      
+  
+      // Fetch user preferences for the logged-in user
+      const { data: userPreferences, error: userPreferencesError } = await supabase
+        .from('userpreferences')
+        .select('min_age, max_age')
+        .eq('id', user.id) // Reference to the logged-in user
+        .single();
+  
+      if (userPreferencesError) throw userPreferencesError;
+  
+      const { min_age, max_age } = userPreferences;
+  
+      // Fetch users data
       const { data: fetchedUsers, error: usersError } = await supabase
-          .from('users')
-          .select('id, birthday, facility, city, name, profilepictureBASE64')
-          .not('name', 'is', null) // Ensure 'name' is not NULL
-          .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
-          .not('birthday', 'is', null) // Ensure 'birthday' is not NULL
-          .limit(USERS_TO_FETCH);
-      
+        .from('users')
+        .select('id, birthday, name, profilepictureBASE64, city, facility')
+        .not('name', 'is', null) // Ensure 'name' is not NULL
+        .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
+        .not('birthday', 'is', null) // Ensure 'm  n mn n jm birthday' is not NULL
+        .limit(USERS_TO_FETCH);
+  
       if (usersError) throw usersError;
-
-      const usersWithHobbies = await Promise.all(
-        fetchedUsers.map(async (user) => {
-          const { data: preferencesData } = await supabase
-            .from('userpreferences')
-            .select('hobbies')
-            .eq('id', user.id)
-            .single();
-
-          return {
-            id: user.id,
-            name: user.name || 'Anonymous',
-            location: user.city,
-            facility: user.facility,
-            birthday: user.birthday,
-            age: calculateAge(user.birthday),
-            profilePicture: user.profilepictureBASE64,
-            hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : []
-          };
-        })
-      );
-
-      const validUsers = usersWithHobbies
-        .filter(user => user && user.name && user.profilePicture)
-        .slice(0, USERS_TO_FETCH);
-
-      setUsers(validUsers);
+  
+      // Filter users by age
+      const usersWithValidAge = fetchedUsers.filter(user => {
+        const age = calculateAge(user.birthday);
+        return age >= min_age && age <= max_age; // Filter by min and max age from user preferences
+      });
+  
+      // Map the users to include additional properties like age
+      const usersWithAge = usersWithValidAge.map(user => ({
+        id: user.id,
+        name: user.name || 'Anonymous',
+        location: user.city,
+        facility: user.facility,
+        birthday: user.birthday,
+        age: calculateAge(user.birthday), // Dynamically calculated age
+        profilePicture: user.profilepictureBASE64
+      }));
+  
+      // Update state with the filtered and processed user data
+      setUsers(usersWithAge);
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+  
+  
+  
+
 
   useEffect(() => {
     fetchUserData();
@@ -129,15 +138,15 @@ const Feed = ({ user, logout }) => {
   }
 
   return (
-<div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> {/* Add padding-top to create spacing */}
-{/* Integrate TopNavigationBar */}
+    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> {/* Add padding-top to create spacing */}
+      {/* Integrate TopNavigationBar */}
       <div className="relative z-50">
         <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
       {/* Main Feed Content */}
       <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10"> {/* Adjusted padding for top margin */}
-      {/* Welcome message */}
+        {/* Welcome message */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
           <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
