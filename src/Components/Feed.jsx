@@ -126,10 +126,16 @@ const Feed = ({ user, logout }) => {
               : 'Geen match gevonden, probeer later opnieuw of pas je filtervoorkeuren aan.'}
           </p>
           <button
-            onClick={() => setRetryCount(c => c + 1)}
+            onClick={() => {
+              if (error) {
+                window.location.reload(); // Refresh on error
+              } else {
+                window.location.href = '/userFilterForm'; // Redirect on no match
+              }
+            }}
             className="mt-2 text-[#fb7185] underline hover:no-underline"
           >
-            {error ? 'Retry' : 'Refresh'}
+            {error ? 'Retry' : 'Filter opnieuw'}
           </button>
         </div>
       </div>
