@@ -1,12 +1,23 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
 import TopNavigationBar from './TopNavigationBar';
 
-const Home = ({ user, loggedIn, logout, email }) => {
+const Home = ({ user, loggedIn, logout, email,role }) => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
+
+  useEffect(() => {
+
+    console.log("User = ",user);
+    console.log("email = ",email);
+    console.log("Role",role)
+    if (role === 'STAFF_MEMBER') {
+      // Redirect to settingsMentor if the user is a mentor
+      navigate('/settingsMentor');
+    }
+  }, [navigate,role]);
 
   const handleButtonClick = useCallback(() => {
     if (loggedIn) {

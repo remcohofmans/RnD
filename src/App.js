@@ -23,11 +23,11 @@ export default function App() {
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [role,setRole] = useState(null);
 
   // Function for email/password login
   async function loginWithEmail(email, password) {
-    setLoading(true); // disable submit button while waiting for the response
-    
+    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -37,11 +37,26 @@ export default function App() {
       console.error('Error logging in with email/password:', error.message);
     } else {
       console.log('Logged in successfully with email/password:', data);
-      setUser(data.user); // Set the user after successful login
+      setUser(data.user);
+      try {
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        if (userError) {
+          console.error('Error fetching user role:', userError.message);
+        } else {
+          console.log('User role fetched successfully:', userData.role);
+          setRole(userData.role);
+        }
+      } catch (err) {
+        console.error('Error in fetching user role:', err);
+      }
     }
-
-    setLoading(false); // enable submit button (and other UI elements) after response
+    setLoading(false);
   }
+
 
   // Function for email/password sign-up
   async function signUpWithEmail(email, password, isMentor) {
@@ -56,6 +71,8 @@ export default function App() {
     }
 
     const role = isMentor ? 'STAFF_MEMBER' : 'USER';
+    setRole(role);
+    
     const { error: updateError } = await supabase
       .from('users')
       .update({ role })
@@ -89,22 +106,38 @@ export default function App() {
 };
 
 
-  // Check session on component mount
-  useEffect(() => {
-    const checkSession = async () => {
-      setLoading(true);
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error fetching session:', error);
-        setError(error.message);
-      } else {
-        setUser(data?.session?.user || null);
+useEffect(() => {
+  const checkSession = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Error fetching session:', error);
+      setError(error.message);
+    } else {
+      setUser(data?.session?.user || null);
+      if (data?.session?.user) {
+        try {
+          // Fetch the role of the user from your 'users' table
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', data.session.user.id) // Ensure we use the correct ID for the user
+            .single();
+          if (userError) {
+            console.error('Error fetching user role:', userError.message);
+          } else {
+            setRole(userData?.role); // Set role properly
+          }
+        } catch (err) {
+          console.error('Error fetching user role:', err);
+        }
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  };
 
-    checkSession();
-  }, []); // Run only on mount
+  checkSession();
+}, []); // Runs once when the component is mounted
 
   return (
     <Router>
@@ -112,37 +145,24 @@ export default function App() {
         {/* Protect the Home route so only authenticated users can access it */}
         <Route 
           path="/" 
-          element={user ? <Home 
-              loggedIn={!!user}  // Boolean to indicate logged-in status
-              logout={logout} 
-              email={user?.email} /> : <Navigate to="/login" />} />
-              {/* Login/Register route */}
+          element={user ? (role === 'STAFF_MEMBER' ? <Navigate to="/settingsMentor"  /> : <Home loggedIn={!!user} logout={logout} email={user?.email} role={role} />) : <Navigate to="/login" />} 
+        />
         <Route
           path="/login"
-          element={user ? <Navigate to="/" /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} error={error} />}
+          element={user ? (role === 'STAFF_MEMBER' ? <Navigate to="/settingsMentor" /> : <Navigate to="/" />) : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} error={error} />}
         />
-        <Route path="/chats" element={user ? <ChatsPage /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        {/* Route to Feed */}
-        <Route path="/settingsMentor" element={<SettingsMentor />} />
-        <Route path="/mentorBanUser" element={<MentorBanUser />} />
-
-        <Route 
-          path="/feed" 
-          element={user ? <Feed user={user} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} 
-        />
-        {/* Add other routes here */}
-        <Route path="/settingsUser" element={<SettingsUser />} />
-        <Route path="/PasswordChangeForm" element={<PasswordChangeForm />} />
-        <Route 
-          path="/userFilterForm" 
-          element={user ? <UserFilterForm userId={user.id} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        {/* Route to UploadFoto */}
-        <Route path="/uploadFoto" element={user ? <ImageUpload /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/bar" element={<TopNavigationBar />} /> {/*Wanneer de bar overal geïntegreerd is mag dit weg*/}
-
-        <Route path="/subscription" element={user ? <SubscriptionPlans /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/forgotPassword" element={<PasswordRecovery />} /> 
-        <Route path="/updatePassword" element={<PasswordUpdate />} /> 
+        <Route path="/chats" element={user ? <ChatsPage role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/settingsMentor" element={user && role === 'STAFF_MEMBER' ? <SettingsMentor role={role} logout={logout} /> : <Navigate to="/" />} />
+        <Route path="/mentorBanUser" element={user ? <MentorBanUser role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/feed" element={user ? <Feed role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/settingsUser" element={user ? <SettingsUser role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/PasswordChangeForm" element={user ? <PasswordChangeForm role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/userFilterForm" element={user ? <UserFilterForm userId={user.id} role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/uploadFoto" element={user ? <ImageUpload role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/bar" element={<TopNavigationBar />} />
+        <Route path="/subscription" element={user ? <SubscriptionPlans role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
+        <Route path="/forgotPassword" element={<PasswordRecovery />} />
+        <Route path="/updatePassword" element={<PasswordUpdate />} />
         <Route path="/pp" element={<ProfielPauzeren />} />
         
       </Routes>
