@@ -50,11 +50,11 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
-    
+
     console.log("Sign up form submitted");  // Debugging line
-  
+
     let error = "";
-  
+
     // Helper functions for validation
     const isValidFacilityCode = (facilityCode, selectedFacility) => {
       if (selectedFacility === "facility1" && facilityCode !== "12345") return "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
@@ -62,7 +62,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") return "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
       return null;
     };
-  
+
     const isValidMentorCode = (mentorCode) => {
       // Example mentor code validation: it should be exactly 6 characters and alphanumeric
       const mentorCodeRegex = /^[A-Za-z0-9]{8}$/;
@@ -76,55 +76,55 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       }
       return null;
     };
-  
+
     const validateFields = () => {
       if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || !selectedFacility) {
         return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
       }
-  
+
       if (signUpPassword !== confirmPassword) {
         return "Paswoorden komen niet overeen.";
       }
-  
+
       if (isMentor && !mentorCode) {
         return "Mentor code is verplicht.";
       }
-  
+
       if (!isMentor && !facilityCode) {
         return "Faciliteitscode is verplicht.";
       }
-  
-      // Validate mentor code if applicable
+
+      // Validate mentor code
       if (isMentor) {
         const mentorCodeError = isValidMentorCode(mentorCode);
         if (mentorCodeError) {
           return mentorCodeError;
         }
       }
-  
-      // Validate facility code if applicable
+
+      // Validate facility code
       else {
         const facilityCodeError = isValidFacilityCode(facilityCode, selectedFacility);
         if (facilityCodeError) {
           return facilityCodeError;
         }
       }
-  
+
       if (isMentor && facilityCode) {
         return "Faciliteitscode mag niet ingevuld worden als u een mentor bent.";
       }
-  
+
       return null;
     };
-  
+
     // Run validation
     error = validateFields();
-  
+
     if (error) {
       setSignupError(error);
       return;
     }
-  
+
     // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, isMentor)
       .then(() => {
@@ -132,7 +132,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       })
       .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
-  
+
   const handleEmailChange = (e) => {
     const email = e.target.value;
     if (isLogin) {
@@ -140,12 +140,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     } else {
       setSignUpEmail(email);  // Update signUpEmail if it's the signup form
     }
-  
+
     // Improved email validation with regex
     const emailFeedback = !/\S+@\S+\.\S+/.test(email) ? 'Voer een geldig e-mailadres in.' : '';
     setEmailFeedback(emailFeedback);
   };
-  
+
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
@@ -297,109 +297,132 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
               <form onSubmit={handleSignUpSubmit} className="space-y-6">
                 {/* Email Input */}
                 <div className="relative">
-                  <Mail className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`} />
+                  <Mail
+                    className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusEmail ? 'text-[#be123c]' : ''}`}
+                    aria-hidden="true"
+                  />
                   <input
                     type="email"
                     value={signUpEmail}
                     onChange={handleEmailChange}
                     onFocus={() => setFocusEmail(true)}
                     onBlur={() => setFocusEmail(false)}
-                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                    className={`w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 ${emailFeedback ? 'border-red-600 focus:ring-red-300' : 'focus:ring-[#fda4af]'
+                      }`}
                     placeholder="Email"
                     required
+                    aria-invalid={!!emailFeedback}
                   />
+                  {emailFeedback && (
+                    <p className="text-red-600 text-sm mt-1" role="alert">
+                      {emailFeedback}
+                    </p>
+                  )}
                 </div>
-
                 {/* Password Input */}
                 <div className="relative">
-                  <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`} />
+                  <Lock
+                    className={`absolute left-3 top-3 w-5 h-5 text-gray-500 ${focusPassword ? 'text-[#be123c]' : ''}`}
+                    aria-hidden="true"
+                  />
                   <input
                     type="password"
                     value={signUpPassword}
                     onChange={handlePasswordChange}
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
-                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                    placeholder="Paswoord"
+                    className={`w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none ${passwordFeedback ? 'border-red-600 ring-2 ring-red-300' :
+                        signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
+                          'ring-2 focus:ring-[#fda4af] border-gray-300'
+                      }`}
+                    placeholder="Wachtwoord"
                     required
+                    aria-invalid={!!passwordFeedback}
                   />
+                  {passwordFeedback && (
+                    <p className="text-red-600 text-sm mt-1" role="alert">
+                      {passwordFeedback}
+                    </p>
+                  )}
                 </div>
 
-                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
-
+                {/* Confirm Password Input */}
                 <div className="relative">
-                  <Lock className={`absolute left-3 top-3 w-5 h-5 text-gray-500`} />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
-                    className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                    placeholder="Bevestig Paswoord"
+                    className={`w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none ${confirmPasswordFeedback ? 'border-red-600 ring-2 ring-red-300' :
+                        signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
+                          'ring-2 focus:ring-[#fda4af] border-gray-300'
+                      }`}
+                    placeholder="Bevestig Wachtwoord"
                     required
+                    aria-invalid={!!confirmPasswordFeedback}
                   />
+                  {confirmPasswordFeedback && (
+                    <p className="text-red-600 text-sm mt-1" role="alert">
+                      {confirmPasswordFeedback}
+                    </p>
+                  )}
                 </div>
+
+                {/* Password Match Success Message */}
+                {signUpPassword && confirmPassword && signUpPassword === confirmPassword && (
+                  <p className="text-green-600 text-sm mt-2">
+                    De paswoorden zijn een match!
+                  </p>
+                )}
 
                 {/* Mentor Checkbox */}
                 <div className="mt-4 mb-6">
-                  <label className="mb-6 flex items-center space-x-2">
+                  <label className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={isMentor}
                       onChange={() => setIsMentor(!isMentor)}
+                      className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     />
-                    <span><b>Ik ben een mentor</b></span>
+                    <span className="font-bold">Ik ben een mentor</span>
                   </label>
-
-                  {/* Facility Code (only for non-mentors) */}
-                  {!isMentor && (
-                    <>
-                      {/* Facility Code Instructions */}
-                      {!isLogin && (
-                        <div className="mb-4 text-lg text-gray-600">
-                          <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
-                        </div>
-                      )}
-
-                      {/* Facility Code Input */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={facilityCode}
-                          onChange={(e) => setFacilityCode(e.target.value)}
-                          className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                          placeholder="Faciliteitscode"
-                          required
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {/* Facility Code (only for non-mentors) */}
-                  {isMentor && (
-                    <>
-                      {/* Facility Code Instructions */}
-                      {!isLogin && (
-                        <div className="mb-4 text-lg text-gray-600">
-                          <span>Geef uw mentor ID in. (*)</span>
-                        </div>
-                      )}
-
-                      {/* Mentor Code Input */}
-                      <div className="relative mb-6">
-                        <input
-                          type="text"
-                          value={mentorCode}
-                          onChange={(e) => setMentorCode(e.target.value)}
-                          className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                          placeholder="Mentorcode"
-                          required
-                        />
-                      </div>
-                    </>
-                  )}
                 </div>
 
-                {confirmPasswordFeedback && <p className="text-red-600 text-sm mt-1">{confirmPasswordFeedback}</p>}
+                {/* Facility/Mentor Code */}
+                {!isMentor ? (
+                  <>
+                    <div className="mb-4 text-lg text-gray-600">
+                      <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={facilityCode}
+                        onChange={(e) => setFacilityCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Faciliteitscode"
+                        required={!isMentor}
+                        disabled={isMentor}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-4 text-lg text-gray-600">
+                      <span>Geef uw mentor ID in. (*)</span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={mentorCode}
+                        onChange={(e) => setMentorCode(e.target.value)}
+                        className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                        placeholder="Mentorcode"
+                        required={isMentor}
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* Facility Dropdown */}
                 <div className="mb-6">
@@ -411,10 +434,11 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                       id="facility"
                       value={selectedFacility}
                       onChange={(e) => setSelectedFacility(e.target.value)}
-                      className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none"
+                      className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
                       required
+                      disabled={isMentor}
                     >
-                      <option value="" disabled selected>
+                      <option value="" disabled>
                         Selecteer uw faciliteit
                       </option>
                       <option value="facility1">Faciliteit 1</option>
@@ -430,7 +454,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                 </div>
 
                 {/* Terms & Conditions Agreement */}
-                <div className="flex items-center">
+                <div className="flex items-center mb-4">
                   <input
                     type="checkbox"
                     checked={isTermsAgreed}
@@ -439,12 +463,15 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     required
                   />
                   <label className="ml-2 text-gray-600 text-sm">
-                    Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>.
+                    Ik ga akkoord met de{' '}
+                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>
+                      Terms and Conditions
+                    </a>.
                   </label>
                 </div>
 
                 {/* Privacy Policy Agreement */}
-                <div className="flex items-center">
+                <div className="flex items-center mb-4">
                   <input
                     type="checkbox"
                     checked={isPrivacyPolicyAgreed}
@@ -453,18 +480,24 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     required
                   />
                   <label className="ml-2 text-gray-600 text-sm">
-                    Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>Privacy Policy</a>.
+                    Ik ga akkoord met de{' '}
+                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>
+                      Privacy Policy
+                    </a>.
                   </label>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
+                  className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   disabled={
                     !isTermsAgreed ||
                     !isPrivacyPolicyAgreed ||
                     (isMentor ? !mentorCode : !facilityCode) ||
-                    (isMentor && facilityCode) // If the user is a mentor, facilityCode should not be filled
+                    (isMentor && facilityCode) ||
+                    !signUpEmail ||
+                    !signUpPassword ||
+                    !confirmPassword
                   }
                 >
                   Registreer
@@ -474,8 +507,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                 {signupError && (
                   <p className="text-red-600 text-xs mt-4">{signupError}</p>
                 )}
-
               </form>
+
             )}
 
             <div className="text-center mt-8">
