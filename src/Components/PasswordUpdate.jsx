@@ -66,7 +66,7 @@ const PasswordUpdate = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fbf6f0]"> {/* Change here */}
+    <div className="min-h-screen flex items-center justify-center bg-[#ffccd3]"> {/* Change here */}
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Uw Paswoord</h2>
 

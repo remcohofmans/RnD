@@ -108,7 +108,7 @@ const Home = ({ user, loggedIn, logout, email,role }) => {
           className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
           style={{
             backgroundImage: `url(${butterflyImage})`,
-            backgroundColor: '#fbf6f0',
+            backgroundColor: '#ffccd3',
             backgroundSize: 'contain',  // Ensures the entire image fits inside the container
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
