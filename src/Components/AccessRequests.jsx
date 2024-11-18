@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/helper/supabaseClient.js';
 import { useNavigate } from 'react-router-dom';
 
-const AccessRequests = () => {
+const AccessRequests = ({mentorEmail}) => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,15 +14,15 @@ const AccessRequests = () => {
   const navigate = useNavigate();
 
   // Fetch all users from the database
-  useEffect((email) => {
+  useEffect(() => {
     const fetchUsers = async () => {
 
       try {
-        /*
         const { data: mentorData, error: mentorError } = await supabase
           .from('users')
           .select('facility')
-          .eq('email', email) // Replace with the actual mentor's email or identifier
+          .eq('email', mentorEmail) // Replace with the actual mentor's email or identifier
+          .eq('access_granted', 'NO')
           .single();
 
         if (mentorError) {
@@ -32,7 +32,7 @@ const AccessRequests = () => {
 
         const mentorFacility = mentorData.facility;
         console.log('mentorFacility: ', mentorFacility);
-        */
+        
         // Assuming mentorFacility is available
         
         // Query to fetch only users with role 'USER' and matching facility
@@ -56,7 +56,7 @@ const AccessRequests = () => {
     };
   
     fetchUsers();
-  }, []); // Add any necessary dependencies here, e.g., mentorFacility
+  }, [mentorEmail]); // Add any necessary dependencies here, e.g., mentorFacility
 
 
   // Search users by name or email
@@ -111,35 +111,38 @@ const AccessRequests = () => {
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', // Soft shadow for the card
         }}
       >
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Access Requests</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
 
         {loading && <p>Loading users...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Search Input */}
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          value={searchQuery}
-          onChange={handleSearch}
-          className="w-full p-2 border border-gray-300 rounded mb-4"
-        />
+        {/* Search Input - Only show if no user is selected */}
+        {!selectedUser && (
+          <input
+            type="text"
+            placeholder="Zoek op naam of email"
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full p-2 border border-gray-300 rounded mb-4"
+          />
+        )}
 
         {/* If a user is selected, show the detailed information */}
         {selectedUser ? (
           <div className="bg-white p-6 border border-gray-300 rounded mt-4">
-            <h3 className="text-xl font-semibold mb-4">User Details</h3>
-            <p><strong>Name:</strong> {selectedUser.name || 'No Name'}</p>
+            <h3 className="text-xl font-semibold mb-4">Gebruiker Details</h3>
+            <p><strong>Naam:</strong> {selectedUser.name || 'Geen naam'}</p>
             <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Phone:</strong> {selectedUser.phone || 'Not provided'}</p>
-            <p><strong>Address:</strong> {selectedUser.address || 'Not provided'}</p>
+            <p><strong>Telefoon:</strong> {selectedUser.phone || 'Niet beschikbaar'}</p>
+            <p><strong>Faciliteit:</strong> {selectedUser.facility || 'Niet beschikbaar'}</p>
             <p><strong>Status:</strong> {selectedUser.status || 'Unknown'}</p>
+            <p><strong>Foto:</strong> {selectedUser.profilepictureBASE64 ? <img src={`data:image/jpeg;base64,${selectedUser.profilepictureBASE64}`} alt="Profile Picture" className="w-32 h-32 object-cover rounded-full" /> : 'Unknown'}</p>
             {/* Add any other details you want to display */}
             <button
               onClick={handleGoBack}
               className="mt-4 px-4 py-2 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c]"
             >
-              Back to User List
+              Terug naar Toegangsverzoeken
             </button>
           </div>
         ) : (
@@ -152,14 +155,14 @@ const AccessRequests = () => {
                   className="p-4 bg-gray-50 border border-gray-300 rounded flex justify-between items-center"
                 >
                   <div>
-                    <p className="font-medium">{user.name || 'No Name'}</p>
+                    <p className="font-medium">{user.name || 'Geen naam'}</p>
                     <p className="text-gray-500">{user.email}</p>
                   </div>
                   <button
                     className="px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#be123c]"
                     onClick={() => handleViewDetails(user.id)} // Open details for the clicked user
                   >
-                    View Details
+                    Zie Details
                   </button>
                 </li>
               ))}
@@ -170,23 +173,19 @@ const AccessRequests = () => {
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
-                className={`px-3 py-1 rounded ${
-                  currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'
-                }`}
+                className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
               >
-                Previous
+                Vorige
               </button>
               <span className="text-sm text-gray-600">
-                Page {currentPage} of {totalPages}
+                Pagina {currentPage} van {totalPages}
               </span>
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`px-3 py-1 rounded ${
-                  currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'
-                }`}
+                className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
               >
-                Next
+                Volgende
               </button>
             </div>
           </>
@@ -197,7 +196,7 @@ const AccessRequests = () => {
           onClick={() => navigate('/settingsMentor')}
           className="mt-4 px-4 py-2 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c]"
         >
-          Back to Settings
+          Terug naar Instellingen
         </button>
       </div>
     </div>

@@ -153,7 +153,7 @@ useEffect(() => {
           element={user ? (role === 'STAFF_MEMBER' ? <Navigate to="/settingsMentor" /> : <Navigate to="/" />) : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} error={error} />}
         />
         <Route path="/chats" element={user ? <ChatsPage role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
-        <Route path="/settingsMentor" element={user && role === 'STAFF_MEMBER' ? <SettingsMentor role={role} logout={logout} email = {email} /> : <Navigate to="/" />} />
+        <Route path="/settingsMentor" element={user && role === 'STAFF_MEMBER' ? <SettingsMentor role={role} logout={logout} email = {user?.email} /> : <Navigate to="/" />} />
         <Route path="/mentorBanUser" element={user ? <MentorBanUser role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         <Route path="/feed" element={user ? <Feed role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
         <Route path="/settingsUser" element={user ? <SettingsUser role={role} /> : <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} />} />
@@ -165,7 +165,7 @@ useEffect(() => {
         <Route path="/forgotPassword" element={<PasswordRecovery />} />
         <Route path="/updatePassword" element={<PasswordUpdate />} />
         <Route path="/pp" element={<ProfielPauzeren />} />
-        <Route path="/accessRequests" element={user && role === 'STAFF_MEMBER' ? <AccessRequests role={role} logout={logout} loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} email = {email} /> : <Navigate to="/" />} />
+        <Route path="/accessRequests" element={user && role === 'STAFF_MEMBER' ? <AccessRequests role={role} logout={logout} loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail} mentorEmail = {user?.email} /> : <Navigate to="/" />} />
         
       </Routes>
     </Router>
