@@ -23,63 +23,55 @@ const Feed = ({ user, logout }) => {
     const ageDate = new Date(ageDiff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
-
+  
   const fetchUserData = async () => {
     try {
       setLoading(true);
       setError(null);
   
-      // Fetch user preferences for the logged-in user
-      const { data: userPreferences, error: userPreferencesError } = await supabase
+      const { data: userPreferences } = await supabase
         .from('userpreferences')
         .select('interest, min_age, max_age')
-        .eq('id', user.id) // Reference to the logged-in user
+        .eq('id', user.id)
         .single();
   
-      if (userPreferencesError) throw userPreferencesError;
-  
-      const { interest, min_age, max_age } = userPreferences;
-  
-      // Fetch users data from 'users' table
-      const { data: fetchedUsers, error: usersError } = await supabase
+      const { data: fetchedUsers } = await supabase
         .from('users')
-        .select('id, birthday, name, profilepictureBASE64, city, facility, gender') // Include gender now
-        .not('name', 'is', null) // Ensure 'name' is not NULL
-        .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
-        .not('birthday', 'is', null) // Ensure 'birthday' is not NULL
+        .select('id, birthday, name, profilepictureBASE64, city, facility, gender')
+        .not('name', 'is', null)
+        .not('profilepictureBASE64', 'is', null)
+        .not('birthday', 'is', null)
         .limit(USERS_TO_FETCH);
   
-      if (usersError) throw usersError;
+      const usersWithDetails = await Promise.all(
+        fetchedUsers.map(async user => {
+          const age = calculateAge(user.birthday);
+          if (age < userPreferences.min_age || 
+              age > userPreferences.max_age || 
+              (userPreferences.interest !== 'geen-voorkeur' && user.gender !== userPreferences.interest)) {
+            return null;
+          }
   
-      // Filter users by both age and interest (gender-based)
-      const usersWithValidFilters = fetchedUsers.filter(user => {
-        const age = calculateAge(user.birthday);
+          const { data: preferencesData } = await supabase
+            .from('userpreferences')
+            .select('hobbies')
+            .eq('id', user.id)
+            .single();
   
-        // Filter by age
-        const isAgeValid = age >= min_age && age <= max_age;
+          return {
+            id: user.id,
+            name: user.name || 'Anonymous',
+            location: user.city,
+            facility: user.facility,
+            birthday: user.birthday,
+            age,
+            profilePicture: user.profilepictureBASE64,
+            hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : []
+          };
+        })
+      );
   
-        // Filter by interest (gender)
-        let isGenderValid = true; // Default is true, meaning no filter on gender if interest is 'geen-voorkeur'
-        if (interest !== 'geen-voorkeur') {
-          isGenderValid = user.gender === interest; // Only allow matching gender if interest is not 'geen-voorkeur'
-        }
-  
-        return isAgeValid && isGenderValid;
-      });
-  
-      // Map the filtered users with additional details
-      const usersWithAgeAndInterest = usersWithValidFilters.map(user => ({
-        id: user.id,
-        name: user.name || 'Anonymous',
-        location: user.city,
-        facility: user.facility,
-        birthday: user.birthday,
-        age: calculateAge(user.birthday), // Dynamically calculated age
-        profilePicture: user.profilepictureBASE64
-      }));
-  
-      // Update state with the filtered and processed user data
-      setUsers(usersWithAgeAndInterest);
+      setUsers(usersWithDetails.filter(user => user).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
     } finally {
@@ -87,7 +79,7 @@ const Feed = ({ user, logout }) => {
     }
   };
   
-    
+  
 
   useEffect(() => {
     fetchUserData();
@@ -146,7 +138,7 @@ const Feed = ({ user, logout }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> {/* Add padding-top to create spacing */}
+    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> 
       {/* Integrate TopNavigationBar */}
       <div className="relative z-50">
         <TopNavigationBar loggedIn={!!user} logout={logout} />
