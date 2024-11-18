@@ -32,6 +32,9 @@ const Feed = ({ user, logout }) => {
       const { data: fetchedUsers, error: usersError } = await supabase
         .from('users')
         .select('id, birthday, facility, city, name, profilepictureBASE64')
+        .not('name', 'is', null) // Ensure 'name' is not NULL
+        .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
+        .not('birthday', 'is', null) // Ensure 'birthday' is not NULL
         .limit(USERS_TO_FETCH);
       
       if (usersError) throw usersError;
