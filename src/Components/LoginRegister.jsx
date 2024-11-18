@@ -50,6 +50,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
+    
     console.log("Sign up form submitted");  // Debugging line
   
     let error = "";
@@ -223,7 +224,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
         </div>
 
         {/* Right Half */}
-        <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fbf6f0' }} >
+        <div className="w-1/2 flex flex-col justify-center p-12" style={{ backgroundColor: '#fff1f2' }} >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
@@ -435,6 +436,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     checked={isTermsAgreed}
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
+                    required
                   />
                   <label className="ml-2 text-gray-600 text-sm">
                     Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>Terms and Conditions</a>.
@@ -448,6 +450,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     checked={isPrivacyPolicyAgreed}
                     onChange={(e) => setIsPrivacyPolicyAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
+                    required
                   />
                   <label className="ml-2 text-gray-600 text-sm">
                     Ik ga akkoord met de <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>Privacy Policy</a>.
