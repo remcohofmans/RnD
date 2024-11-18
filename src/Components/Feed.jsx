@@ -3,7 +3,7 @@ import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
-import TopNavigationBar from './TopNavigationBar'; // Import TopNavigationBar
+import TopNavigationBar from './TopNavigationBar'; 
 
 const Feed = ({ user, logout }) => {
   const [users, setUsers] = useState([]);
@@ -12,8 +12,7 @@ const Feed = ({ user, logout }) => {
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [currentUserId, setCurrentUserId] = useState(user?.id); // Use user prop
-
+  const [currentUserId] = useState(user?.id); 
   const USERS_TO_FETCH = 10;
 
   const calculateAge = (birthday) => {
@@ -78,8 +77,6 @@ const Feed = ({ user, logout }) => {
       setLoading(false);
     }
   };
-  
-  
 
   useEffect(() => {
     fetchUserData();
@@ -124,9 +121,11 @@ const Feed = ({ user, logout }) => {
       <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
         <div className="text-center p-4 bg-white rounded-lg">
           <p className="text-gray-800">
-            {error ? `Error loading users: ${error}` : 'No users found. Please try again later.'}
+            {error
+              ? `Error loading users: ${error}`
+              : 'Geen match gevonden, probeer later opnieuw of pas je filtervoorkeuren aan.'}
           </p>
-          <button 
+          <button
             onClick={() => setRetryCount(c => c + 1)}
             className="mt-2 text-[#fb7185] underline hover:no-underline"
           >
