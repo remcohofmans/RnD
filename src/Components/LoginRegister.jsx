@@ -126,7 +126,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     }
   
     // Call signUpWithEmail function if all validations pass
-    signUpWithEmail(signUpEmail, signUpPassword, isMentor ? mentorCode : facilityCode)
+    signUpWithEmail(signUpEmail, signUpPassword, isMentor)
       .then(() => {
         setSignupError('');
       })
