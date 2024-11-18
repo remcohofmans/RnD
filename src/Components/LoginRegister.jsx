@@ -38,9 +38,10 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       return;
     }
 
+    // Returns a Promise  
     loginWithEmail(loginEmail, loginPassword)
       .then(() => {
-        setLoginError(''); // Clear error if successful
+        setLoginError(null); // Clear error if successful
       })
       .catch((error) => {
         console.error("Login Error:", error);  // Debug the error here
@@ -53,7 +54,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
     console.log("Sign up form submitted");  // Debugging line
 
-    let error = "";
+    let error = null;
 
     // Helper functions for validation
     const isValidFacilityCode = (facilityCode, selectedFacility) => {
@@ -72,7 +73,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
       // You can also add additional checks, such as checking if the code exists in a predefined list of mentor codes.
       const validMentorCodes = ["MENTOR01", "MENTOR02", "MENTOR03"];  // Example valid codes
       if (!validMentorCodes.includes(mentorCode)) {
-        return "Ongeldige mentor code. De code komt niet overeen met een geldige mentor.";
+        return "De mentor code is ongeldig. Gelieve een juiste code in te geven.";
       }
       return null;
     };
@@ -128,7 +129,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, isMentor)
       .then(() => {
-        setSignupError('');
+        setSignupError(null);
       })
       .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
@@ -144,8 +145,11 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     // Improved email validation with regex
     const emailFeedback = !/\S+@\S+\.\S+/.test(email) ? 'Voer een geldig e-mailadres in.' : '';
     setEmailFeedback(emailFeedback);
-  };
 
+    if (loginError) {
+      setLoginError(null);
+    }
+  };
 
   const handlePasswordChange = (e) => {
     const password = e.target.value;
@@ -153,8 +157,6 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     if (isLogin) {
       // Update login password state if in login mode
       setLoginPassword(password);
-      // // Clear any existing feedback for login passwords
-      // setPasswordFeedback('');
     } else {
       // Update signup password state if in registration mode
       setSignUpPassword(password);
@@ -164,7 +166,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     if (password.length < 6) {
       setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
     } else {
-      setPasswordFeedback('');
+      setPasswordFeedback(null);
+    }
+
+    // If there is still an existing error, clear it
+    if(loginError) {
+      setLoginError(null);
     }
   };
 
@@ -283,7 +290,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
 
                 <button
                   type="submit"
-                  // disabled={loading}
+                  disabled={loginPassword.length < 6}
                   className="w-full py-3 bg-[#e11d48] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105"
                 >
                   Log in
