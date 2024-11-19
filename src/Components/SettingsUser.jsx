@@ -49,7 +49,6 @@ const SettingsUser = () => {
 
   return (
     <div>
-      <TopNavigationBar/>
       <div className="grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
        {/* Left Menu */}
     <div

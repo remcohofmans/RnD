@@ -93,7 +93,6 @@ const SettingsMentor = ({ logout, loggedIn }) => {
             </button>
           ))}
           
-          {/* Logout Button */}
           <button
             className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 mt-4"
             style={{ backgroundColor: '#f43f5e' }}
@@ -106,7 +105,6 @@ const SettingsMentor = ({ logout, loggedIn }) => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div

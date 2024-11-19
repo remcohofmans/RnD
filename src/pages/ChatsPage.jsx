@@ -22,9 +22,6 @@ const ChatsPage = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Top Navigation Bar */}
-      <TopNavigationBar />
-
       {/* Main Content Container with padding to avoid overlay */}
       <div className="container mx-auto py-8 mt-16"> {/* Added mt-16 for spacing below the navbar */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
