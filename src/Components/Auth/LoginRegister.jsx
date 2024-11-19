@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
+import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
 
-const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
+
+const LoginRegister = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -29,33 +31,35 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
+  const { loginWithEmail, signUpWithEmail, error, loading } = useAuth();
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-  
+
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;
     }
-  
+
     // Now login attempt
     loginWithEmail(loginEmail, loginPassword)
       .then(() => {
         // Clear the error only if login is successful
-        // setLoginError(null); // Clear error on successful login
+        setLoginError(''); // Clear error on successful login
       })
-      .catch((error) => {
-        console.error("Login Error:", error);  // Debug the error here
+      .catch((loginError) => {
+        console.error("Login Error:", loginError);  // Debug the error here
         setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
       });
+      
+      console.log("Log in error:", loginError);  // Debugging line
+
   };
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
 
     console.log("Sign up form submitted");  // Debugging line
-
-    let error = null;
 
     // Helper functions for validation
     const isValidFacilityCode = (facilityCode, selectedFacility) => {
@@ -120,10 +124,10 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     };
 
     // Run validation
-    error = validateFields();
+    signupError = validateFields();
 
-    if (error) {
-      setSignupError(error);
+    if (signupError) {
+      setSignupError(signupError);
       return;
     }
 
@@ -148,7 +152,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     setEmailFeedback(emailFeedback);
 
     if (loginError) {
-      setLoginError(null);
+      setLoginError('');
     }
   };
 
@@ -171,7 +175,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
     }
 
     // If there is still an existing error, clear it
-    if(loginError) {
+    if (loginError) {
       setLoginError(null);
     }
   };
@@ -189,10 +193,10 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
   };
 
   useEffect(() => {
-    if (error) {
-      setLoginError(error); // Update local state if there's an error from App.js
+    if (loginError) {
+      setLoginError(loginError); // Update local state if there's an error from App.js
     }
-  }, [error]);
+  }, [loginError]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -298,7 +302,9 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                 </button>
 
                 {/* Display login error if any */}
-                {loginError && <p className="text-red-600 text-xs mt-4">{loginError}</p>}
+                {loginError && (
+                  <p className="text-red-600 text-xs mt-4">{loginError}</p>
+                )}
 
               </form>
             ) : (
@@ -340,8 +346,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
                     className={`w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none ${passwordFeedback ? 'border-red-600 ring-2 ring-red-300' :
-                        signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
-                          'ring-2 focus:ring-[#fda4af] border-gray-300'
+                      signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
+                        'ring-2 focus:ring-[#fda4af] border-gray-300'
                       }`}
                     placeholder="Wachtwoord"
                     required
@@ -362,8 +368,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
                     className={`w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none ${confirmPasswordFeedback ? 'border-red-600 ring-2 ring-red-300' :
-                        signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
-                          'ring-2 focus:ring-[#fda4af] border-gray-300'
+                      signUpPassword && confirmPassword && signUpPassword === confirmPassword ? 'border-green-600 ring-2 ring-green-400' :
+                        'ring-2 focus:ring-[#fda4af] border-gray-300'
                       }`}
                     placeholder="Bevestig Wachtwoord"
                     required

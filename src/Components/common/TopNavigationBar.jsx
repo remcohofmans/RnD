@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart, faUserFriends, faComment, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthContext';
 
-const TopNavigationBar = ({ loggedIn, logout }) => {
+const TopNavigationBar = () => {
+
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
+  const { logout, user, error, loading } = useAuth();
+  const loggedIn = !!user;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleNavigate = (path) => {
