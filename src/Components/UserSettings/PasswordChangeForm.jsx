@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../lib/helper/supabaseClient'; 
-import TopNavigationBar from './TopNavigationBar';
+import { supabase } from '../../lib/helper/supabaseClient'; 
+import TopNavigationBar from '../common/TopNavigationBar';
 
 
 

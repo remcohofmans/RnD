@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/helper/supabaseClient'; 
+import { supabase } from '../../lib/helper/supabaseClient.js'; 
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from './TopNavigationBar.jsx';
+import TopNavigationBar from '../common/TopNavigationBar.jsx';
 
 const SettingsMentor = ({ logout, loggedIn }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);

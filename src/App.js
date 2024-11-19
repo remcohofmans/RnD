@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from './lib/helper/supabaseClient';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import LoginRegister from './Components/LoginRegister';
+import LoginRegister from './Components/Auth/LoginRegister';
 import Home from './Components/Home';
-import ChatsPage from './pages/ChatsPage';
+import ChatsPage from './Components/Chat/ChatsPage';
 import Feed from './Components/Feed'
-import SettingsUser from './Components/SettingsUser';
-import PasswordChangeForm from './Components/PasswordChangeForm';
-import UserFilterForm from './Components/UserFilterForm';
-import ImageUpload from './Components/ImageUpload';
-import TopNavigationBar from './Components/TopNavigationBar';
-import MentorBanUser from './Components/MentorBanUser';
-import SettingsMentor from './Components/SettingsMentor';
+import SettingsUser from './Components/UserSettings/SettingsUser';
+import PasswordChangeForm from './Components/UserSettings/PasswordChangeForm';
+import UserFilterForm from './Components/UserSettings/UserFilterForm';
+import ImageUpload from './Components/UserSettings/ImageUpload';
+import TopNavigationBar from './Components/common/TopNavigationBar';
+import MentorBanUser from './Components/MentorSettings/MentorBanUser';
+import SettingsMentor from './Components/MentorSettings/SettingsMentor';
 import SubscriptionPlans from './Components/SubscriptionPlans';
-import PasswordRecovery from './Components/PasswordRecovery';
-import PasswordUpdate from './Components/PasswordUpdate';
-import ProfielPauzeren from './Components/ProfielPauzeren';
+import PasswordRecovery from './Components/Auth/PasswordRecovery';
+import PasswordUpdate from './Components/Auth/PasswordUpdate';
+import ProfielPauzeren from './Components/UserSettings/ProfielPauzeren';
 import MainLayout from './MainLayout'; // Import MainLayout
 
 

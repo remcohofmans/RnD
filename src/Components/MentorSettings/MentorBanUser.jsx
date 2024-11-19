@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
-import { supabase } from '../lib/helper/supabaseClient.js';
+import { supabase } from '../../lib/helper/supabaseClient.js';
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from './TopNavigationBar.jsx';
+import TopNavigationBar from '../common/TopNavigationBar.jsx';
 
 const MentorBanUser = () => {
   const [users, setUsers] = useState([]);

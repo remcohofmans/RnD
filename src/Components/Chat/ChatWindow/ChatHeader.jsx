@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserPicture } from '../../UserPicture';
+import { UserPicture } from '../../UserSettings/UserPicture';
 
 export const ChatHeader = ({ otherUserName, otherUserId }) => {
   return (

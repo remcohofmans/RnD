@@ -9,7 +9,7 @@ import {
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
-import { availableHobbies } from '../filter/AvailableHobbiesPage';  // Ensure this path is correct
+import { availableHobbies } from '../Filter/AvailableHobbiesPage';  // Ensure this path is correct
 import { supabase } from '../../supabaseClient';
 
 // Map the available hobbies to icons

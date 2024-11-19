@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
-import TopNavigationBar from './TopNavigationBar';
+import TopNavigationBar from './common/TopNavigationBar';
 
 const Home = ({ user, loggedIn, logout, email,role }) => {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/helper/supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 
 const ProfielPauzeren = ({ userId, onSuccess, onError, setIsConfirming }) => {
   const [error, setError] = useState(null);

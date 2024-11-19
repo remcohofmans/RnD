@@ -1,6 +1,6 @@
 // MainLayout.js
 import React from 'react';
-import TopNavigationBar from './Components/TopNavigationBar';
+import TopNavigationBar from './Components/common/TopNavigationBar';
 
 const MainLayout = ({ children, loggedIn, logout }) => {
   return (

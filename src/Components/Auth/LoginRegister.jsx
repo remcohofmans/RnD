@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import happyPeople from '../Assets/happyPeople.png';
-import butterflyIcon from '../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
+import happyPeople from '../../Assets/happyPeople.png';
+import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
 
 const LoginRegister = ({ loginWithEmail, signUpWithEmail, error }) => {

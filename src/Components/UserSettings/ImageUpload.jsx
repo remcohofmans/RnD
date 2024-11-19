@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
-import { supabase } from '../supabaseClient';
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth.js';
-import { LoadingSpinner } from '../Components/common/LoadingSpinner.jsx';
-import  TopNavigationBar from '../Components/TopNavigationBar.jsx' 
+import { supabase } from '../../supabaseClient.js';
+import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
+import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
+import  TopNavigationBar from '../common/TopNavigationBar.jsx' 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

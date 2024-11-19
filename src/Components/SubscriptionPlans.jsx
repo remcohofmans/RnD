@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from './TopNavigationBar';
+import TopNavigationBar from './common/TopNavigationBar';
 import { FaPlaneCircleCheck } from 'react-icons/fa6';
 import { Check } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
