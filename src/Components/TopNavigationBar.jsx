@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart, faUserFriends, faComment, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TopNavigationBar = ({ loggedIn, logout }) => {
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleNavigate = (path) => {
@@ -33,14 +34,14 @@ const TopNavigationBar = ({ loggedIn, logout }) => {
   ];
   const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };
 
-  const NavItem = ({ item }) => (
+  const NavItem = ({ item, isActive }) => (
     <div 
-      className="group flex flex-col items-center cursor-pointer relative"
+      className={`group flex flex-col items-center cursor-pointer relative ${isActive ? 'text-rose-700' : 'text-white'}`} 
       onClick={() => handleNavigate(item.path)}
     >
       <FontAwesomeIcon
         icon={item.icon}
-        className="text-white text-sm md:text-lg transition duration-300 hover:text-rose-700"
+        className={`text-sm md:text-lg transition duration-300 ${isActive ? 'text-rose-700' : 'text-white'}`}
       />
       <span className="absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 text-white text-xs mt-1 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0">
         {item.label}
@@ -48,24 +49,37 @@ const TopNavigationBar = ({ loggedIn, logout }) => {
     </div>
   );
 
+  // Check if the current path matches the path of each navigation item
+  const isHomeActive = location.pathname === '/';
+  const isFeedActive = location.pathname === '/feed';
+  const isChatsActive = location.pathname === '/chats';
+  const isSettingsActive = location.pathname === '/settingsUser';
+  const isLogoutActive = location.pathname === '/logout';
+
   return (
     <div>
       <div
         className="fixed top-0 left-0 right-0 flex items-center py-1 md:py-2 px-2 md:px-4"
-        style={{ backgroundColor: '#f43f5e', zIndex: 10, borderRadius: '8px' }} // Added borderRadius here
+        style={{ backgroundColor: '#f43f5e', zIndex: 10, borderRadius: '8px' }}
       >
         <div className="w-12 md:w-20">
-          <NavItem item={leftItem} />
+          {/* Pass isActive prop to check if Home component is active */}
+          <NavItem item={leftItem} isActive={isHomeActive} />
         </div>
 
         <div className="flex-1 flex justify-center gap-2 md:gap-8">
           {centerItems.map((item, index) => (
-            <NavItem key={index} item={item} />
+            <NavItem 
+              key={index} 
+              item={item} 
+              isActive={location.pathname === item.path}
+            />
           ))}
         </div>
 
         <div className="w-12 md:w-20 flex justify-end">
-          <NavItem item={rightItem} />
+          {/* Check if Logout is active */}
+          <NavItem item={rightItem} isActive={isLogoutActive} />
         </div>
       </div>
 
