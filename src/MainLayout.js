@@ -1,15 +1,18 @@
 // MainLayout.js
 import React from 'react';
 import TopNavigationBar from './Components/common/TopNavigationBar';
+import { useAuth } from './hooks/AuthContext'; // Use the hook to access auth context
 
-const MainLayout = ({ children, loggedIn, logout }) => {
+const MainLayout = ({ children }) => {
+
+  const { logout, user, error, loading } = useAuth();
+  const loggedIn = !!user;
+
   return (
     <div>
-      {/* Render TopNavigationBar and pass required props */}
-      <TopNavigationBar loggedIn={loggedIn} logout={logout} />
+      <TopNavigationBar />
       
-      {/* Render the main content below the TopNavigationBar */}
-      <div className="mt-16"> {/* Add margin or padding as needed to offset the TopNavigationBar height */}
+      <div className="mt-16">
         {children}
       </div>
     </div>
