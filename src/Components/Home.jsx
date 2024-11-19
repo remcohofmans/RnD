@@ -2,11 +2,14 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
-import TopNavigationBar from './common/TopNavigationBar';
+import { useAuth } from '../hooks/AuthContext';
 
-const Home = ({ user, loggedIn, logout, email,role }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
+  const { user, logout, role } = useAuth();
+  const email = user?.email;
+  const loggedIn = !!user;
 
   useEffect(() => {
 

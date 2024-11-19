@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
       }
     }
     setLoading(false);
+    return error;
   };
 
   // Function for email/password sign-up

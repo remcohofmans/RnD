@@ -42,18 +42,16 @@ const LoginRegister = () => {
     }
 
     // Now login attempt
-    loginWithEmail(loginEmail, loginPassword)
-      .then(() => {
-        // Clear the error only if login is successful
-        setLoginError(''); // Clear error on successful login
+    let response = loginWithEmail(loginEmail, loginPassword)
+      .then((response) => {
+        if (response) {
+          setLoginError(response.toString());
+        }
+        else {
+          // Clear the error only if login is successful
+          setLoginError(''); // Clear error on successful login
+        }
       })
-      .catch((loginError) => {
-        console.error("Login Error:", loginError);  // Debug the error here
-        setLoginError("Ongeldige inloggegevens. Probeer het opnieuw.");
-      });
-      
-      console.log("Log in error:", loginError);  // Debugging line
-
   };
 
   const handleSignUpSubmit = (e) => {
@@ -107,7 +105,6 @@ const LoginRegister = () => {
           return mentorCodeError;
         }
       }
-
       // Validate facility code
       else {
         const facilityCodeError = isValidFacilityCode(facilityCode, selectedFacility);
@@ -116,6 +113,8 @@ const LoginRegister = () => {
         }
       }
 
+      console.log("test 3");
+
       if (isMentor && facilityCode) {
         return "Faciliteitscode mag niet ingevuld worden als u een mentor bent.";
       }
@@ -123,20 +122,19 @@ const LoginRegister = () => {
       return null;
     };
 
-    // Run validation
-    signupError = validateFields();
-
-    if (signupError) {
-      setSignupError(signupError);
+    let error = validateFields();
+    if (error) {
+      setSignupError(error);
       return;
     }
 
     // Call signUpWithEmail function if all validations pass
-    signUpWithEmail(signUpEmail, signUpPassword, isMentor)
-      .then(() => {
-        setSignupError(null);
+    let response = signUpWithEmail(signUpEmail, signUpPassword, isMentor)
+      .then((response) => {
+        if(response) {
+          setSignupError(response.toString);
+        }
       })
-      .catch(() => setSignupError("Aanmelden mislukt. Probeer het opnieuw."));
   };
 
   const handleEmailChange = (e) => {
