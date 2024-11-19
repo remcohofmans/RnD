@@ -9,7 +9,7 @@ import {
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
-import { availableHobbies } from '../filter/AvailableHobbiesPage'; 
+import { availableHobbies } from '../Filter/AvailableHobbiesPage'; 
 import { supabase } from '../../supabaseClient';
 
 
@@ -61,7 +61,7 @@ const UserCard = ({ user, currentUserId }) => {
       <div className="info text-left mt-4">
         <p className="age text-[#360009]">
           <FontAwesomeIcon icon={faUser} className="mr-2" />
-          {user.age} years
+          {user.age} jaar
         </p>
         <p className="location text-[#360009]">
           <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
