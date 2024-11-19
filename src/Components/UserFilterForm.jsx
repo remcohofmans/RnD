@@ -11,6 +11,7 @@ const FilterForm = () => {
     minAge: '18',
     maxAge: '35',
   });
+  
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]); 
   const [errors, setErrors] = useState({});
