@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/helper/supabaseClient'; 
-import TopNavigationBar from '../Components/TopNavigationBar.jsx';
-import ImageUpload from '../Components/ImageUpload'; // Assuming you have this component
-import PasswordChangeForm from '../Components/PasswordChangeForm'; // Assuming you have this component
-import UserFilterForm from '../Components/UserFilterForm'; // Assuming you have this component
-import ProfielPauzeren from '../Components/ProfielPauzeren'; // Import ProfielPauzeren component
+import { supabase } from '../../lib/helper/supabaseClient.js'; 
+import TopNavigationBar from '../common/TopNavigationBar.jsx';
+import ImageUpload from './ImageUpload.jsx'; // Assuming you have this component
+import PasswordChangeForm from './PasswordChangeForm.jsx'; // Assuming you have this component
+import UserFilterForm from './UserFilterForm.jsx'; // Assuming you have this component
+import ProfielPauzeren from './ProfielPauzeren.jsx'; // Import ProfielPauzeren component
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
@@ -49,7 +49,6 @@ const SettingsUser = () => {
 
   return (
     <div>
-      <TopNavigationBar/>
       <div className="grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
        {/* Left Menu */}
     <div

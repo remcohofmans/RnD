@@ -1,25 +1,23 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
-  faMapMarkerAlt, 
+import {
+  faUser,
+  faMapMarkerAlt,
   faBuilding,
-  faTimes, 
-  faHeart, 
+  faTimes,
+  faHeart,
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
-import { availableHobbies } from '../Filter/AvailableHobbiesPage'; 
+import { availableHobbies } from '../Filter/AvailableHobbiesPage';
 import { supabase } from '../../supabaseClient';
-
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
   return acc;
 }, {});
-
-
 const defaultHobbyIcon = faStar;
+
 
 const UserCard = ({ user, currentUserId }) => {
 
@@ -54,7 +52,7 @@ const UserCard = ({ user, currentUserId }) => {
         src={`data:image/jpeg;base64,${user.profilePicture}`}
         alt={`${user.name} profile`}
       />
-      
+
 
       {/* User Info */}
       <h2 className="name text-2xl font-semibold text-[#360009] text-center">{user.name}</h2>
@@ -73,7 +71,7 @@ const UserCard = ({ user, currentUserId }) => {
         </p>
       </div>
 
-      
+
       {/* Hobbies Section */}
       <div className="hobbies mt-4 text-left">
         <span className="hobbies-label text-[#fb7185] font-bold">Hobbies:</span>
@@ -90,12 +88,12 @@ const UserCard = ({ user, currentUserId }) => {
           )}
         </div>
       </div>
-      
 
-      
+
+
       {/* Action Buttons */}
       <div className="actions flex justify-between mt-6">
-        <button 
+        <button
           className="love-button flex items-center bg-[#fb7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] "
           onClick={handleLoveClick}
         >

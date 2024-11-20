@@ -3,17 +3,19 @@ import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
-import TopNavigationBar from './TopNavigationBar'; 
-import  DistanceCalculator from '../Components/Feed/GoogleMapsMatrixAPI'
+import { useAuth } from '../hooks/AuthContext';
+import DistanceCalculator from '../Components/Feed/GoogleMapsMatrixAPI'
 
-const Feed = ({ user, logout }) => {
+const Feed = () => {
+
+  const { user, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [currentUserId] = useState(user?.id); 
+  const [currentUserId] = useState(user?.id);
   const USERS_TO_FETCH = 10;
 
   const calculateAge = (birthday) => {
@@ -25,20 +27,20 @@ const Feed = ({ user, logout }) => {
   };
 
 
-  
+
   const fetchUserData = async () => {
-    
+
 
     try {
       setLoading(true);
       setError(null);
-  
+
       const { data: userPreferences } = await supabase
         .from('userpreferences')
         .select('interest, min_age, max_age')
         .eq('id', user.id)
         .single();
-  
+
       const { data: fetchedUsers } = await supabase
         .from('users')
         .select('id, birthday, name, profilepictureBASE64, city, facility, gender')
@@ -46,22 +48,22 @@ const Feed = ({ user, logout }) => {
         .not('profilepictureBASE64', 'is', null)
         .not('birthday', 'is', null)
         .limit(USERS_TO_FETCH);
-  
+
       const usersWithDetails = await Promise.all(
         fetchedUsers.map(async user => {
           const age = calculateAge(user.birthday);
-          if (age < userPreferences.min_age || 
-              age > userPreferences.max_age || 
-              (userPreferences.interest !== 'geen-voorkeur' && user.gender !== userPreferences.interest)) {
+          if (age < userPreferences.min_age ||
+            age > userPreferences.max_age ||
+            (userPreferences.interest !== 'geen-voorkeur' && user.gender !== userPreferences.interest)) {
             return null;
           }
-  
+
           const { data: preferencesData } = await supabase
             .from('userpreferences')
             .select('hobbies')
             .eq('id', user.id)
             .single();
-  
+
           return {
             id: user.id,
             name: user.name || 'Anonymous',
@@ -74,7 +76,7 @@ const Feed = ({ user, logout }) => {
           };
         })
       );
-  
+
       setUsers(usersWithDetails.filter(user => user).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
@@ -89,7 +91,7 @@ const Feed = ({ user, logout }) => {
 
   const wheelData = users.map((user, index) => ({
     option: user.name,
-    style: { 
+    style: {
       backgroundColor: index % 2 === 0 ? '#fff1f2' : '#881337',
       textColor: index % 2 === 0 ? '#881337' : '#fff1f2'
     },
@@ -127,7 +129,7 @@ const Feed = ({ user, logout }) => {
           <p className="text-gray-800">
             {error
               ? `Error loading users: ${error}`
-              : 'Geen match gevonden, probeer later opnieuw of pas je filtervoorkeuren aan.'}
+              : 'Geen match gevonden. Probeer later opnieuw, of pas je filtervoorkeuren aan.'}
           </p>
           <button
             onClick={() => {
@@ -147,22 +149,18 @@ const Feed = ({ user, logout }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]"> 
-      {/* Integrate TopNavigationBar */}
+    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]">
       <div className="relative z-50">
-        <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
-      {/* Main Feed Content */}
-      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10"> {/* Adjusted padding for top margin */}
-        {/* Welcome message */}
+      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-[#360009]">Gebruik de spin knop om een nieuwe liefde te ontdekken!</h1>
+          <h1 className="text-3xl font-semibold text-[#360009]">Gebruik de spin knop om echte liefde te ontdekken!</h1>
           {/* <p className="text-lg text-[#881337]">Gebruik de draaiknop om een nieuwe liefde te ontdekken!</p> */}
         </div>
 
         <div>
-        <DistanceCalculator origin="Brussels, Belgium" destination="Antwerp, Belgium" />
+          <DistanceCalculator origin="Brussels, Belgium" destination="Antwerp, Belgium" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -206,7 +204,7 @@ const Feed = ({ user, logout }) => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    Onze vinder is opzoek naar een moglijke vlinder...
+                    Onze vinder is opzoek naar een mogelijke vlinder...
                   </motion.div>
                 ) : (
                   <motion.div

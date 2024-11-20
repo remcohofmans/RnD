@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/helper/supabaseClient'; 
+import { supabase } from '../../lib/helper/supabaseClient.js'; 
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from './TopNavigationBar.jsx';
+import TopNavigationBar from '../common/TopNavigationBar.jsx';
+import { useAuth } from '../../hooks/AuthContext';
 
-const SettingsMentor = ({ logout, loggedIn }) => {
+const SettingsMentor = () => {
+  
+  const { user, logout } = useAuth();
+  const loggedIn = !!user;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
@@ -93,7 +97,6 @@ const SettingsMentor = ({ logout, loggedIn }) => {
             </button>
           ))}
           
-          {/* Logout Button */}
           <button
             className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 mt-4"
             style={{ backgroundColor: '#f43f5e' }}
@@ -106,7 +109,6 @@ const SettingsMentor = ({ logout, loggedIn }) => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div

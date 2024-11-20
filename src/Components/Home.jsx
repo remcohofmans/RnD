@@ -2,11 +2,14 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
-import TopNavigationBar from './TopNavigationBar';
+import { useAuth } from '../hooks/AuthContext';
 
-const Home = ({ user, loggedIn, logout, email,role }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
+  const { user, logout, role } = useAuth();
+  const email = user?.email;
+  const loggedIn = !!user;
 
   useEffect(() => {
 
@@ -74,12 +77,9 @@ const Home = ({ user, loggedIn, logout, email,role }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Use the new TopNavigationBar */}
       <div className="relative z-50">
-        <TopNavigationBar loggedIn={!!user} logout={logout} />
       </div>
 
-      {/* Modal Overlay */}
       {isPausedModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-auto shadow-lg">
@@ -177,5 +177,3 @@ const Home = ({ user, loggedIn, logout, email,role }) => {
 };
 
 export default Home;
-
-{/** test change #2 */}
