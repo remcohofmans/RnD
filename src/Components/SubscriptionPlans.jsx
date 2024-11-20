@@ -8,6 +8,7 @@ const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
     const [selectedSubscription, setSelectedSubscription] = useState(false);
+    const [inputVal, setInputVal] = useState('');
     
     const openModal = (subscription) => {
         setSelectedSubscription(subscription);
@@ -17,10 +18,13 @@ const Subscription = () => {
     const closeModal = () => {
         setSelectedSubscription(false);
         setIsSubscriptionModalOpen(null);
+        setInputVal('');
     };
 
-
-
+    const handleSubscribe = () => {
+        //send mail to director using chargebee :)
+        closeModal();
+    };
 
     return (
         <div>
@@ -37,7 +41,7 @@ const Subscription = () => {
                     >
                         
                         <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
-                        Bevestig je aankoop!
+                            Bevestig je aankoop!
                         </h5>
                         
 
@@ -56,34 +60,35 @@ const Subscription = () => {
                         <input
                             type="text"
                             placeholder="BEVESTIG"
-                            
+                            value={inputVal}
+                            onChange={e => setInputVal(e.target.value)}
                             className="w-full p-2 border-2 rounded-lg border-rose-300 text-rose-700 focus:ring-rose-500 focus:border-rose-500 outline-none"
                             style={{ backgroundColor: '#ffe4e6' }}
                         />
                         </div>
-                        <div className='flex items-start justify-between w-full space-x-4'>
+                        <form onSubmit={handleSubscribe} className='flex items-start justify-between w-full space-x-4'>
                             <button 
-                            onClick={closeModal}
-                            type="button"
-                            className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
-                            style={{ color: '#881337', backgroundColor: '#fda4af' }}
-                            onMouseOver={(e) => (e.target.style.backgroundColor = '#fb7185')}
-                            onMouseOut={(e) => (e.target.style.backgroundColor = '#fda4af')}
+                                onClick={closeModal}
+                                type="button"
+                                className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
+                                style={{ color: '#881337', backgroundColor: '#fda4af' }}
+                                onMouseOver={(e) => (e.target.style.backgroundColor = '#fb7185')}
+                                onMouseOut={(e) => (e.target.style.backgroundColor = '#fda4af')}
                             >
-                            Terug
+                                Terug
                             </button>
 
                             <button
-                            onClick={closeModal}
-                            type="button"
-                            className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
-                            style={{ color: '#881337', backgroundColor: '#fff1f2' }}
-                            onMouseOver={(e) => (e.target.style.backgroundColor = '#fecdd3')}
-                            onMouseOut={(e) => (e.target.style.backgroundColor = '#fff1f2')}
+                                type="submit"
+                                disabled={inputVal!=='BEVESTIG'}
+                                className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
+                                style={{ color: '#881337', backgroundColor: '#fff1f2' }}
+                                onMouseOver={(e) => (e.target.style.backgroundColor = '#fecdd3')}
+                                onMouseOut={(e) => (e.target.style.backgroundColor = '#fff1f2')}
                             >
-                            Abonneer
+                                Abonneer
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             )}
