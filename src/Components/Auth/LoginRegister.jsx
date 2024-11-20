@@ -82,7 +82,7 @@ const LoginRegister = () => {
     };
 
     const validateFields = () => {
-      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || !selectedFacility) {
+      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor? !mentorCode : !selectedFacility) ) {
         return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
       }
 
@@ -506,7 +506,6 @@ const LoginRegister = () => {
                     !isTermsAgreed ||
                     !isPrivacyPolicyAgreed ||
                     (isMentor ? !mentorCode : !facilityCode) ||
-                    (isMentor && facilityCode) ||
                     !signUpEmail ||
                     !signUpPassword ||
                     !confirmPassword
