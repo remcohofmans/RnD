@@ -6,8 +6,31 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
+  const [profileComplete, setProfileComplete] = useState(false); // New state for profile completion
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Helper func to check profile completion
+  const checkProfileCompletion = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('name, birthday')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile data:', error.message);
+        setProfileComplete(false);
+        return;
+      }
+
+      setProfileComplete(!!data.name && !!data.birthdate);
+    } catch (err) {
+      console.error('Unexpected error checking profile completion:', err);
+      setProfileComplete(false);
+    }
+  };
 
   // Authenticate using Supabase
   const loginWithEmail = async (email, password) => {
@@ -16,6 +39,7 @@ export function AuthProvider({ children }) {
       email,
       password,
     });
+
     if (error) {
       setError(error.message);
       console.error('Error logging in with email/password:', error.message);
@@ -32,6 +56,7 @@ export function AuthProvider({ children }) {
           console.error('Error fetching user role:', userError.message);
         } else {
           setRole(userData.role);
+          await checkProfileCompletion(data.user.id); // Check profile completion on login
         }
       } catch (err) {
         console.error('Error in fetching user role:', err);
@@ -55,7 +80,7 @@ export function AuthProvider({ children }) {
 
     const role = isMentor ? 'STAFF_MEMBER' : 'USER';
     setRole(role);
-    
+
     const { error: updateError } = await supabase
       .from('users')
       .update({ role })
@@ -68,8 +93,9 @@ export function AuthProvider({ children }) {
     if (error) {
       setError(error.message);
     } else {
-      console.log('Logged in successfully with email/password:', data);
-      setUser(data.user); // Set the user after successful login
+      console.log('Signed up successfully:', data);
+      setUser(data.user); // Set the user after successful sign-up
+      await checkProfileCompletion(data.user.id); // Check profile completion after sign-up
       setError(''); // Clear any previous errors on success
     }
     setLoading(false);
@@ -83,6 +109,8 @@ export function AuthProvider({ children }) {
       console.error('Error logging out:', error);
     } else {
       setUser(null);
+      setRole(null);
+      setProfileComplete(false); // Reset profile completion state on logout
     }
     setLoading(false);
   };
@@ -95,18 +123,22 @@ export function AuthProvider({ children }) {
         console.error('Error fetching session:', error);
         setError(error.message);
       } else {
-        setUser(data?.session?.user || null);
-        if (data?.session?.user) {
+        const sessionUser = data?.session?.user || null;
+        setUser(sessionUser);
+
+        if (sessionUser) {
           try {
             const { data: userData, error: userError } = await supabase
               .from('users')
               .select('role')
-              .eq('id', data.session.user.id)
+              .eq('id', sessionUser.id)
               .single();
+
             if (userError) {
               console.error('Error fetching user role:', userError.message);
             } else {
               setRole(userData?.role);
+              await checkProfileCompletion(sessionUser.id); // Check profile completion on session restore
             }
           } catch (err) {
             console.error('Error fetching user role:', err);
@@ -120,7 +152,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, role, profileComplete, loading, error, loginWithEmail, signUpWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );
