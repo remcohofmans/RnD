@@ -1,57 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { LoadScript, useJsApiLoader } from '@react-google-maps/api';
+import { useEffect, useState } from 'react';
 
-const libraries = ['places'];
+const API_KEY = 'AIzaSyBFR-QFJG4IC8k55TtTE7ClBzMyXWYUJTo'; // Your API key
 
-// Created a google api on my ggogle
-//source: https://developers.google.com/maps/documentation/javascript/distancematrix
+let distanceMatrixService;
 
-
-const DistanceCalculator = ({ origin, destination }) => {
-    const apiKey = 'AIzaSyBFR-QFJG4IC8k55TtTE7ClBzMyXWYUJTo'; 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: apiKey,
-        libraries,
-    });
-
-    useEffect(() => {
-        if (isLoaded) {
-            const service = new window.google.maps.DistanceMatrixService();
-            service.getDistanceMatrix(
-                {
-                    origins: [origin],
-                    destinations: [destination],
-                    travelMode: 'DRIVING',  
-                    unitSystem: window.google.maps.UnitSystem.METRIC,
-                    avoidHighways: false,
-                    avoidTolls: false,
-                },
-                (response, status) => {
-                    if (status === 'OK') {
-                        const results = response.rows[0].elements[0];
-                        const distance = results.distance.text;
-                        const duration = results.duration.text;
-                        console.log(`Distance from ${origin} to ${destination} is ${distance} and it takes ${duration}.`);
-                    } else {
-                        console.error('Error:', status);
-                    }
-                }
-            );
+const calculateDistance = (origin, destination) => {
+    return new Promise((resolve, reject) => {
+        if (!distanceMatrixService) {
+            reject(new Error('Distance Matrix Service not initialized'));
+            return;
         }
-    }, [isLoaded, origin, destination]);
 
-    return (
-        <div>
-            {isLoaded ? (
-                <div>
-                    <h1>Distance Calculator</h1>
-                    <p>Calculating distance between {origin} and {destination}...</p>
-                </div>
-            ) : (
-                <p>Loading...</p>
-            )}
-        </div>
-    );
+        distanceMatrixService.getDistanceMatrix(
+            {
+                origins: [origin],
+                destinations: [destination],
+                travelMode: 'DRIVING', // You can change this to WALKING, BICYCLING, TRANSIT
+                unitSystem: window.google.maps.UnitSystem.METRIC,
+            },
+            (response, status) => {
+                if (status === 'OK') {
+                    const results = response.rows[0].elements[0];
+                    const distance = results.distance.text;  // Just return the distance
+                    resolve(distance);
+                } else {
+                    reject(new Error('Error fetching distance matrix: ' + status));
+                }
+            }
+        );
+    });
 };
 
-export default DistanceCalculator;
+// Initialize the service once the script is loaded
+const initializeDistanceMatrixService = () => {
+    return new Promise((resolve, reject) => {
+        if (window.google && window.google.maps) {
+            distanceMatrixService = new window.google.maps.DistanceMatrixService();
+            resolve();
+        } else {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
+            script.async = true;
+            script.onload = () => {
+                distanceMatrixService = new window.google.maps.DistanceMatrixService();
+                resolve();
+            };
+            script.onerror = () => reject(new Error('Failed to load Google Maps script'));
+            document.head.appendChild(script);
+        }
+    });
+};
+
+const useDistanceMatrixService = () => {
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    useEffect(() => {
+        initializeDistanceMatrixService().then(() => {
+            setIsInitialized(true);
+        }).catch((error) => {
+            console.error(error);
+        });
+    }, []);
+
+    return isInitialized;
+};
+
+export { useDistanceMatrixService, calculateDistance };
