@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserPicture } from '../../UserPicture';
 import { UnmatchButton } from './UnmatchButton';
+import { UserPicture } from '../../UserSettings/UserPicture';
 
 
 export const ChatHeader = ({ otherUserName, otherUserId , matchId}) => {
