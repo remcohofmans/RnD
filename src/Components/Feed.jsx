@@ -3,8 +3,8 @@ import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
-import TopNavigationBar from './common/TopNavigationBar';
 import { useAuth } from '../hooks/AuthContext';
+import DistanceCalculator from '../Components/Feed/GoogleMapsMatrixAPI'
 
 const Feed = () => {
 
@@ -15,8 +15,7 @@ const Feed = () => {
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [currentUserId, setCurrentUserId] = useState(user?.id); // Use user prop
-
+  const [currentUserId] = useState(user?.id);
   const USERS_TO_FETCH = 10;
 
   const calculateAge = (birthday) => {
@@ -27,23 +26,38 @@ const Feed = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
+
+
   const fetchUserData = async () => {
+
+
     try {
       setLoading(true);
       setError(null);
-      
-      const { data: fetchedUsers, error: usersError } = await supabase
+
+      const { data: userPreferences } = await supabase
+        .from('userpreferences')
+        .select('interest, min_age, max_age')
+        .eq('id', user.id)
+        .single();
+
+      const { data: fetchedUsers } = await supabase
         .from('users')
-        .select('id, birthday, facility, city, name, profilepictureBASE64')
-        .not('name', 'is', null) // Ensure 'name' is not NULL
-        .not('profilepictureBASE64', 'is', null) // Ensure 'profilepictureBASE64' is not NULL
-        .not('birthday', 'is', null) // Ensure 'birthday' is not NULL
+        .select('id, birthday, name, profilepictureBASE64, city, facility, gender')
+        .not('name', 'is', null)
+        .not('profilepictureBASE64', 'is', null)
+        .not('birthday', 'is', null)
+        .limit(USERS_TO_FETCH);
 
-      
-      if (usersError) throw usersError;
+      const usersWithDetails = await Promise.all(
+        fetchedUsers.map(async user => {
+          const age = calculateAge(user.birthday);
+          if (age < userPreferences.min_age ||
+            age > userPreferences.max_age ||
+            (userPreferences.interest !== 'geen-voorkeur' && user.gender !== userPreferences.interest)) {
+            return null;
+          }
 
-      const usersWithHobbies = await Promise.all(
-        fetchedUsers.map(async (user) => {
           const { data: preferencesData } = await supabase
             .from('userpreferences')
             .select('hobbies')
@@ -56,18 +70,14 @@ const Feed = () => {
             location: user.city,
             facility: user.facility,
             birthday: user.birthday,
-            age: calculateAge(user.birthday),
+            age,
             profilePicture: user.profilepictureBASE64,
             hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : []
           };
         })
       );
 
-      const validUsers = usersWithHobbies
-        .filter(user => user && user.name && user.profilePicture)
-        .slice(0, USERS_TO_FETCH);
-
-      setUsers(validUsers);
+      setUsers(usersWithDetails.filter(user => user).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
     } finally {
@@ -81,7 +91,7 @@ const Feed = () => {
 
   const wheelData = users.map((user, index) => ({
     option: user.name,
-    style: { 
+    style: {
       backgroundColor: index % 2 === 0 ? '#fff1f2' : '#881337',
       textColor: index % 2 === 0 ? '#881337' : '#fff1f2'
     },
@@ -94,7 +104,6 @@ const Feed = () => {
       const newIndex = Math.floor(Math.random() * users.length);
       setCurrentIndex(newIndex);
       setMustSpin(true);
-
       // Log both the logged-in user ID and the selected user ID
       console.log('Logged-in user ID:', currentUserId);  // Using the state to access current user ID
       console.log('Selected user ID:', users[newIndex]?.id);
@@ -118,13 +127,21 @@ const Feed = () => {
       <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
         <div className="text-center p-4 bg-white rounded-lg">
           <p className="text-gray-800">
-            {error ? `Error loading users: ${error}` : 'No users found. Please try again later.'}
+            {error
+              ? `Error loading users: ${error}`
+              : 'Geen match gevonden. Probeer later opnieuw, of pas je filtervoorkeuren aan.'}
           </p>
-          <button 
-            onClick={() => setRetryCount(c => c + 1)}
+          <button
+            onClick={() => {
+              if (error) {
+                window.location.reload(); // Refresh on error
+              } else {
+                window.location.href = '/userFilterForm'; // Redirect on no match
+              }
+            }}
             className="mt-2 text-[#fb7185] underline hover:no-underline"
           >
-            {error ? 'Retry' : 'Refresh'}
+            {error ? 'Retry' : 'Filter opnieuw'}
           </button>
         </div>
       </div>
@@ -132,14 +149,18 @@ const Feed = () => {
   }
 
   return (
-<div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]">
+    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]">
       <div className="relative z-50">
       </div>
 
-      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10"> 
+      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-[#360009]">Welcome to the Feed</h1>
-          <p className="text-lg text-[#881337]">Use the Spin button to discover a new user!</p>
+          <h1 className="text-3xl font-semibold text-[#360009]">Gebruik de spin knop om echte liefde te ontdekken!</h1>
+          {/* <p className="text-lg text-[#881337]">Gebruik de draaiknop om een nieuwe liefde te ontdekken!</p> */}
+        </div>
+
+        <div>
+          <DistanceCalculator origin="Brussels, Belgium" destination="Antwerp, Belgium" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -183,7 +204,7 @@ const Feed = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    Searching...
+                    Onze vinder is opzoek naar een mogelijke vlinder...
                   </motion.div>
                 ) : (
                   <motion.div
