@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { supabase } from '../../lib/helper/supabaseClient.js'; 
 import { useNavigate } from 'react-router-dom';
 import TopNavigationBar from '../common/TopNavigationBar.jsx';
+import { useAuth } from '../../hooks/AuthContext';
 
-const SettingsMentor = ({ logout, loggedIn }) => {
+const SettingsMentor = () => {
+  
+  const { user, logout } = useAuth();
+  const loggedIn = !!user;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);

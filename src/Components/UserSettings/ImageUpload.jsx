@@ -16,7 +16,7 @@ const CATEGORIES = {
   favorieteHobby: { label: 'Favoriete Hobby', icon: '🎨' },
 };
 
-const ImageUpload = ({ onUploadComplete ,user, loggedIn, logout, email}) => {
+const ImageUpload = ({ onUploadComplete }) => {
   const { currentUser, loading, error } = useSupabaseAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})

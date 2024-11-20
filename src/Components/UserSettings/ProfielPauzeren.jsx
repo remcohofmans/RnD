@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/helper/supabaseClient';
+import { useAuth } from '../../hooks/AuthContext';
 
-const ProfielPauzeren = ({ userId, onSuccess, onError, setIsConfirming }) => {
+const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
+  
   const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const userId = user?.id
 
   const handleConfirmPause = async () => {
     if (!userId) {

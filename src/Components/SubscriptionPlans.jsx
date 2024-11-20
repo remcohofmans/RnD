@@ -5,15 +5,14 @@ import { Check } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
-const subscription = () => {
-    const subscriptionBenefitItem = {icon: faCircleCheck, label: Check}
 
-    
+const subscription = () => {
+    const subscriptionBenefitItem = { icon: faCircleCheck, label: Check }
 
     return (
         <div>
-            <TopNavigationBar/>
-            
+            <TopNavigationBar />
+
             {/* Subscription card component used from flowbite */}
             <div className='flex justify-center items-center h-screen'>
                 <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#e11d48' }}> {/* Darker background */}
@@ -24,19 +23,19 @@ const subscription = () => {
                         <span className="text-5xl font-extrabold tracking-tight">10</span>
                         <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span> {/* Slightly darker light color */}
                     </div>
-                    
+
                     <ul role="list" className="space-y-5 my-7">
                         <li className="flex items-center">
-                            <FontAwesomeIcon 
-                            icon = {subscriptionBenefitItem.icon}
-                            className="text-white text-base transition duration-300 hover:text-rose-700"
+                            <FontAwesomeIcon
+                                icon={subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300 hover:text-rose-700"
                             />
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Onbeperkt aantal berichten</span> {/* Light text */}
                         </li>
 
                         <li className="flex line-through decoration-gray-500">
                             <svg className="flex-shrink-0 w-4 h-4" style={{ color: '#4c0519' }} fill="currentColor" viewBox="0 0 20 20"> {/* Dark red icon */}
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                             </svg>
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#4c0519' }}>Abonnement gratis stopzetten*</span> {/* Dark red text */}
                         </li>
@@ -53,12 +52,12 @@ const subscription = () => {
                         <span className="text-5xl font-extrabold tracking-tight">17</span>
                         <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span> {/* Slightly darker light color */}
                     </div>
-                    
+
                     <ul role="list" className="space-y-5 my-7">
                         <li className="flex items-center">
-                        <FontAwesomeIcon 
-                            icon = {subscriptionBenefitItem.icon}
-                            className="text-white text-base transition duration-300 hover:text-rose-700"
+                            <FontAwesomeIcon
+                                icon={subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300 hover:text-rose-700"
                             />
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>10 matches per dag</span> {/* Light text */}
                         </li>
@@ -76,28 +75,28 @@ const subscription = () => {
                         <span className="text-5xl font-extrabold tracking-tight">20</span>
                         <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span> {/* Slightly darker light color */}
                     </div>
-                    
+
                     <ul role="list" className="space-y-5 my-7">
                         <li className="flex items-center">
-                        <FontAwesomeIcon 
-                            icon = {subscriptionBenefitItem.icon}
-                            className="text-white text-base transition duration-300"
+                            <FontAwesomeIcon
+                                icon={subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300"
                             />
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Oneindig matches per dag</span> {/* Light text */}
                         </li>
 
                         <li className="flex items-center">
-                        <FontAwesomeIcon 
-                            icon = {subscriptionBenefitItem.icon}
-                            className="text-white text-base transition duration-300"
+                            <FontAwesomeIcon
+                                icon={subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300"
                             />
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Rizzler university abonnement</span> {/* Light text */}
                         </li>
 
                         <li className="flex items-center">
-                        <FontAwesomeIcon 
-                            icon = {subscriptionBenefitItem.icon}
-                            className="text-white text-base transition duration-300"
+                            <FontAwesomeIcon
+                                icon={subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300"
                             />
                             <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Abonnement gratis stopzetten*</span> {/* Light text */}
                         </li>
@@ -105,10 +104,10 @@ const subscription = () => {
 
                     <button type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button> {/* Light button with dark text */}
                 </div>
-            
-        
-            </div>  
-        </div>        
+
+
+            </div>
+        </div>
     );
 
 };

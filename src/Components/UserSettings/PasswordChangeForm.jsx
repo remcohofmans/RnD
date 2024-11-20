@@ -6,7 +6,6 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import TopNavigationBar from '../common/TopNavigationBar';
 
 
-
 const PasswordChangeForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

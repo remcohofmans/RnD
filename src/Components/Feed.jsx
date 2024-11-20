@@ -3,9 +3,12 @@ import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
-import TopNavigationBar from './common/TopNavigationBar'; // Import TopNavigationBar
+import TopNavigationBar from './common/TopNavigationBar';
+import { useAuth } from '../hooks/AuthContext';
 
-const Feed = ({ user, logout }) => {
+const Feed = () => {
+
+  const { user, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
