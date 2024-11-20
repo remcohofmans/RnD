@@ -166,7 +166,10 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
 
   return (
     <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
-      <ChatHeader otherUserName={otherUserName} otherUserId={matchedUserId}/>
+      <ChatHeader 
+      otherUserName={otherUserName}
+      otherUserId={matchedUserId}
+      matchId={matchId}/>
       <div className="flex-grow overflow-auto p-4" ref={messagesContainerRef}>
         {showSuggestion && (
           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center mb-4">
