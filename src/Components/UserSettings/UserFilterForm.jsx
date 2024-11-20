@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import DistanceControl from '../filter/DistanceControl';
-import AgeRangeControl from '../filter/AgeRangeControl';
+import DistanceControl from '../Filter/DistanceControl';
+import AgeRangeControl from '../Filter/AgeRangeControl';
 import { supabase } from '../../supabaseClient';
-import { availableHobbies, ButtonGroup, HobbiesModal } from '../filter/AvailableHobbiesPage';
+import { availableHobbies, ButtonGroup, HobbiesModal } from '../Filter/AvailableHobbiesPage';
 
 const FilterForm = () => {
   const [formState, setFormState] = useState({

@@ -9,7 +9,7 @@ import {
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
-import { availableHobbies } from '../filter/AvailableHobbiesPage';
+import { availableHobbies } from '../Filter/AvailableHobbiesPage';
 import { supabase } from '../../supabaseClient';
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
