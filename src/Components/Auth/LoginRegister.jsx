@@ -113,8 +113,6 @@ const LoginRegister = () => {
         }
       }
 
-      console.log("test 3");
-
       if (isMentor && facilityCode) {
         return "Faciliteitscode mag niet ingevuld worden als u een mentor bent.";
       }

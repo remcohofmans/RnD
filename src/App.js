@@ -16,6 +16,7 @@ import SubscriptionPlans from './Components/SubscriptionPlans';
 import PasswordRecovery from './Components/Auth/PasswordRecovery';
 import PasswordUpdate from './Components/Auth/PasswordUpdate';
 import ProfielPauzeren from './Components/UserSettings/ProfielPauzeren';
+import CompleteRegistration from './Components/Auth/CompleteRegistration';
 
 import MainLayout from './MainLayout';
 
@@ -168,6 +169,19 @@ function AppRoutes() {
       <Route path="/updatePassword" element={<PasswordUpdate />} />
 
       <Route path="/pp" element={<ProfielPauzeren />} />
+
+      <Route
+        path="/complete-profile"
+        element={
+          user ? (
+            <MainLayout loggedIn={!!user}>
+              <CompleteRegistration />
+            </MainLayout>
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+      />
     </Routes>
   );
 }

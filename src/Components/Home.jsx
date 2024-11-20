@@ -13,9 +13,9 @@ const Home = () => {
 
   useEffect(() => {
 
-    console.log("User = ",user);
-    console.log("email = ",email);
-    console.log("Role",role)
+    console.log("User:",user);
+    console.log("email:",email);
+    console.log("Role:",role)
     if (role === 'STAFF_MEMBER') {
       // Redirect to settingsMentor if the user is a mentor
       navigate('/settingsMentor');
