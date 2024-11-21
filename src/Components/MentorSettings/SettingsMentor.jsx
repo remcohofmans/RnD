@@ -3,13 +3,17 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import AccessRequests from '../../Components/AccessRequests'; // Import AccessRequests component
 import MentorBanUser from '../../Components/MentorSettings/MentorBanUser'; // Import MentorBanUser component
+import { useAuth } from '../../hooks/AuthContext';
 
-const SettingsMentor = ({ logout, loggedIn }) => {
+
+const SettingsMentor = () => {
   const [activeComponent, setActiveComponent] = useState(null); // State to control which content to display
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const { logout} = useAuth();
 
   const handleDeleteAccount = async () => {
     try {
