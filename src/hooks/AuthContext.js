@@ -55,20 +55,24 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
       if (error) throw error;
-
+  
       const loggedInUser = data.user;
       setUser(loggedInUser);
       await fetchUserRole(loggedInUser.id);
       // await checkProfileCompletion(loggedInUser.id);
-      setError(null);
+      setError('');  // Clear any previous errors
+      return { success: true, user: loggedInUser };
     } catch (err) {
       console.error('Error logging in:', err.message);
-      setError(err.message);
+      setError(err.message);  // Set error state
+      return { success: false, error: err.message }; // Return error message
     } finally {
       setLoading(false);
     }
   };
+  
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor) => {

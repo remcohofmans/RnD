@@ -42,17 +42,22 @@ const LoginRegister = () => {
     }
 
     // Now login attempt
-    let response = loginWithEmail(loginEmail, loginPassword)
+    loginWithEmail(loginEmail, loginPassword)
       .then((response) => {
-        if (response) {
-          setLoginError(response.toString());
-        }
-        else {
-          // Clear the error only if login is successful
+        if (response.success) {
           setLoginError(''); // Clear error on successful login
+          console.log('Logged in successfully:', response.user);
+        } else {
+          setLoginError(response.error);
+          console.log('Login failed:', response.error);
         }
       })
-  };
+      .catch((err) => {
+        // In case an unexpected error occured outside of the function
+        setLoginError('An unexpected error occurred.');
+        console.error('Unexpected error:', err);
+      });
+  }
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
@@ -82,7 +87,7 @@ const LoginRegister = () => {
     };
 
     const validateFields = () => {
-      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor? !mentorCode : !selectedFacility) ) {
+      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor ? !mentorCode : !selectedFacility)) {
         return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
       }
 
@@ -129,7 +134,7 @@ const LoginRegister = () => {
     // Call signUpWithEmail function if all validations pass
     let response = signUpWithEmail(signUpEmail, signUpPassword, isMentor)
       .then((response) => {
-        if(response) {
+        if (response) {
           setSignupError(response.toString);
         }
       })
@@ -517,7 +522,6 @@ const LoginRegister = () => {
                   <p className="text-red-600 text-xs mt-4">{signupError}</p>
                 )}
               </form>
-
             )}
 
             <div className="text-center mt-8">
