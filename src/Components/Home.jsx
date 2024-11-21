@@ -99,12 +99,11 @@ const Home = () => {
       )}
 
       {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
+      <div className="flex-1 flex from-rose-100 to-rose-200 relative bg-rose-50">
         <div
           className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
           style={{
             backgroundImage: `url(${butterflyImage})`,
-            backgroundColor: '#ffccd3',
             backgroundSize: 'contain',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
