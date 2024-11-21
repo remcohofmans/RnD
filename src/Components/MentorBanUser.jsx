@@ -116,7 +116,7 @@ const MentorBanUser = () => {
           maxHeight: '1000px', // Max height limit for bigger screens
         }}
       >
-        {loading && <div>Loading...</div>}
+        {loading && <div>Laden...</div>}
         {error && <div className="p-2 text-sm text-red-600 bg-red-100 rounded">{error}</div>}
 
         {/* Success Message */}
@@ -134,7 +134,7 @@ const MentorBanUser = () => {
         {/* Search Bar */}
         <input
           type="text"
-          placeholder="Search users by name or email"
+          placeholder="Zoek op naam of email"
           value={searchQuery}
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
@@ -169,27 +169,21 @@ const MentorBanUser = () => {
             disabled={currentPage === 1}
             className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Previous
+            Vorige
           </button>
           <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
+            Pagina {currentPage} van {totalPages}
           </span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
             className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Next
+            Volgende
           </button>
         </div>
 
-        {/* Go Back Button */}
-        <button
-          onClick={() => navigate('/settingsMentor')} // Navigate to the settingsMentor page
-          className="mt-4 px-4 py-2 text-white bg-[#f43f5e] rounded-lg hover:bg-[#be123c]"
-        >
-          Ga terug naar instellingen
-        </button>
+       
       </div>
 
       {/* Confirmation Modal */}
@@ -202,9 +196,9 @@ const MentorBanUser = () => {
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Ban</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Bevestig Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to ban this user? This action cannot be undone.
+            Bent u zeker dat u dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
@@ -215,14 +209,14 @@ const MentorBanUser = () => {
                 }}
                 onClick={() => setShowConfirmation(false)}
               >
-                Cancel
+                Annuleer
               </button>
               <button
                 className="px-4 py-2 text-white rounded-lg"
                 style={{ backgroundColor: '#f43f5e' }}
                 onClick={() => handleBanUser(userIdToBan)}
               >
-                Confirm Ban
+                Bevestig Ban
               </button>
             </div>
           </div>
