@@ -8,6 +8,7 @@ import { ToggleSlider }  from "react-toggle-slider";
 const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [selectedSubscription, setSelectedSubscription] = useState(false);
     const [inputVal, setInputVal] = useState('');
     const [payAnnually, setPayAnnually] = useState(false);
@@ -17,20 +18,29 @@ const Subscription = () => {
     const annualPricesSaved = {basis: 120, gevorderd: 204, elite: 240}
 
     
-    const openModal = (subscription) => {
+    const openSubscriptionModal = (subscription) => {
         setSelectedSubscription(subscription);
         setIsSubscriptionModalOpen(true);
     };
 
-    const closeModal = () => {
+    const closeSubscriptionModal = () => {
         setSelectedSubscription(false);
         setIsSubscriptionModalOpen(null);
         setInputVal('');
     };
 
+    const openFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const closeFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
+    };
+
     const handleSubscribe = () => {
         //send mail to director using chargebee :)
-        closeModal();
+        closeSubscriptionModal();
+        openFeedbackModal();
     };
 
     return (
@@ -39,7 +49,7 @@ const Subscription = () => {
                 <TopNavigationBar/>
             </div>
 
-            {/*Modal window*/}
+            {/*Subscription Modal window*/}
             {isSubscriptionModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xl" style={{ zIndex: 100 }}>
                     <div
@@ -75,7 +85,7 @@ const Subscription = () => {
                         </div>
                         <form onSubmit={handleSubscribe} className='flex items-start justify-between w-full space-x-4'>
                             <button 
-                                onClick={closeModal}
+                                onClick={closeSubscriptionModal}
                                 type="button"
                                 className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
                                 style={{ color: '#881337', backgroundColor: '#fda4af' }}
@@ -96,6 +106,31 @@ const Subscription = () => {
                                 Abonneer
                             </button>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/*Confirmation Modal window*/}
+            {isFeedbackModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xl" style={{ zIndex: 100 }}>
+                    <div
+                        className="flex flex-col items-center justify-center m-16 max-w-sm p-6 rounded-lg drop-shadow-lg sm:p-8"
+                        style={{ backgroundColor: '#be123c' }}
+                    >
+                        <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
+                            Bedankt voor je aankoop!
+                        </h5>
+                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. Geniet van je nieuwe abonnement!</span>
+                        <button 
+                            onClick={closeFeedbackModal}
+                            type="button"
+                            className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
+                            style={{ color: '#881337', backgroundColor: '#fff1f2' }}
+                            onMouseOver={(e) => (e.target.style.backgroundColor = '#fecdd3')}
+                            onMouseOut={(e) => (e.target.style.backgroundColor = '#fff1f2')}
+                        >
+                            Sluiten
+                        </button>
                     </div>
                 </div>
             )}
@@ -133,7 +168,7 @@ const Subscription = () => {
 
                         </ul>
 
-                        <button onClick={() => openModal('basis')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button onClick={() => openSubscriptionModal('basis')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
                     </div>
 
                     <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#be123c' }}>
@@ -173,7 +208,7 @@ const Subscription = () => {
 
                         </ul>
 
-                        <button onClick={() => openModal('gevorderd')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button onClick={() => openSubscriptionModal('gevorderd')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
                     </div>
 
                     <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#9f1239' }}>
@@ -220,7 +255,7 @@ const Subscription = () => {
                             </li>
                         </ul>
 
-                        <button onClick={() => openModal('elite')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button onClick={() => openSubscriptionModal('elite')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
                     </div>
                 </div>
                 <div className='flex flex-row items-center mb-8 justify-center rounded-lg' style={{background: '#e11d48', color: '#fafaf9'}}>
