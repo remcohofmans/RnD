@@ -7,8 +7,6 @@ import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
 import CarouselCard from '../Components/Feed/CarouselCard';
 
-
-
 const Feed = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState([]);
@@ -20,6 +18,7 @@ const Feed = () => {
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
 
+  // Function to calculate the user's age
   const calculateAge = (birthday) => {
     if (!birthday) return null;
     const birthDate = new Date(birthday);
@@ -28,6 +27,7 @@ const Feed = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
+  // Fetch user data and filter based on preferences
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -125,8 +125,8 @@ const Feed = () => {
   const wheelData = users.map((user, index) => ({
     option: user.name,
     style: {
-      backgroundColor: index % 2 === 0 ? '#fff1f2' : '#881337',
-      textColor: index % 2 === 0 ? '#881337' : '#fff1f2',
+      backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
+      textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
     }
   }));
 
@@ -142,100 +142,110 @@ const Feed = () => {
     setMustSpin(false);
   };
 
+  // Loading state
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
-        <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="mt-12 bg-rose-50 rounded-lg shadow-md">
+          <div className="animate-pulse bg-gray-200 h-96 rounded-lg" />
+        </div>
       </div>
     );
   }
 
+  // Error or no users found
   if (error || users.length === 0) {
     return (
-      <div className="max-w-6xl mx-auto mt-12 p-6 bg-[#ffccd3] rounded-lg shadow-md">
-        <div className="text-center p-4 bg-white rounded-lg">
-          <p className="text-gray-800">
-            {error
-              ? `Error loading users: ${error}`
-              : 'Geen match gevonden. Probeer later opnieuw, of pas je filtervoorkeuren aan.'}
-          </p>
-          <button
-            onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
-            className="mt-2 text-[#fb7185] underline hover:no-underline"
-          >
-            {error ? 'Retry' : 'Filter opnieuw'}
-          </button>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="mt-12 bg-rose-50 rounded-lg">
+          <div className="text-center p-4 bg-rose-100 rounded-lg">
+            <p className="text-gray-800">
+              {error ? `Error loading users: ${error}` : 'Geen match gevonden. Probeer later opnieuw, of pas je filtervoorkeuren aan.'}
+            </p>
+            <button
+              onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
+              className="mt-2 text-rose-400 underline hover:no-underline"
+            >
+              {error ? 'Retry' : 'Filter opnieuw'}
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col pt-8 bg-[#ffccd3]">
-      <div className="max-w-6xl mx-auto mt-7 p-6 bg-[#ffccd3] pt-10">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-[#360009]">
-            Gebruik de spin knop om echte liefde te ontdekken!
-          </h1>
+    <div className="min-h-screen bg-rose-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pt-20 py-12"> {/* Added pt-16 for extra top padding */}
+        
+      <div className="text-center mb-12">
+          
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center">
-            <div className="relative w-full max-w-md">
-              <Wheel
-                mustStartSpinning={mustSpin}
-                prizeNumber={currentIndex}
-                data={wheelData}
-                onStopSpinning={handleWheelStop}
-                radiusLineWidth={1}
-                radiusLineColor="#fff"
-                outerBorderWidth={2}
-                outerBorderColor="#fb7185"
-                fontSize={16}
-                perpendicularText
-                textDistance={70}
-              />
-              {/* Updated button styling */}
-              <motion.button
-  className="absolute inset-0 w-20 h-20 m-auto rounded-full bg-white shadow-lg text-[#fb7185] font-bold z-10 flex items-center justify-center"
-  onClick={handleSpinClick}
-  disabled={mustSpin}
-  whileHover={{ scale: mustSpin ? 1 : 1.1 }}
->
-  {mustSpin ? 'Spinning...' : 'Spin'}
-</motion.button>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Left Column - Wheel */}
+          <div className="flex flex-col items-center justify-start bg-rose-50">
 
-            </div>
+          <div className="text-center mb-12">
+          <h1 className="text-4xl font-semibold text-rose-950">Spin en ontdek echte liefde!</h1>
+        </div>
+          
+              <div className="relative w-full max-w-md mx-auto">
+                <Wheel
+                  mustStartSpinning={mustSpin}
+                  prizeNumber={currentIndex}
+                  data={wheelData}
+                  onStopSpinning={handleWheelStop}
+                  radiusLineWidth={1}
+                  radiusLineColor="rgb(255, 255, 255)"
+                  outerBorderWidth={2}
+                  outerBorderColor="rgb(251, 113, 133)"
+                  fontSize={16}
+                  perpendicularText
+                  textDistance={70}
+                />
+                <motion.button
+                  className="absolute inset-0 w-20 h-20 m-auto rounded-full bg-white shadow-lg text-rose-400 font-bold z-10 flex items-center justify-center hover:bg-rose-50 transition-colors duration-200"
+                  onClick={handleSpinClick}
+                  disabled={mustSpin}
+                  whileHover={{ scale: mustSpin ? 1 : 1.1 }}
+                >
+                  {mustSpin ? 'Spinning...' : 'Spin'}
+                </motion.button>
+              </div>
           </div>
 
-          <div className="flex flex-col items-center">
+          {/* Right Column - User Card */}
+          <div className="flex flex-col items-center justify-start bg-rose-50 ">
             <AnimatePresence mode="wait">
               {mustSpin ? (
                 <motion.div
-                  className="text-xl text-center text-[#360009]"
+                  className="text-xl text-center text-rose-950 p-8"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  Onze vinder is op zoek naar een mogelijke vlinder...
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12  border-b-2 border-rose-400"></div>
+                    <p>Onze vinder is op zoek naar een mogelijke vlinder...</p>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
                   key={users[currentIndex]?.id}
+                  className="w-full"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                <UserCard user={users[currentIndex]} currentUserId={user.id} />
+                  <UserCard user={users[currentIndex]} currentUserId={user.id} />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
         </div>
-        
       </div>
     </div>
   );
