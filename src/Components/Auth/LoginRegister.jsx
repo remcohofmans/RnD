@@ -25,6 +25,7 @@ const LoginRegister = () => {
   const [signupError, setSignupError] = useState('');
   const [isMentor, setIsMentor] = useState(false); // Tracks whether user is a mentor
   const [mentorCode, setMentorCode] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
 
 
   // State for feedback
@@ -197,26 +198,37 @@ const LoginRegister = () => {
     if (loginError) {
       setLoginError(loginError); // Update local state if there's an error from App.js
     }
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // If the width is less than or equal to 768px, it's a mobile view
+    };
+
+    // Listen to window resize events
+    window.addEventListener('resize', handleResize);
+
+    // Set initial layout based on screen size
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+
   }, [loginError]);
 
+  // The image source changes based on whether it's mobile or not
+  const imageSrc = isMobile ? butterflyIcon : happyPeople;
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`w-full ${isMobile ? 'h-auto object-cover' : 'h-64 object-contain'}`}>
 
       {/* Split Layout Container */}
       <div className="flex flex-1 flex-col md:flex-row">
 
         {/* Left Half */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10 md:h-full h-[30vh] overflow-hidden">
-          {/* Blurred Background Image */}
-          <div
-            className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover"
-            style={{
-              backgroundImage: `url(${happyPeople})`,
-              filter: 'blur(3px)',
-              backgroundPositionY: '-150px', 
-              backgroundSize: 'cover',
-            }}
-          ></div>
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10 md:h-full h-[20vh] overflow-hidden">
+          <img
+            src={imageSrc} // Dynamically load the image
+            alt="Image"
+            className={`w-full ${isMobile ? 'h-auto object-cover' : 'h-auto object-cover'}`}
+          />
 
           {/* Content Section */}
           <div
@@ -261,13 +273,6 @@ const LoginRegister = () => {
         <div className="w-full flex flex-col justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
-
-            {/* Position the butterfly icon in the top-right corner of the screen */}
-            <img
-              src={butterflyIcon}
-              alt="Butterfly Icon"
-              className="absolute top-4 right-4 w-12 h-12 opacity-70"
-            />
 
             {isLogin ? (
               <form onSubmit={handleLoginSubmit} className="space-y-6">
