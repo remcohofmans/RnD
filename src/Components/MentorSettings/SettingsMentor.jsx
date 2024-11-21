@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/helper/supabaseClient.js'; 
 import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from '../common/TopNavigationBar.jsx';
 import { useAuth } from '../../hooks/AuthContext';
 
 const SettingsMentor = () => {
