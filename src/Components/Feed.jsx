@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
+import CarouselCard from '../Components/Feed/CarouselCard';
 
 
 
@@ -235,7 +236,9 @@ const Feed = () => {
               )}
             </AnimatePresence>
           </div>
+
         </div>
+        
       </div>
     </div>
   );

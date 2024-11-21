@@ -11,6 +11,7 @@ import {
 
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
 import { supabase } from '../../supabaseClient';
+import CarouselCard from '../Feed/CarouselCard';
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
@@ -47,11 +48,12 @@ const UserCard = ({ user, currentUserId }) => {
   return (
     <div className="user-card bg-[#fff1f2] rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
       {/* Profile Picture */}
-      <img
+      {/* <img
         className="profile-picture w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-[#fb7185]"
         src={`data:image/jpeg;base64,${user.profilePicture}`}
         alt={`${user.name} profile`}
-      />
+      /> */}
+      <CarouselCard userId={currentUserId} />
 
 
       {/* User Info */}

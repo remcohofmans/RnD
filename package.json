@@ -8,6 +8,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@glidejs/glide": "^3.7.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@react-google-maps/api": "^2.20.3",
     "@supabase/supabase-js": "^2.45.4",
