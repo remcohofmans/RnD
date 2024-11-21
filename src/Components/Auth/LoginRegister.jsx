@@ -206,31 +206,51 @@ const LoginRegister = () => {
       <div className="flex flex-1 flex-col md:flex-row">
 
         {/* Left Half */}
-        <div className="w-full md:w-full flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10 md:h-full h-[30vh] overflow-hidden">
+          {/* Blurred Background Image */}
           <div
-            className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
-            style={{ backgroundImage: `url(${happyPeople})`, filter: 'blur(5px)' }}
+            className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover"
+            style={{
+              backgroundImage: `url(${happyPeople})`,
+              filter: 'blur(3px)',
+              backgroundPositionY: '-150px', // Adjust to your liking
+              backgroundSize: 'cover',
+            }}
           ></div>
 
-          {/* Title with Animation */}
-          <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
-            <h1 className="text-[#ffe4e6] text-4xl md:text-6xl font-bold mb-4">V(l)inder</h1>
-            <p className="text-[#fff1f2] text-sm md:text-lg mb-6">Find your perfect match</p>
+          {/* Content Section */}
+          <div
+            className={`relative z-10 text-center font-poppins transition-all duration-700 ease-in-out ${isLogin ? 'mt-0' : 'mt-[-150px]'
+              }`}
+          >
+            {/* Main Title */}
+            <h1 className="text-[#ffe4e6] text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
+              V(l)inder
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-[#fff1f2] text-base md:text-lg mb-6 drop-shadow-sm">
+              Find your perfect match
+            </p>
 
             {/* Registration Info Prompt */}
             {showRegisterInfo && (
-              <div className="mt-6 bg-white bg-opacity-80 shadow-md rounded-lg p-4 max-w-full mx-auto">
-                <h2 className="font-bold text-lg text-center text-[#e11d48]">Sluit je nu aan en fladder het geluk tegemoet...</h2>
-                <div className="flex justify-center items-center mt-2 gap-4 w-full">
-                  <span className="flex items-center">
-                    ❤️ <strong className="ml-2">Inclusief</strong>
-                  </span>
-                  <span className="flex items-center">
-                    ❤️ <strong className="ml-2">Veilig</strong>
-                  </span>
-                  <span className="flex items-center">
-                    ❤️ <strong className="ml-2">Betrouwbaar</strong>
-                  </span>
+              <div className="mt-6 bg-white bg-opacity-90 shadow-lg rounded-lg p-5 w-11/12 md:max-w-md mx-auto">
+                <h2 className="font-bold text-lg text-center text-[#e11d48] mb-4">
+                  Sluit je nu aan en fladder het geluk tegemoet...
+                </h2>
+
+                {/* Feature List */}
+                <div className="flex flex-wrap justify-center items-center gap-4 w-full text-sm md:text-base">
+                  <div className="flex items-center gap-2">
+                    ❤️ <strong>Inclusief</strong>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    ❤️ <strong>Veilig</strong>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    ❤️ <strong>Betrouwbaar</strong>
+                  </div>
                 </div>
               </div>
             )}
