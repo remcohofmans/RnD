@@ -64,7 +64,7 @@ const TopNavigationBar = () => {
     <div>
       <div
         className="fixed top-0 left-0 right-0 flex items-center py-1 md:py-2 px-2 md:px-4"
-        style={{ backgroundColor: '#f43f5e', zIndex: 10, borderRadius: '8px' }}
+        style={{ backgroundColor: '#f43f5e', zIndex: 50, borderRadius: '8px' }}
       >
         <div className="w-12 md:w-20">
           {/* Pass isActive prop to check if Home component is active */}

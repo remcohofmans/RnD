@@ -6,9 +6,29 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  const [profileComplete, setProfileComplete] = useState(false); // New state for profile completion
-  const [loading, setLoading] = useState(false);
+  // const [profileComplete, setProfileComplete] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Helper to fetch user role
+  const fetchUserRole = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      setRole(data.role);
+      console.log("Data object retrieved from fetchUserRole:", data);
+
+    } catch (err) {
+      console.error('Error fetching user role:', err.message);
+      setRole(null);
+    }
+  };
 
   // Helper func to check profile completion
   const checkProfileCompletion = async (userId) => {
@@ -19,140 +39,104 @@ export function AuthProvider({ children }) {
         .eq('id', userId)
         .single();
 
-      if (error) {
-        console.error('Error fetching profile data:', error.message);
-        setProfileComplete(false);
-        return;
-      }
+      if (error) throw error;
 
-      setProfileComplete(!!data.name && !!data.birthdate);
+      console.log("Checking profile ... Data object: ", data);
+
+      // setProfileComplete(!!data.name && !!data.birthday);
     } catch (err) {
-      console.error('Unexpected error checking profile completion:', err);
-      setProfileComplete(false);
+      console.error('Error checking profile completion:', err.message);
+      // setProfileComplete(false);
     }
   };
 
-  // Authenticate using Supabase
+  // Function to handle login
   const loginWithEmail = async (email, password) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
 
-    if (error) {
-      setError(error.message);
-      console.error('Error logging in with email/password:', error.message);
-    } else {
-      console.log('Logged in successfully with email/password:', data);
-      setUser(data.user);
-      try {
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-        if (userError) {
-          console.error('Error fetching user role:', userError.message);
-        } else {
-          setRole(userData.role);
-          await checkProfileCompletion(data.user.id); // Check profile completion on login
-        }
-      } catch (err) {
-        console.error('Error in fetching user role:', err);
-      }
+      const loggedInUser = data.user;
+      setUser(loggedInUser);
+      await fetchUserRole(loggedInUser.id);
+      // await checkProfileCompletion(loggedInUser.id);
+      setError(null);
+    } catch (err) {
+      console.error('Error logging in:', err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    return error;
   };
 
   // Function for email/password sign-up
-  async function signUpWithEmail(email, password, isMentor) {
+  const signUpWithEmail = async (email, password, isMentor) => {
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
 
-    if (error) {
-      throw new Error(error.message); // Handle errors from signUp
+      const newUser = data.user;
+      const role = isMentor ? 'STAFF_MEMBER' : 'USER';
+
+      await supabase.from('users').upsert({ id: newUser.id, email, role });
+
+      setUser(newUser);
+      setRole(role);
+      // await checkProfileCompletion(newUser.id);
+      setError(null);
+    } catch (err) {
+      console.error('Error signing up:', err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const role = isMentor ? 'STAFF_MEMBER' : 'USER';
-    setRole(role);
-
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ role })
-      .eq('email', email);
-
-    if (updateError) {
-      throw new Error(updateError.message); // Handle errors from update query
-    }
-
-    if (error) {
-      setError(error.message);
-    } else {
-      console.log('Signed up successfully:', data);
-      setUser(data.user); // Set the user after successful sign-up
-      await checkProfileCompletion(data.user.id); // Check profile completion after sign-up
-      setError(''); // Clear any previous errors on success
-    }
-    setLoading(false);
-  }
+  };
 
   // Logout function
   const logout = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error logging out:', error);
-    } else {
+    try {
+      await supabase.auth.signOut();
       setUser(null);
       setRole(null);
-      setProfileComplete(false); // Reset profile completion state on logout
+      // setProfileComplete(false);
+    } catch (err) {
+      console.error('Error logging out:', err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  // Restore session on app load
   useEffect(() => {
-    const checkSession = async () => {
+    const restoreSession = async () => {
       setLoading(true);
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error fetching session:', error);
-        setError(error.message);
-      } else {
-        const sessionUser = data?.session?.user || null;
-        setUser(sessionUser);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
 
+        const sessionUser = data.session?.user;
         if (sessionUser) {
-          try {
-            const { data: userData, error: userError } = await supabase
-              .from('users')
-              .select('role')
-              .eq('id', sessionUser.id)
-              .single();
-
-            if (userError) {
-              console.error('Error fetching user role:', userError.message);
-            } else {
-              setRole(userData?.role);
-              await checkProfileCompletion(sessionUser.id); // Check profile completion on session restore
-            }
-          } catch (err) {
-            console.error('Error fetching user role:', err);
-          }
+          setUser(sessionUser);
+          await fetchUserRole(sessionUser.id);
+          // await checkProfileCompletion(sessionUser.id);
         }
+      } catch (err) {
+        console.error('Error restoring session:', err.message);
+        setUser(null);
+        setRole(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    checkSession();
+    restoreSession();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, profileComplete, loading, error, loginWithEmail, signUpWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

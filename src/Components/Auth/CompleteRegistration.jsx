@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
+import butterflyImage from '../../Assets/Butterfly.png'; // Reuse the butterfly image for consistency
+import { useAuth } from '../../hooks/AuthContext';
+
 
 const CompleteProfile = () => {
   const [name, setName] = useState('');
@@ -9,7 +12,9 @@ const CompleteProfile = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
+  // Handle image input change  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -17,38 +22,39 @@ const CompleteProfile = () => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // Upload de afbeelding naar Supabase Storage (indien een afbeelding is geselecteerd)
       let imageUrl = null;
+
+      // If an image is selected, upload it to Supabase storage
       if (image) {
         const { data, error: uploadError } = await supabase.storage
-          .from('user-images') // Zorg ervoor dat de bucket 'user-images' bestaat in Supabase
+          .from('user-images')
           .upload(`profiles/${Date.now()}_${image.name}`, image);
 
-        if (uploadError) {
-          throw uploadError;
-        }
-        imageUrl = data.path;
+        if (uploadError) throw uploadError;
+
+        imageUrl = data.path;  // Image URL that will be stored in the database
       }
 
-      const { error: insertError } = await supabase
+      // Insert the user's profile data into the 'users' table
+      const { error } = await supabase
         .from('users')
-        .insert({
-          name,
-          birthdate,
-          profile_image: imageUrl,
-        });
+        .update({
+          name: name,
+          birthday: birthdate,
+          profilepictureBASE64: imageUrl
+        })
+        .eq('id', user.id);
 
-      if (insertError) {
-        throw insertError;
-      }
+      if (error) throw error;
 
-      navigate('/');
+      navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
       setError('Er ging iets mis. Probeer het opnieuw.');
       console.error(err.message);
@@ -58,63 +64,79 @@ const CompleteProfile = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-[#be123c] mb-4">Voltooi je profiel</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Naam
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fda4af] focus:border-[#e11d48]"
-              placeholder="Voer je naam in"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700">
-              Geboortedatum
-            </label>
-            <input
-              type="date"
-              id="birthdate"
-              value={birthdate}
-              onChange={(e) => setBirthdate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#fda4af] focus:border-[#e11d48]"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-              Profielfoto (optioneel)
-            </label>
-            <input
-              type="file"
-              id="image"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 hover:file:bg-gray-100"
-            />
-          </div>
-
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            disabled={loading}
-          >
-            {loading ? 'Bezig met opslaan...' : 'Voltooien'}
-          </button>
-        </form>
+    <div className="min-h-screen flex flex-col bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6]">
+      {/* Background with butterfly image */}
+      <div
+        className="flex items-center justify-center flex-1 relative bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${butterflyImage})`,
+          backgroundColor: '#ffccd3',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* Profile Completion Form */}
+        <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full z-10 mt-18">
+          <h1 className="text-3xl font-bold text-center text-[#f43f5e] mb-6">Voltooi je profiel</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Naam
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                placeholder="Voer je naam in"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700">
+                Geboortedatum
+              </label>
+              <input
+                type="date"
+                id="birthday"
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                Profielfoto (optioneel)
+              </label>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={handleImageChange} // Use the handler
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 hover:file:bg-gray-100"
+              />
+            </div>
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              {loading ? 'Bezig met opslaan...' : 'Voltooien'}
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <p>© 2024 V(l)inder. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
