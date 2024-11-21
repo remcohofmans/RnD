@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginRegister from './Components/LoginRegister';
+import LoginRegister from './Components/Auth/LoginRegister';
 import '@testing-library/jest-dom/extend-expect';
 
 const mockLogin = jest.fn();

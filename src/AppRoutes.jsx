@@ -94,6 +94,17 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      
+      <Route
+        path="/accessRequests"
+        element={
+          <ProtectedRoute allowedRoles={['STAFF_MEMBER']}>
+            <MainLayout>
+              <CompleteRegistration />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
