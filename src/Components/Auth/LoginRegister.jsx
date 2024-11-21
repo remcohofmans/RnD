@@ -213,7 +213,7 @@ const LoginRegister = () => {
             style={{
               backgroundImage: `url(${happyPeople})`,
               filter: 'blur(3px)',
-              backgroundPositionY: '-150px', // Adjust to your liking
+              backgroundPositionY: '-150px', 
               backgroundSize: 'cover',
             }}
           ></div>
