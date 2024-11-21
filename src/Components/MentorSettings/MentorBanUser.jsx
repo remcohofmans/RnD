@@ -19,11 +19,15 @@ const MentorBanUser = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data, error } = await supabase.from('users').select('*');
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('role','USER')
+          .eq('access_granted','YES');
         if (error) {
           setError(error.message);
         } else {
-          const sortedUsers = data.sort((a, b) => a.email.localeCompare(b.email));
+          const sortedUsers = data.sort((a, b) => a.name.localeCompare(b.name));
           setUsers(sortedUsers);
           setFilteredUsers(sortedUsers); // Initialize filtered users with all users
         }
