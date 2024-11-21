@@ -59,8 +59,8 @@ const TopNavigationBar = () => {
   return (
     <div className="fixed top-0 left-0 right-0 bg-rose-600 z-50">
       {/* Wrapper Container */}
-      <div className="container mx-auto flex items-center justify-between h-12 md:h-16 px-4">
-        {/* Left Section (Home) */}
+      <div className="container mx-auto flex items-center justify-between h-12 md:h-16 px-0 md:px-4">
+      {/* Left Section (Home) */}
         <div className="flex items-center justify-center h-full">
           <NavItem item={leftItem} isActive={location.pathname === '/'} />
         </div>
@@ -76,7 +76,6 @@ const TopNavigationBar = () => {
           ))}
         </div>
 
-        {/* Right Section (Logout & Hamburger Menu) */}
         <div className="flex items-center justify-end h-full">
           {/* Hamburger Menu for Small Screens */}
           <div className="block md:hidden">

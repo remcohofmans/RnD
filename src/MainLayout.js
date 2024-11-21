@@ -12,7 +12,7 @@ const MainLayout = ({ children }) => {
     <div>
       <TopNavigationBar />
       
-      <div className="mt-16">
+      <div>
         {children}
       </div>
     </div>
