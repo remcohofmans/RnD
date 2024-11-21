@@ -47,7 +47,7 @@ const UserCard = ({ user, currentUserId }) => {
   };
 
   return (
-    <div className="user-card bg-[#fff1f2] rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
+    <div className="user-card bg-rose-200 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
       {/* Profile Picture */}
       {/* <img
         className="profile-picture w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-[#fb7185]"
