@@ -13,46 +13,48 @@ const AccessRequests = ({ mentorEmail }) => {
   const usersPerPage = 10;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const { data: mentorData, error: mentorError } = await supabase
-          .from('users')
-          .select('facility')
-          .eq('email', mentorEmail)
-          .eq('access_granted', 'NO');
+  // Fetch users function
+  const fetchUsers = async () => {
+    try {
+      const { data: mentorData, error: mentorError } = await supabase
+        .from('users')
+        .select('facility')
+        .eq('email', mentorEmail);
 
-        if (mentorError) {
-          setError(mentorError.message);
-          return;
-        }
-
-        const mentorFacility = mentorData.facility;
-
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('role', 'USER');
-
-        if (error) {
-          setError(error.message);
-        } else {
-          const sortedUsers = data.sort((a, b) => {
-            const nameA = a.name ? a.name.toLowerCase() : '';
-            const nameB = b.name ? b.name.toLowerCase() : '';
-            return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-          });
-
-          setUsers(sortedUsers);
-          setFilteredUsers(sortedUsers);
-        }
-      } catch (err) {
-        setError('Failed to fetch users');
-      } finally {
-        setLoading(false);
+      if (mentorError) {
+        setError(mentorError.message);
+        return;
       }
-    };
 
+      const mentorFacility = mentorData.facility;
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'USER')
+        .eq('access_granted', 'PENDING')
+        .not('birthday', 'is', null);
+
+      if (error) {
+        setError(error.message);
+      } else {
+        const sortedUsers = data.sort((a, b) => {
+          const nameA = a.name ? a.name.toLowerCase() : '';
+          const nameB = b.name ? b.name.toLowerCase() : '';
+          return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+        });
+
+        setUsers(sortedUsers);
+        setFilteredUsers(sortedUsers);
+      }
+    } catch (err) {
+      setError('Failed to fetch users');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, [mentorEmail]);
 
@@ -93,6 +95,27 @@ const AccessRequests = ({ mentorEmail }) => {
 
   const handleGoBack = () => {
     setSelectedUser(null);
+  };
+
+  // Update access_granted in Supabase
+  const handleAccessChange = async (userId, status) => {
+    // Update access_granted in Supabase
+    const { error } = await supabase
+      .from('users')
+      .update({ access_granted: status })
+      .eq('id', userId);
+
+    if (error) {
+      setError('Failed to update access status');
+    } else {
+      // Optionally, remove the user from the current list after the change
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      setFilteredUsers((prevFilteredUsers) => prevFilteredUsers.filter((user) => user.id !== userId));
+
+      // Refetch users to get the updated list
+      await fetchUsers();
+      setSelectedUser(null); // Optionally close details view after the change
+    }
   };
 
   return (
@@ -152,6 +175,20 @@ const AccessRequests = ({ mentorEmail }) => {
                   className="w-32 h-32 object-cover rounded-full"
                 />
               )}
+              <div className="mt-4">
+                <button
+                  onClick={() => handleAccessChange(selectedUser.id, 'YES')}
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
+                >
+                  Toestaan
+                </button>
+                <button
+                  onClick={() => handleAccessChange(selectedUser.id, 'NO')}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Weigeren
+                </button>
+              </div>
               <button
                 onClick={handleGoBack}
                 className="mt-4 px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#be123c]"
