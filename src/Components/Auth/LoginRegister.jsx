@@ -203,9 +203,10 @@ const LoginRegister = () => {
     <div className="min-h-screen flex flex-col">
 
       {/* Split Layout Container */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col md:flex-row">
+
         {/* Left Half */}
-        <div className="w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
+        <div className="w-full md:w-full flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10">
           <div
             className="absolute top-0 right-0 bottom-0 left-0 opacity-30 bg-cover bg-center"
             style={{ backgroundImage: `url(${happyPeople})`, filter: 'blur(5px)' }}
@@ -213,8 +214,8 @@ const LoginRegister = () => {
 
           {/* Title with Animation */}
           <div className={`relative z-10 text-center font-poppins transition-all duration-700 ${isLogin ? 'mt-0' : 'mt-[-150px]'}`}>
-            <h1 className="text-[#ffe4e6] text-6xl font-bold mb-4">V(l)inder</h1>
-            <p className="text-[#fff1f2] text-lg mb-6">Find your perfect match</p>
+            <h1 className="text-[#ffe4e6] text-4xl md:text-6xl font-bold mb-4">V(l)inder</h1>
+            <p className="text-[#fff1f2] text-sm md:text-lg mb-6">Find your perfect match</p>
 
             {/* Registration Info Prompt */}
             {showRegisterInfo && (
@@ -237,7 +238,7 @@ const LoginRegister = () => {
         </div>
 
         {/* Right Half */}
-        <div className="w-1/2 flex flex-col justify-center p-12 bg-rose-50" >
+        <div className="w-full flex flex-col justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
