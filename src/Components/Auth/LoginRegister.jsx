@@ -31,7 +31,7 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { loginWithEmail, signUpWithEmail, error, loading } = useAuth();
+  const { loginWithEmail, signUpWithEmail } = useAuth();
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
