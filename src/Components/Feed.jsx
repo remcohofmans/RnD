@@ -230,7 +230,7 @@ const Feed = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <UserCard user={users[currentIndex]} />
+                <UserCard user={users[currentIndex]} currentUserId={user.id} />
                 </motion.div>
               )}
             </AnimatePresence>
