@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/helper/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import AccessRequests from '../../Components/AccessRequests'; // Import AccessRequests component
+import MentorBanUser from '../../Components/MentorSettings/MentorBanUser'; // Import MentorBanUser component
 import { useAuth } from '../../hooks/AuthContext';
-import AccessRequests from '../../Components/AccessRequests';
-import MentorBanUser from '../../Components/MentorSettings/MentorBanUser'; 
+
 
 const SettingsMentor = () => {
   const [activeComponent, setActiveComponent] = useState(null); // State to control which content to display
@@ -12,7 +13,7 @@ const SettingsMentor = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const [ logout ] = useAuth();
+  const { logout} = useAuth();
 
   const handleDeleteAccount = async () => {
     try {
