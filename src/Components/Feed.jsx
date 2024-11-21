@@ -59,9 +59,8 @@ const Feed = () => {
 
       const { data: fetchedUsers } = await supabase
         .from('users')
-        .select('id, birthday, name, profilepictureBASE64, city, facility, gender')
+        .select('id, birthday, name, city, facility, gender')
         .not('name', 'is', null)
-        .not('profilepictureBASE64', 'is', null)
         .not('birthday', 'is', null)
         .not('city', 'is', null)
         .limit(USERS_TO_FETCH);
@@ -99,11 +98,10 @@ const Feed = () => {
           return {
             id: potentialUser.id,
             name: potentialUser.name || 'Anonymous',
-            location: `${potentialUser.city} (${distance})`, // Added distance to location
+            location: `${potentialUser.city} (${distance})`,
             facility: potentialUser.facility,
             birthday: potentialUser.birthday,
             age,
-            profilePicture: potentialUser.profilepictureBASE64,
             hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : [],
             distance,
           };
@@ -129,8 +127,7 @@ const Feed = () => {
     style: {
       backgroundColor: index % 2 === 0 ? '#fff1f2' : '#881337',
       textColor: index % 2 === 0 ? '#881337' : '#fff1f2',
-    },
-    imageURI: `data:image/jpeg;base64,${user.profilePicture}`,
+    }
   }));
 
   const handleSpinClick = () => {

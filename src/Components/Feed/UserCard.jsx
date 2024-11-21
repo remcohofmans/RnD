@@ -6,7 +6,8 @@ import {
   faBuilding,
   faTimes,
   faHeart,
-  faStar
+  faStar,
+  faComment 
 } from '@fortawesome/free-solid-svg-icons';
 
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
@@ -101,8 +102,8 @@ const UserCard = ({ user, currentUserId }) => {
         >
           <FontAwesomeIcon icon={faHeart} className="mr-2" /> Love
         </button>
-        <button className="skip-button flex items-center bg-[#ffccd3] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] ">
-          <FontAwesomeIcon icon={faTimes} className="mr-2" /> Skip
+        <button className="chat-button flex items-center bg-[#ffccd3] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] ">
+          <FontAwesomeIcon icon={faComment} className="mr-2" /> Chat
         </button>
       </div>
     </div>
