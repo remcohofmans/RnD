@@ -99,7 +99,7 @@ const Feed = () => {
           return {
             id: potentialUser.id,
             name: potentialUser.name || 'Anonymous',
-            location: `${potentialUser.city} (${distance})`, // Added distance to location
+            location: `${potentialUser.city} (${distance})`,
             facility: potentialUser.facility,
             birthday: potentialUser.birthday,
             age,

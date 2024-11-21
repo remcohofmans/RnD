@@ -26,7 +26,7 @@ const SettingsUser = () => {
   }, []);
 
   const handleOptionClick = (option) => {
-    if (option === "Info Aanpassen") {
+    if (option === "Filtervoorkeuren") {
       setActiveComponent("UserFilterForm");
     } else if (option === "Wachtwoord Bewerken") {
       setActiveComponent("PasswordChangeForm");
@@ -65,7 +65,7 @@ const SettingsUser = () => {
         </div>
       )}
 
-      {["Info Aanpassen", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
+      {["Filtervoorkeuren", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
         <button
           key={option}
           className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 bg-rose-600 hover:bg-rose-800"
