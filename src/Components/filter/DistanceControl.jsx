@@ -21,7 +21,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
       return;
     }
 
-    const newDistance = Math.min(Math.max(1, parseInt(newValue)), 100);
+    const newDistance = Math.min(Math.max(1, parseInt(newValue)), 300);
     
     if (newDistance !== parseInt(newValue)) {
       setError('Value must be between 1 and 100');
@@ -69,7 +69,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
               onClick={() => handleChange(distance + 1)}
               className="w-12 h-12 flex items-center justify-center rounded-full bg-rose-50 hover:bg-rose-100 active:bg-rose-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               aria-label="Increase distance"
-              disabled={distance >= 100}
+              disabled={distance >= 500}
             >
               <Plus className="w-5 h-5 text-rose-600" />
             </button>
