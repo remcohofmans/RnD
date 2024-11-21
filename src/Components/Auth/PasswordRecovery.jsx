@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/helper/supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 
 const PasswordRecovery = () => {
   const [email, setEmail] = useState('');
@@ -37,7 +37,7 @@ const PasswordRecovery = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fbf6f0]">
+    <div className="min-h-screen flex items-center justify-center bg-[#ffccd3]">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Herstel paswoord</h2>
 

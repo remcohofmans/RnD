@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/helper/supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import AccessRequests from '../Components/AccessRequests'; // Import AccessRequests component
-import MentorBanUser from '../Components/MentorBanUser'; // Import MentorBanUser component
+import AccessRequests from '../../Components/AccessRequests'; // Import AccessRequests component
+import MentorBanUser from '../../Components/MentorSettings/MentorBanUser'; // Import MentorBanUser component
 
 const SettingsMentor = ({ logout, loggedIn }) => {
   const [activeComponent, setActiveComponent] = useState(null); // State to control which content to display

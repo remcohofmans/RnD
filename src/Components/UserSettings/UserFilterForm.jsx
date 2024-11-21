@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import DistanceControl from './DistanceControl';
-import AgeRangeControl from './AgeRangeControl';
-import { supabase } from '../supabaseClient';
-import { availableHobbies, ButtonGroup, HobbiesModal } from '../Components/filter/AvailableHobbiesPage';
+import DistanceControl from '../filter/DistanceControl';
+import AgeRangeControl from '../filter/AgeRangeControl';
+import { supabase } from '../../supabaseClient';
+import { availableHobbies, ButtonGroup, HobbiesModal } from '../filter/AvailableHobbiesPage';
 
 const FilterForm = () => {
   const [formState, setFormState] = useState({
@@ -11,6 +11,7 @@ const FilterForm = () => {
     minAge: '18',
     maxAge: '35',
   });
+  
   const [showModal, setShowModal] = useState(false);
   const [selectedHobbies, setSelectedHobbies] = useState([]); 
   const [errors, setErrors] = useState({});
