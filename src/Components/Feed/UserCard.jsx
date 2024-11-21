@@ -53,7 +53,7 @@ const UserCard = ({ user, currentUserId }) => {
         src={`data:image/jpeg;base64,${user.profilePicture}`}
         alt={`${user.name} profile`}
       /> */}
-      <CarouselCard userId={currentUserId} />
+      <CarouselCard userId={user.id} />
 
 
       {/* User Info */}
