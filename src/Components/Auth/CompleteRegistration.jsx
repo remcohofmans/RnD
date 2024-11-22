@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient';
 import butterflyImage from '../../Assets/Butterfly.png'; // Reuse the butterfly image for consistency
 import { useAuth } from '../../hooks/AuthContext';
 
+
 const CompleteProfile = () => {
   const [name, setName] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -29,6 +30,7 @@ const CompleteProfile = () => {
 
     try {
       let imageUrl = null;
+      console.log("test");
 
       // If an image is selected, upload it to Supabase storage
       if (image) {
@@ -40,18 +42,38 @@ const CompleteProfile = () => {
 
         imageUrl = data.path;  // Image URL that will be stored in the database
       }
-
+      console.log("test");
       // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
         .update({
           name: name,
           birthday: birthdate,
-          profilepictureBASE64: imageUrl
+          //profilepictureBASE64: imageUrl
         })
         .eq('id', user.id);
+        console.log("test");
 
       if (error) throw error;
+
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+      console.log(endDate);
+
+      // Insert the user's profile data into the 'subscriptions' table and start free trial
+      const { error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          subscription: 'BASIS',
+          end_date: endDate,
+          active: true
+        })
+      if (subscriptionError){
+        console.log("starting free trial failed", subscriptionError);
+      } 
+      
+        
 
       navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
@@ -64,9 +86,11 @@ const CompleteProfile = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6]">
+      {/* Background with butterfly image */}
       <div
         className="flex items-center justify-center flex-1 relative bg-cover bg-center"
         style={{
+          backgroundImage: `url(${butterflyImage})`,
           backgroundColor: '#ffccd3',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
@@ -74,8 +98,8 @@ const CompleteProfile = () => {
         }}
       >
         {/* Profile Completion Form */}
-        <div className="bg-white p-6 sm:p-8 md:p-10 lg:p-12 rounded-lg shadow-lg max-w-md w-full z-10 mt-10 sm:mt-16 md:mt-24 mb-10 pt-6 sm:pt-10">
-          <h1 className="text-2xl sm:text-3xl font-bold text-center text-[#f43f5e] mb-6">Voltooi je profiel</h1>
+        <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full z-10 mt-18">
+          <h1 className="text-3xl font-bold text-center text-[#f43f5e] mb-6">Voltooi je profiel</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -86,7 +110,7 @@ const CompleteProfile = () => {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full py-3 px-4 sm:px-6 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
                 placeholder="Voer je naam in"
                 required
               />
@@ -100,7 +124,7 @@ const CompleteProfile = () => {
                 id="birthday"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
-                className="w-full py-3 px-4 sm:px-6 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
                 required
               />
             </div>
