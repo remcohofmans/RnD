@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/helper/supabaseClient.js'; 
-import TopNavigationBar from '../common/TopNavigationBar.jsx';
-import ImageUpload from './ImageUpload.jsx'; // Assuming you have this component
-import PasswordChangeForm from './PasswordChangeForm.jsx'; // Assuming you have this component
-import UserFilterForm from './UserFilterForm.jsx'; // Assuming you have this component
-import ProfielPauzeren from './ProfielPauzeren.jsx'; // Import ProfielPauzeren component
+import { supabase } from '../../lib/helper/supabaseClient.js';
+import ImageUpload from './ImageUpload.jsx';
+import PasswordChangeForm from './PasswordChangeForm.jsx';
+import UserFilterForm from './UserFilterForm.jsx';
+import ProfielPauzeren from './ProfielPauzeren.jsx';
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
@@ -12,7 +11,7 @@ const SettingsUser = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [activeComponent, setActiveComponent] = useState(null);
-  const [isConfirming, setIsConfirming] = useState(false); // State for modal visibility
+  const [isConfirming, setIsConfirming] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,7 +32,7 @@ const SettingsUser = () => {
     } else if (option === "Foto's Aanpassen") {
       setActiveComponent("ImageUpload");
     } else if (option === "Profiel Pauzeren") {
-      setIsConfirming(true); // Show ProfielPauzeren modal
+      setIsConfirming(true);
     }
   };
 
@@ -48,48 +47,57 @@ const SettingsUser = () => {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-12 min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
-       {/* Left Menu */}
-    <div
-      className="col-span-3 flex flex-col items-center justify-center gap-4 p-6 rounded-xl shadow-lg bg-white border-4 border-rose-300 h-96 mt-24"
-    >
-      {error && (
-        <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
-          {error}
+    <div className="flex h-screen overflow-hidden">
+      {/* Navigation Drawer */}
+      <div className="h-full w-80 bg-white shadow-lg border-r-4 border-rose-300 flex flex-col">
+        <div className="p-4 bg-rose-500 text-white text-lg font-bold text-center">
+          Instellingen
         </div>
-      )}
-      {success && (
-        <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
-          {success}
-        </div>
-      )}
+        <div className="p-4 flex flex-col gap-8 flex-grow">
+          {error && (
+            <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
+              {success}
+            </div>
+          )}
 
-      {["Filtervoorkeuren", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map((option) => (
-        <button
-          key={option}
-          className="px-4 py-2 text-lg font-semibold text-white rounded-lg transition duration-300 bg-rose-600 hover:bg-rose-800"
-          onClick={() => handleOptionClick(option)}
-        >
-          {option}
-        </button>
-      ))}
-    </div>
-
-        {/* Right Section */}
-        <div className="col-span-9 p-6">
-          {activeComponent === "UserFilterForm" && <UserFilterForm />}
-          {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
-          {activeComponent === "ImageUpload" && <ImageUpload />}
-          {isConfirming && (
-            <ProfielPauzeren
-              userId={userId}
-              onSuccess={handleSuccess}
-              onError={handleError}
-              setIsConfirming={setIsConfirming} // Pass down the function to close modal
-            />
+          {["Filtervoorkeuren", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map(
+            (option) => (
+              <button
+                key={option}
+                className="px-4 py-2 text-center w-full bg-rose-500 text-white rounded-lg transition hover:bg-rose-700"
+                onClick={() => handleOptionClick(option)}
+              >
+                {option}
+              </button>
+            )
           )}
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+        {/* Scrollable content */}
+        {activeComponent === "UserFilterForm" && <UserFilterForm />}
+        {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
+        {activeComponent === "ImageUpload" && (
+          <div className="overflow-y-auto h-full">
+            {/* Ensure scrolling for ImageUpload */}
+            <ImageUpload />
+          </div>
+        )}
+        {isConfirming && (
+          <ProfielPauzeren
+            userId={userId}
+            onSuccess={handleSuccess}
+            onError={handleError}
+            setIsConfirming={setIsConfirming}
+          />
+        )}
       </div>
     </div>
   );
