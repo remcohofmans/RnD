@@ -229,29 +229,24 @@ const LoginRegister = () => {
 
   }, [loginError]);
 
-  // The image source changes based on whether it's mobile or not
-  const imageSrc = happyPeople;
 
   return (
-    <div>
-      {/* Split Layout Container */}
-      <div className="flex flex-col md:flex-row items-cover">
+    <div className="flex flex-col">      {/* Split Layout Container */}
+      <div className="min-h-screen flex flex-col md:flex-row items-cover">
 
         {/* Left Half */}
         <div className="flex md:flex-col justify-center items-center bg-rose-400">
-          {/* Conditionally render the image based on the screen size */}
           {!isMobile && (
             <img
-              src={imageSrc} // The image will be dynamically set based on screen size
+              src={happyPeople}
               alt="Image"
-              className="w-full h-1/2 object-cover" // Image styling for larger screens
+              className="w-full h-1/2 object-cover" 
             />
           )}
 
           {/* Content Section */}
           <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
             <div className="flex flex-row items-center justify-start space-x-4">
-              {/* Butterfly Icon in Round Container - Render only if isMobile is true */}
               {isMobile && (
                 <div className="bg-white rounded-full p-4 shadow-lg">
                   <img src={butterflyIcon} alt="Butterfly Icon" className="w-20 h-20" />
@@ -294,7 +289,7 @@ const LoginRegister = () => {
         </div>
 
         {/* Right Half */}
-        <div className="flex md:flex-col items-center justify-center p-12 bg-rose-50" >
+        <div className="w-full flex flex- items-center justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
