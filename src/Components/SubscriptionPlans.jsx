@@ -12,6 +12,7 @@ const Subscription = () => {
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [selectedSubscription, setSelectedSubscription] = useState(false);
     const [inputVal, setInputVal] = useState('');
+    const [currentSubscription, setCurrentSubscription] = useState('BASIS');
     const [payAnnually, setPayAnnually] = useState(false);
     const [userId, setUserId] = useState(null);
 
@@ -26,6 +27,17 @@ const Subscription = () => {
           if (session) {
             setUserId(session.user.id);
             console.log("Session user ID:", session.user.id);
+            const {data: subscription, error} = await supabase
+                .from('subscriptions')
+                .select('subscription')
+                .eq('user_id', userId)
+            if (error) {
+                console.log("error fetching subscription", error);
+                return;
+            }
+            else {
+                setCurrentSubscription(subscription)
+            }
           }
         };
         fetchUserData();
@@ -210,7 +222,7 @@ const Subscription = () => {
             <div className='flex flex-col items-center justify-center min-h-screen'>
                 
                 <div className='flex justify-center items-center'>
-                    <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#e11d48' }}>
+                    <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: currentSubscription === 'BASIS' ? '#fecdd3':'#e11d48' }}>
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Basis</h5>
 
                         <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
