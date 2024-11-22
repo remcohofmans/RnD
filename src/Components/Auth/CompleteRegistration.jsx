@@ -30,6 +30,7 @@ const CompleteProfile = () => {
 
     try {
       let imageUrl = null;
+      console.log("test");
 
       // If an image is selected, upload it to Supabase storage
       if (image) {
@@ -41,18 +42,38 @@ const CompleteProfile = () => {
 
         imageUrl = data.path;  // Image URL that will be stored in the database
       }
-
+      console.log("test");
       // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
         .update({
           name: name,
           birthday: birthdate,
-          profilepictureBASE64: imageUrl
+          //profilepictureBASE64: imageUrl
         })
         .eq('id', user.id);
+        console.log("test");
 
       if (error) throw error;
+
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+      console.log(endDate);
+
+      // Insert the user's profile data into the 'subscriptions' table and start free trial
+      const { error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          subscription: 'BASIS',
+          end_date: endDate,
+          active: true
+        })
+      if (subscriptionError){
+        console.log("starting free trial failed", subscriptionError);
+      } 
+      
+        
 
       navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
