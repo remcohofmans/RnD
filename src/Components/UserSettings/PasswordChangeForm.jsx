@@ -84,8 +84,8 @@ const PasswordChangeForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fff1f2' }}>
-      <div className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72 bg-white border-4" style={{ borderColor: '#fda4af' }}>
+    <div className="flex items-center justify-center min-h-screen bg-rose-100">
+      <div className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72 bg-white">
         {success && (
           <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
             {success}
@@ -106,7 +106,7 @@ const PasswordChangeForm = () => {
               placeholder="Oud Wachtwoord"
               value={formData.oldPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>
@@ -119,7 +119,7 @@ const PasswordChangeForm = () => {
               placeholder="Nieuw Wachtwoord"
               value={formData.newPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>
@@ -132,7 +132,7 @@ const PasswordChangeForm = () => {
               placeholder="Bevestig Wachtwoord"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>

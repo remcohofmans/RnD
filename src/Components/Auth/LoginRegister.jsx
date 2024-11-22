@@ -4,6 +4,7 @@ import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
+import { useNavigate } from 'react-router-dom';  // Import the hook
 
 
 const LoginRegister = () => {
@@ -34,6 +35,7 @@ const LoginRegister = () => {
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
   const { user, loginWithEmail, signUpWithEmail, updateFacilityEnum } = useAuth();
+  const navigate = useNavigate();  // Use navigate here, inside the component
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -151,6 +153,8 @@ const LoginRegister = () => {
       console.error("Error during sign-up:", error);
       setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
     });
+
+    navigate('/completeProfile')
 };
 
   const handleEmailChange = (e) => {
