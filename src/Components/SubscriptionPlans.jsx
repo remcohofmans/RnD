@@ -57,11 +57,19 @@ const Subscription = () => {
         if (inputVal !== 'BEVESTIG') return;
         //send mail to director using chargebee :)
         const { data: { session } } = await supabase.auth.getSession();
+        const endDate = new Date();
+        if (payAnnually){
+            endDate.setFullYear(endDate.getFullYear()+1);
+        }
+        else {
+            endDate.setMonth(endDate.getMonth()+1);
+        }
+    
 
         const subscriptonFields = {
                     user_id: userId,
                     subscription: selectedSubscription,
-                    //end_date: payAnnually ? supabase.sqlsupabase.sql`CURRENT_DATE + INTERVAL '1 year'` : supabase.sql`CURRENT_DATE + INTERVAL '1 month'`,
+                    end_date: endDate,
                     annual_payment: payAnnually,
                     active:true
                 }
