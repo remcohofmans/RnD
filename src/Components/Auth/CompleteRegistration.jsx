@@ -41,7 +41,7 @@ const CompleteProfile = () => {
 
         imageUrl = data.path;  // Image URL that will be stored in the database
       }
-
+  
       // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
@@ -53,6 +53,22 @@ const CompleteProfile = () => {
         .eq('id', user.id);
 
       if (error) throw error;
+
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
+
+      // Insert the user's profile data into the 'subscriptions' table and start free trial
+      const { error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          subscription: 'BASIS',
+          end_date: endDate,
+          active: true
+        })
+      if (subscriptionError){
+        console.log("starting free trial failed", subscriptionError);
+      } 
 
       navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
