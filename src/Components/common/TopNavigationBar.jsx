@@ -35,7 +35,7 @@ const TopNavigationBar = () => {
     { icon: faComment, label: 'Berichten', path: '/chats' },
     { icon: faCog, label: 'Instellingen', path: '/settingsUser' }
   ];
-  const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };
+  const rightItem = { icon: faSignOutAlt, label: 'Log uit', path: '/logout' };
 
   const NavItem = ({ item, isActive }) => (
     <div
