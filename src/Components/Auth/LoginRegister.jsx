@@ -288,7 +288,7 @@ const LoginRegister = () => {
         </div>
 
         {/* Right Half */}
-        <div className="w-full h-screen flex md:flex-col items-center justify-center bg-rose-50" >
+        <div className="w-full h-screen flex md:flex-col items-center justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
