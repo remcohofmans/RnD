@@ -11,6 +11,7 @@ import Feed from './Components/Feed';
 import SettingsUser from './Components/UserSettings/SettingsUser';
 import SettingsMentor from './Components/MentorSettings/SettingsMentor';
 import CompleteRegistration from './Components/Auth/CompleteRegistration';
+import SubscriptionPlans from './Components/SubscriptionPlans'
 
 import MainLayout from './MainLayout';
 import ProtectedRoute from './ProtectedRoute';
@@ -74,6 +75,17 @@ function AppRoutes() {
       />
 
       <Route
+        path="/subscription"
+        element={
+          <ProtectedRoute allowedRoles={['USER']}>
+            <MainLayout>
+              <SubscriptionPlans />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/settingsUser"
         element={
           <ProtectedRoute allowedRoles={['USER']}>
@@ -94,7 +106,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/accessRequests"
         element={

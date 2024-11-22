@@ -30,12 +30,12 @@ const TopNavigationBar = () => {
 
   const leftItem = { icon: faHome, label: 'Home', path: '/' };
   const centerItems = [
-    { icon: faHeart, label: 'Find Love', path: '/feed' },
-    { icon: faUserFriends, label: 'Friends', path: '/feed' },
-    { icon: faComment, label: 'Messages', path: '/chats' },
-    { icon: faCog, label: 'Settings', path: '/settingsUser' }
+    { icon: faHeart, label: 'Liefde', path: '/feed' },
+    { icon: faUserFriends, label: 'Vriendschap', path: '/feed' },
+    { icon: faComment, label: 'Berichten', path: '/chats' },
+    { icon: faCog, label: 'Instellingen', path: '/settingsUser' }
   ];
-  const rightItem = { icon: faSignOutAlt, label: 'Logout', path: '/logout' };
+  const rightItem = { icon: faSignOutAlt, label: 'Log uit', path: '/logout' };
 
   const NavItem = ({ item, isActive }) => (
     <div
