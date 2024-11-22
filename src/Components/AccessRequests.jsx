@@ -119,8 +119,8 @@ const AccessRequests = ({ mentorEmail }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#fff1f2]">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg border-4 border-[#fda4af] flex flex-col min-h-[70vh]">
+    <div className="flex items-center justify-center min-h-screen bg-rose-100">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
 
         {loading && <p>Laden ...</p>}
