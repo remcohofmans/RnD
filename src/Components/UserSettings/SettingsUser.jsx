@@ -57,7 +57,7 @@ const SettingsUser = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Navigation Drawer */}
-      <div className="h-full w-80 bg-white shadow-lg border-r-4 border-rose-300 flex flex-col">
+      <div className="h-full w-80 bg-rose-50 shadow-lg flex flex-col">
         <div className="p-4 bg-rose-500 text-white text-lg font-bold text-center">
           Instellingen
         </div>
@@ -88,7 +88,7 @@ const SettingsUser = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+      <div className="flex-1 p-6 bg-rose-100 overflow-y-auto">
         {/* Scrollable content */}
         {activeComponent === "UserFilterForm" && <UserFilterForm />}
         {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}

@@ -189,7 +189,7 @@ const ImageUpload = ({ onUploadComplete }) => {
   };
 
   return (
-    <div className="min-h-screen bg-rose-50 mt-12">
+    <div className="min-h-screen bg-rose-100 mt-12">
       
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
