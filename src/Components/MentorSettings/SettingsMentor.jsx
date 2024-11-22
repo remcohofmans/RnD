@@ -5,7 +5,6 @@ import AccessRequests from '../../Components/AccessRequests'; // Import AccessRe
 import MentorBanUser from '../../Components/MentorSettings/MentorBanUser'; // Import MentorBanUser component
 import { useAuth } from '../../hooks/AuthContext';
 
-
 const SettingsMentor = () => {
   const [activeComponent, setActiveComponent] = useState(null); // State to control which content to display
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -13,7 +12,7 @@ const SettingsMentor = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { logout} = useAuth();
+  const { logout } = useAuth();
 
   const handleDeleteAccount = async () => {
     try {
@@ -54,6 +53,13 @@ const SettingsMentor = () => {
     navigate('/login');
   };
 
+  // Emojis for each setting option
+  const emojis = {
+    "Toegangsverzoeken": "📜", // Access Requests
+    "Ban gebruiker": "🚫", // Ban User
+    "Verwijder profiel": "🗑️", // Cross Mark for Delete Profile
+  };
+
   // Handle button clicks in the left drawer
   const handleOptionClick = (option) => {
     if (option === 'Toegangsverzoeken') {
@@ -68,7 +74,7 @@ const SettingsMentor = () => {
   return (
     <div className="flex h-screen overflow-hidden"> {/* Full height container */}
       {/* Permanent Drawer (Sidebar) */}
-      <div className="h-full w-80 bg-white shadow-lg border-r-4 border-[#fda4af] flex flex-col"> {/* Flex column layout */}
+      <div className="h-full w-80 bg-rose-50 shadow-lg flex flex-col"> {/* Flex column layout */}
         <div className="p-4 bg-[#f43f5e] text-white text-lg font-bold text-center">
           Settings
         </div>
@@ -91,7 +97,7 @@ const SettingsMentor = () => {
                 className="px-4 py-2 text-center w-full bg-[#f43f5e] text-white rounded-lg transition hover:bg-[#be123c]"
                 onClick={() => handleOptionClick(option)}
               >
-                {option}
+                {emojis[option]} {option}
               </button>
             )
           )}
@@ -107,7 +113,7 @@ const SettingsMentor = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100 overflow-hidden"> {/* Ensure no overflow in main content */}
+      <div className="flex-1 p-6 bg-rose-100 overflow-hidden"> {/* Ensure no overflow in main content */}
         {/* Conditional Content based on activeComponent */}
         <div className="flex-1 overflow-hidden"> {/* Ensures no overflow in the content */}
           {activeComponent === 'AccessRequests' && <AccessRequests />}
