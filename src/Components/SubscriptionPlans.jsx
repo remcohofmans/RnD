@@ -1,4 +1,4 @@
-import TopNavigationBar from './TopNavigationBar';
+
 import { Check } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
@@ -125,9 +125,7 @@ const Subscription = () => {
 
     return (
         <div>
-            <div className="relative z-50">
-                <TopNavigationBar/>
-            </div>
+           
 
             {/*Subscription Modal window*/}
             {isSubscriptionModalOpen && (
