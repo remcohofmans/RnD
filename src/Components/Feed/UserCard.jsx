@@ -88,19 +88,32 @@ const UserCard = ({ user, currentUserId }) => {
           return;
         }
   
-        // Delete both likes
-        const { error: deleteLikesError } = await supabase
-          .from('likes')
-          .delete()
-          .or(`(user_id.eq.${currentUserId}.and.liked_user_id.eq.${user.id}),
-               (user_id.eq.${user.id}.and.liked_user_id.eq.${currentUserId})`);
-  
-        if (deleteLikesError) {
-          console.error('Error removing likes:', deleteLikesError);
-          alert('Error updating match status, please try again.');
-          return;
-        }
-  
+      // Delete first like (current user's like)
+      const { error: deleteFirstLikeError } = await supabase
+      .from('likes')
+      .delete()
+      .eq('user_id', currentUserId)
+      .eq('liked_user_id', user.id);
+
+      if (deleteFirstLikeError) {
+      console.error('Error removing first like:', deleteFirstLikeError);
+      alert('Error updating match status, please try again.');
+      return;
+      }
+
+      // Delete second like (other user's like)
+      const { error: deleteSecondLikeError } = await supabase
+      .from('likes')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('liked_user_id', currentUserId);
+
+      if (deleteSecondLikeError) {
+      console.error('Error removing second like:', deleteSecondLikeError);
+      alert('Error updating match status, please try again.');
+      return;
+      }
+        
         alert('It\'s a match! 🎉');
       } else {
         alert('User liked successfully!');
