@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/helper/supabaseClient';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock } from 'lucide-react';
@@ -32,7 +33,7 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { loginWithEmail, signUpWithEmail } = useAuth();
+  const { user, loginWithEmail, signUpWithEmail, updateFacilityEnum } = useAuth();
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -133,13 +134,24 @@ const LoginRegister = () => {
     }
 
     // Call signUpWithEmail function if all validations pass
-    let response = signUpWithEmail(signUpEmail, signUpPassword, isMentor)
-      .then((response) => {
+    signUpWithEmail(signUpEmail, signUpPassword, isMentor)
+      .then(async (response) => {
         if (response) {
           setSignupError(response.toString);
+          return;
         }
-      })
-  };
+
+        // Now update the 'facility_enum' in the 'users' table if no errors and not a mentor
+      if (!isMentor) {
+        // Call the helper function to update the 'facility_enum'
+        await updateFacilityEnum(signUpEmail, selectedFacility);  // Pass the user ID and selected facility
+      }
+    })
+    .catch((error) => {
+      console.error("Error during sign-up:", error);
+      setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
+    });
+};
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
@@ -217,13 +229,13 @@ const LoginRegister = () => {
   const imageSrc = isMobile ? butterflyIcon : happyPeople;
 
   return (
-    <div className={`w-full ${isMobile ? 'h-auto object-cover' : 'h-64 object-contain'}`}>
+    <div className={`w-full ${isMobile ? 'h-auto object-contain' : 'h-64 object-contain'}`}>
 
       {/* Split Layout Container */}
       <div className="flex flex-1 flex-col md:flex-row">
 
         {/* Left Half */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-10 md:h-full h-[20vh] overflow-hidden">
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-tr from-[#fda4af] to-[#f43f5e] relative py-0 md:h-full h-[20vh] overflow-hidden">
           <img
             src={imageSrc} // Dynamically load the image
             alt="Image"
