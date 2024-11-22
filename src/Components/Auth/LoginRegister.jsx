@@ -233,13 +233,12 @@ const LoginRegister = () => {
   const imageSrc = happyPeople;
 
   return (
-    <div className={"w-full h-full"}>
-
+    <div>
       {/* Split Layout Container */}
       <div className="flex flex-col md:flex-row items-cover">
 
         {/* Left Half */}
-        <div className="w-full flex md:flex-col items-center items-start bg-rose-400">
+        <div className="flex md:flex-col justify-center items-center bg-rose-400">
           {/* Conditionally render the image based on the screen size */}
           {!isMobile && (
             <img
@@ -250,16 +249,25 @@ const LoginRegister = () => {
           )}
 
           {/* Content Section */}
-          <div class="flex flex-col items-center justify-center h-full text-center font-poppins">
+          <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
+            <div className="flex flex-row items-center justify-start space-x-4">
+              {/* Butterfly Icon in Round Container - Render only if isMobile is true */}
+              {isMobile && (
+                <div className="bg-white rounded-full p-4 shadow-lg">
+                  <img src={butterflyIcon} alt="Butterfly Icon" className="w-20 h-20" />
+                </div>
+              )}
 
-            {/* Main Title */}
-            <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
-              V(l)inder
-              {/* Subtitle */}
-              <p className="text-rose-800 text-base font-medium md:text-xl mb-6 drop-shadow-sm">
-                Find your perfect match
-              </p>
-            </h1>
+              {/* Text Section */}
+              <div className="text-left">
+                <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
+                  V(l)inder
+                </h1>
+                <p className="text-rose-800 text-base font-medium md:text-xl drop-shadow-sm">
+                  Find your perfect match
+                </p>
+              </div>
+            </div>
 
             {/* Registration Info Prompt */}
             {showRegisterInfo && !isMobile && (
@@ -268,7 +276,6 @@ const LoginRegister = () => {
                   Sluit je nu aan en fladder het geluk tegemoet...
                 </h2>
                 <div className="flex flex-wrap justify-start items-center gap-4">
-                  {/* Rendering feature list with heart icons */}
                   {[<Heart />, 'Inclusief', <Heart />, 'Veilig', <Heart />, 'Betrouwbaar', <Heart />].map((feature, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <span>{feature}</span>
@@ -278,7 +285,6 @@ const LoginRegister = () => {
               </div>
             )}
 
-            {/* Butterfly icon under the same condition but outside the container */}
             {showRegisterInfo && !isMobile && (
               <div className="flex justify-center items-center mt-4">
                 <img src={butterflyIcon} alt="Butterfly icon" className="w-40 h-40" />
@@ -288,7 +294,7 @@ const LoginRegister = () => {
         </div>
 
         {/* Right Half */}
-        <div className="w-full h-screen flex md:flex-col items-center justify-center p-12 bg-rose-50" >
+        <div className="flex md:flex-col items-center justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
