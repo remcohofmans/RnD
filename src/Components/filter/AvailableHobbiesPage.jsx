@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 export const availableHobbies = [
   // Collectie & Leren
   { name: 'Geschiedenis', icon: '📜', category: 'Leren' },

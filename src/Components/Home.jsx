@@ -1,30 +1,41 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
-import TopNavigationBar from './TopNavigationBar';
+import { useAuth } from '../hooks/AuthContext';
 
-const Home = ({ user, loggedIn, logout, email }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
+  const { user, logout, role } = useAuth();
+  const email = user?.email;
+  const loggedIn = !!user;
+
+  useEffect(() => {
+    console.log("User:", user);
+    console.log("email:", email);
+    console.log("Role:", role);
+    if (role === 'STAFF_MEMBER') {
+      navigate('/settingsMentor');
+    }
+  }, [navigate, role]);
 
   const handleButtonClick = useCallback(() => {
     if (loggedIn) {
-      logout(); // Call the logout function passed as prop
-      navigate('/login'); // Redirect to login page after logout
+      logout();
+      navigate('/login');
     } else {
-      navigate('/login'); // Redirect to login page if user is not logged in
+      navigate('/login');
     }
   }, [loggedIn, logout, navigate]);
 
   const handleGoToFeed = useCallback(async () => {
     try {
-      // Query Supabase to get the account status
       const { data, error } = await supabase
         .from('users')
         .select('status')
         .eq('email', email)
-        .single(); // Assuming email uniquely identifies the user
+        .single();
 
       if (error) {
         console.error('Error fetching account status:', error);
@@ -32,16 +43,15 @@ const Home = ({ user, loggedIn, logout, email }) => {
       }
 
       if (data.status === 'PAUSED') {
-        setIsPausedModalOpen(true); // Open the modal if account is paused
+        setIsPausedModalOpen(true);
       } else {
-        navigate('/feed'); // Navigate to feed if account is active
+        navigate('/feed');
       }
     } catch (err) {
       console.error('Error checking account status:', err);
     }
   }, [navigate, email]);
 
-  // Function to unpause the account
   const handleUnpauseAccount = useCallback(async () => {
     try {
       const { error } = await supabase
@@ -54,8 +64,8 @@ const Home = ({ user, loggedIn, logout, email }) => {
         return;
       }
 
-      setIsPausedModalOpen(false); // Close the modal after unpausing
-      navigate('/feed'); // Redirect to the feed after account is unpaused
+      setIsPausedModalOpen(false);
+      navigate('/feed');
     } catch (err) {
       console.error('Error updating account status:', err);
     }
@@ -63,17 +73,15 @@ const Home = ({ user, loggedIn, logout, email }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Use the new TopNavigationBar */}
-      <div className="relative z-50">
-        <TopNavigationBar loggedIn={!!user} logout={logout} />
-      </div>
+      <div className="relative z-50"></div>
 
-      {/* Modal Overlay */}
       {isPausedModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-auto shadow-lg">
             <h2 className="text-2xl font-bold text-[#f43f5e] mb-4">Account Paused</h2>
-            <p className="text-gray-600 mb-6">Your account is currently paused. You cannot access the feed until it is reactivated.</p>
+            <p className="text-gray-600 mb-6">
+              Your account is currently paused. You cannot access the feed until it is reactivated.
+            </p>
             <button
               className="px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#e11d48] mr-4"
               onClick={handleUnpauseAccount}
@@ -91,20 +99,17 @@ const Home = ({ user, loggedIn, logout, email }) => {
       )}
 
       {/* Hero Section */}
-      <div className="flex-1 flex bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6] relative">
-        {/* Merged Background and Content Container */}
+      <div className="flex-1 flex from-rose-100 to-rose-200 relative bg-rose-50">
         <div
           className="relative w-full h-full opacity-80 bg-cover bg-center flex items-center justify-center text-center font-poppins py-20 px-4"
           style={{
             backgroundImage: `url(${butterflyImage})`,
-            backgroundColor: '#fbf6f0',
-            backgroundSize: 'contain',  // Ensures the entire image fits inside the container
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            minHeight: '100vh',   // Ensures the container scales to fill the screen height
+            minHeight: '100vh',
           }}
         >
-          {/* Content */}
           <div className="text-gray-800 space-y-4 max-w-xl mx-auto z-10">
             <h1 className="text-5xl font-bold leading-tight text-[#881337]">Vlinder</h1>
             <h2 className="text-xl leading-relaxed max-w-lg mx-auto">
@@ -121,33 +126,40 @@ const Home = ({ user, loggedIn, logout, email }) => {
       <div className="bg-gray-50 py-16 px-4 text-center">
         <h2 className="text-4xl font-bold text-gray-800 mb-8">Waarom Kiezen Voor V(l)inder?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Smart Matching</h3>
-            <p className="text-gray-600 leading-relaxed">Ons geavanceerde algoritme zorgt ervoor dat er mensen in uw feed verschijnen die aan uw verwachtingen kunnen voldoen.</p>
-          </div>
-          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Privacy Eerst</h3>
-            <p className="text-gray-600 leading-relaxed">We geven prioriteit aan uw privacy en veiligheid, zodat u met een gerust hart connecties kunt maken.</p>
-          </div>
-          <div className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">Onvergetelijke Ervaring</h3>
-            <p className="text-gray-600 leading-relaxed">Ons platform is ontworpen om u een zalige en ongeëvenaarde ervaring te bieden.</p>
-          </div>
+          {['Smart Matching', 'Privacy Eerst', 'Onvergetelijke Ervaring'].map((title, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-lg p-6 rounded-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105 flex flex-col"
+            >
+              <h3 className="text-2xl font-bold mb-4 text-[#f43f5e]">{title}</h3>
+              <p className="text-gray-600 leading-relaxed flex-grow">
+                {index === 0
+                  ? 'Ons geavanceerde algoritme zorgt ervoor dat er mensen in uw feed verschijnen die aan uw verwachtingen kunnen voldoen.'
+                  : index === 1
+                  ? 'We geven prioriteit aan uw privacy en veiligheid, zodat u met een gerust hart connecties kunt maken.'
+                  : 'Ons platform is ontworpen om u een zalige en ongeëvenaarde ervaring te bieden.'}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Testimonials Section */}
       <div className="bg-gray-100 py-16 px-4 text-center">
         <h2 className="text-4xl font-bold text-gray-800 mb-8">Wat Onze Gebruikers Zeggen</h2>
-        <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-8">
-          <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"V(l)inder heeft me geholpen mijn soulmate te vinden! Het matchingsproces was zo eenvoudig en nauwkeurig."</p>
-            <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Sarah T.</p>
-          </div>
-          <div className="bg-white shadow-lg p-6 rounded-lg max-w-md">
-            <p className="text-lg text-gray-600 leading-relaxed">"Ik heb zoveel nieuwe vrienden gemaakt dankzij dit platform. Een echte aanrader!"</p>
-            <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- Jake L.</p>
-          </div>
+        <div className="flex flex-col md:flex-row justify-center items-stretch space-y-6 md:space-y-0 md:space-x-8">
+          {[
+            { text: 'V(l)inder heeft me geholpen mijn soulmate te vinden! Het matchingsproces was zo eenvoudig en nauwkeurig.', name: 'Sarah T.' },
+            { text: 'Ik heb zoveel nieuwe vrienden gemaakt dankzij dit platform. Een echte aanrader!', name: 'Jake L.' },
+          ].map((testimonial, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-lg p-6 rounded-lg max-w-md flex flex-col justify-between"
+            >
+              <p className="text-lg text-gray-600 leading-relaxed">{testimonial.text}</p>
+              <p className="mt-4 text-xl font-semibold text-[#f43f5e]">- {testimonial.name}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -166,5 +178,3 @@ const Home = ({ user, loggedIn, logout, email }) => {
 };
 
 export default Home;
-
-{/** test change #2 */}
