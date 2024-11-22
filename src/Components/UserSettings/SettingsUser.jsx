@@ -46,6 +46,14 @@ const SettingsUser = () => {
     setSuccess(null);
   };
 
+  // Emojis for each setting option
+  const emojis = {
+    "Filtervoorkeuren": "🔍",  // Filter preferences
+    "Wachtwoord Bewerken": "🔑",  // Change password
+    "Foto's Aanpassen": "🖼️",  // Edit photos
+    "Profiel Pauzeren": "⏸️",  // Pause profile
+  };
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Navigation Drawer */}
@@ -72,7 +80,7 @@ const SettingsUser = () => {
                 className="px-4 py-2 text-center w-full bg-rose-500 text-white rounded-lg transition hover:bg-rose-700"
                 onClick={() => handleOptionClick(option)}
               >
-                {option}
+                {emojis[option]} {option}
               </button>
             )
           )}
