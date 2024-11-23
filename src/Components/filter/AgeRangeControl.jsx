@@ -92,7 +92,6 @@ const AgeRangeControl = ({
               </div>
             </div>
 
-            {/* Separator */}
             <div className="text-rose-300 text-2xl">-</div>
 
             {/* Maximum age control */}
