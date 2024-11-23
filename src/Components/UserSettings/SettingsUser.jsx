@@ -115,8 +115,8 @@ const SettingsUser = () => {
                 key={option.id}
                 onClick={() => handleOptionClick(option.id)}
                 className={`${buttonStyles.menuItem} ${isActive
-                    ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                    : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                  : 'text-gray-700 hover:bg-gray-50'
                   }`}
               >
                 <div className="flex items-center gap-3 p-3">
@@ -133,8 +133,8 @@ const SettingsUser = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-        <div className="w-full bg-white rounded-xl shadow-sm">
+      <div className="flex-1 justify-center items-center pt-16 bg-rose-50 overflow-y-auto">
+        <div className="w-full rounded-xl shadow-sm p-6">
           {/* Dynamic Content */}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
