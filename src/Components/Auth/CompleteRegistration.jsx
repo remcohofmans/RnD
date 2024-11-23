@@ -29,9 +29,6 @@ const CompleteProfile = () => {
     setError('');
 
     try {
-      let imageUrl = null;
-      console.log("test");
-
       // If an image is selected, upload it to Supabase storage
       if (image) {
         const { data, error: uploadError } = await supabase.storage
@@ -39,8 +36,6 @@ const CompleteProfile = () => {
           .upload(`profiles/${Date.now()}_${image.name}`, image);
 
         if (uploadError) throw uploadError;
-
-        imageUrl = data.path;  // Image URL that will be stored in the database
       }
       console.log("test");
       // Insert the user's profile data into the 'users' table
@@ -90,8 +85,7 @@ const CompleteProfile = () => {
       <div
         className="flex items-center justify-center flex-1 relative bg-cover bg-center"
         style={{
-          backgroundImage: `url(${butterflyImage})`,
-          backgroundColor: '#ffccd3',
+          backgroundColor: 'bg-rose-100',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
