@@ -41,7 +41,7 @@ export const UnmatchButton = ({ otherUserName, otherUserId, matchId, onUnmatch }
       </button>
 
       {showUnmatchModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full transform transition-transform duration-300 scale-95">
             <p className="text-lg font-medium text-gray-800 mb-4">
               Weet je zeker dat je {otherUserName} wilt unmachen?

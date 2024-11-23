@@ -53,7 +53,7 @@ export const ChatHeader = ({ otherUserName, otherUserId , matchId}) => {
           Chat with {otherUserName}
         </h3>
         <button 
-          className="px-2 py-1 bg-rose-300 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+          className="px-2 py-1 bg-red-300 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           onClick={handleReportButton}
         >
           Help
@@ -66,7 +66,7 @@ export const ChatHeader = ({ otherUserName, otherUserId , matchId}) => {
       </div>
 
       {showReportWindow && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full transform transition-transform duration-300 scale-95">
             <p className="text-lg font-medium text-gray-800">
             🛡️ Veiligheid eerst!
