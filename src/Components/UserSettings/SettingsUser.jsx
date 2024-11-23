@@ -25,7 +25,6 @@ const SettingsUser = () => {
     fetchUserData();
   }, []);
 
-  // Common button styles
   const buttonStyles = {
     primary: "bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition-colors duration-200",
     secondary: "bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200",
@@ -108,18 +107,17 @@ const SettingsUser = () => {
           {/* Menu Items */}
           {settingsOptions.map((option) => {
             const Icon = option.icon;
-            const isActive = activeComponent === option.component || 
-                           (option.id === "Profiel Pauzeren" && isConfirming);
-            
+            const isActive = activeComponent === option.component ||
+              (option.id === "Profiel Pauzeren" && isConfirming);
+
             return (
               <button
                 key={option.id}
                 onClick={() => handleOptionClick(option.id)}
-                className={`${buttonStyles.menuItem} ${
-                  isActive
+                className={`${buttonStyles.menuItem} ${isActive
                     ? 'bg-rose-50 text-rose-600 border border-rose-200'
                     : 'text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3 p-3">
                   <Icon className={`w-5 h-5 ${isActive ? 'text-rose-500' : 'text-gray-500'}`} />
@@ -136,7 +134,7 @@ const SettingsUser = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-        <div className="w-full h-full bg-white rounded-xl shadow-sm p-6">
+        <div className="w-full bg-white rounded-xl shadow-sm">
           {/* Dynamic Content */}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
@@ -153,7 +151,7 @@ const SettingsUser = () => {
               setIsConfirming={setIsConfirming}
             />
           )}
-          
+
           {/* Welcome Screen */}
           {!activeComponent && !isConfirming && (
             <div className="h-full flex flex-col items-center justify-center text-center text-gray-500 py-20">

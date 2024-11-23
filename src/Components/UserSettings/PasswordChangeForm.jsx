@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faLock, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/helper/supabaseClient';
 
 const PasswordChangeForm = () => {
@@ -13,8 +13,6 @@ const PasswordChangeForm = () => {
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
-  // Single state for toggling visibility of all fields
   const [showPasswords, setShowPasswords] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -54,7 +52,6 @@ const PasswordChangeForm = () => {
       } else {
         setSuccess("Wachtwoord is geüpdated");
 
-        // Clear fields and remove success message after 2 seconds
         setFormData({
           oldPassword: '',
           newPassword: '',
@@ -78,79 +75,98 @@ const PasswordChangeForm = () => {
     });
   };
 
-  // Toggle visibility for all fields
   const togglePasswordVisibility = () => {
     setShowPasswords((prev) => !prev);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-rose-100">
-      <div className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-72 bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-rose-50">
+      <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-xl">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-rose-600">Wachtwoord Wijzigen</h2>
+          <p className="text-sm text-gray-600">Beveilig je account met een nieuw wachtwoord</p>
+        </div>
+
+        {/* Success and Error Messages */}
         {success && (
-          <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
-            {success}
+          <div className="p-3 mb-4 text-sm text-green-600 bg-green-100 border border-green-300 rounded-lg">
+            <FontAwesomeIcon icon={faCheck} /> {success}
           </div>
         )}
         {error && (
-          <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+          <div className="p-3 mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-lg">
             {error}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Old Password Field */}
           <div className="relative">
+            <FontAwesomeIcon
+              icon={faLock}
+              className="absolute left-3 top-3.5 text-gray-400"
+            />
             <input
               type={showPasswords ? "text" : "password"}
               name="oldPassword"
               placeholder="Oud Wachtwoord"
               value={formData.oldPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full pl-10 pr-10 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>
 
           {/* New Password Field */}
           <div className="relative">
+            <FontAwesomeIcon
+              icon={faLock}
+              className="absolute left-3 top-3.5 text-gray-400"
+            />
             <input
               type={showPasswords ? "text" : "password"}
               name="newPassword"
               placeholder="Nieuw Wachtwoord"
               value={formData.newPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full pl-10 pr-10 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>
 
           {/* Confirm Password Field */}
           <div className="relative">
+            <FontAwesomeIcon
+              icon={faLock}
+              className="absolute left-3 top-3.5 text-gray-400"
+            />
             <input
               type={showPasswords ? "text" : "password"}
               name="confirmPassword"
               placeholder="Bevestig Wachtwoord"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full py-3 pr-10 pl-3 bg-rose-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full pl-10 pr-10 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
               required
             />
           </div>
 
-          {/* Single Eye Icon for All Fields */}
+          {/* Toggle Password Visibility */}
           <div className="flex justify-end">
             <button
               type="button"
               onClick={togglePasswordVisibility}
               className="text-rose-500 hover:text-rose-700"
             >
-              <FontAwesomeIcon icon={showPasswords ? faEyeSlash : faEye} size="lg" />
             </button>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
-            className="px-4 py-2 text-lg font-semibold text-white rounded-lg bg-rose-500 hover:bg-rose-700 transition duration-300"
+            className="w-full py-3 text-lg font-semibold text-white bg-rose-500 rounded-lg hover:bg-rose-700 transition duration-300"
           >
             Bevestig
           </button>
