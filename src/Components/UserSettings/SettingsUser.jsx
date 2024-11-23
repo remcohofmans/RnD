@@ -83,7 +83,7 @@ const SettingsUser = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
-      <div className="h-full w-80 bg-white shadow-lg flex flex-col">
+      <div className="flex flex-col h-full w-40 md:w-80 sm:w-56 bg-white shadow-lg">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white">
           <Settings className="w-6 h-6 text-rose-500" />
@@ -119,7 +119,7 @@ const SettingsUser = () => {
                   : 'text-gray-700 hover:bg-gray-50'
                   }`}
               >
-                <div className="flex items-center gap-3 p-3">
+                <div className="flex-row items-center gap-3 p-3">
                   <Icon className={`w-5 h-5 ${isActive ? 'text-rose-500' : 'text-gray-500'}`} />
                   <div>
                     <div className="font-medium">{option.id}</div>
