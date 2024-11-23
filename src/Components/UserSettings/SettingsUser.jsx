@@ -134,7 +134,7 @@ const SettingsUser = () => {
 
       {/* Main Content */}
       <div className="flex-1 justify-center items-center pt-16 bg-rose-50 overflow-y-auto">
-        <div className="w-full rounded-xl shadow-sm p-6">
+        <div className="w-full rounded-xl p-6">
           {/* Dynamic Content */}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
