@@ -17,9 +17,10 @@ const Subscription = () => {
     const [userId, setUserId] = useState(null);
 
 
-    const monthlyPrices = {basis: 10, gevorderd: 17, elite: 20}
-    const annualPrices = {basis: 110, gevorderd: 187, elite: 220}
-    const annualPricesSaved = {basis: 120, gevorderd: 204, elite: 240}
+
+    const monthlyPrices = {BASIS: 10, GEVORDERD: 17, ELITE: 20}
+    const annualPrices = {BASIS: 110, GEVORDERD: 187, ELITE: 220}
+    const annualPricesSaved = {BASIS: 120, GEVORDERD: 204, ELITE: 240}
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -30,13 +31,13 @@ const Subscription = () => {
             const {data: subscription, error} = await supabase
                 .from('subscriptions')
                 .select('subscription')
-                .eq('user_id', userId)
+                .eq('user_id', session.user.id)
             if (error) {
                 console.log("error fetching subscription", error);
                 return;
             }
             else {
-                setCurrentSubscription(subscription)
+                setCurrentSubscription(subscription[0].subscription);
             }
           }
         };
@@ -116,9 +117,9 @@ const Subscription = () => {
                 console.log("inserting subscription failed", error);
             }
             console.log("subscription inserted");
-        }
-        
+        }        
         openFeedbackModal();
+        setCurrentSubscription(selectedSubscription);
         closeSubscriptionModal();
 
     };
@@ -149,7 +150,7 @@ const Subscription = () => {
                             </div>
 
                             <p className="text-sm">
-                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{selectedSubscription}</span>{' '}
+                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{currentSubscription}</span>{' '}
                                 abonnement? Zo ja, type: <span className="font-bold">BEVESTIG</span>
                             </p>
 
@@ -220,13 +221,18 @@ const Subscription = () => {
             <div className='flex flex-col items-center justify-center min-h-screen'>
                 
                 <div className='flex justify-center items-center'>
-                    <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: currentSubscription === 'BASIS' ? '#fecdd3':'#e11d48' }}>
+                <div
+                    className={
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
+                        (currentSubscription === "BASIS" ? " border-4 border-rose-200 ring-4 ring-rose-500" : "")
+                    }
+                    style={{ backgroundColor: "#f43f5e" }}
+                    >           
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Basis</h5>
-
                         <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
                             <span className="text-3xl font-semibold">€</span>
-                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.basis : ''}</span>
-                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.basis : monthlyPrices.basis}</span>
+                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.BASIS : ''}</span>
+                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.BASIS : monthlyPrices.BASIS}</span>
                             <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
@@ -249,16 +255,29 @@ const Subscription = () => {
 
                         </ul>
 
-                        <button onClick={() => openSubscriptionModal('basis')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button 
+                        onClick={() => openSubscriptionModal('BASIS')} 
+                        disabled={currentSubscription === 'BASIS'}
+                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
+                        style={{ color: '#881337', 
+                            backgroundColor: '#ffe4e6', 
+                            hover: { backgroundColor: '#fecdd3' },
+                            cursor:  currentSubscription === 'BASIS' ? 'not-allowed' : 'pointer'
+                            }}>{currentSubscription === 'BASIS' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
-                    <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#be123c' }}>
+                    <div
+                    className={
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
+                        (currentSubscription === "GEVORDERD" ? " border-4 border-rose-200 ring-4 ring-rose-600" : "")
+                    }
+                    style={{ backgroundColor: "#e11d48" }}
+                    >                        
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Gevorderd</h5>
-
                         <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
                             <span className="text-3xl font-semibold">€</span>
-                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.gevorderd : ''}</span>
-                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.gevorderd : monthlyPrices.gevorderd}</span>
+                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.GEVORDERD : ''}</span>
+                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.GEVORDERD : monthlyPrices.GEVORDERD}</span>
                             <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
@@ -289,16 +308,28 @@ const Subscription = () => {
 
                         </ul>
 
-                        <button onClick={() => openSubscriptionModal('gevorderd')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button 
+                        onClick={() => openSubscriptionModal('GEVORDERD')} 
+                        disabled={currentSubscription === 'GEVORDERD'}
+                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
+                        style={{ color: '#881337', 
+                        backgroundColor: '#ffe4e6', 
+                        hover: { backgroundColor: '#fecdd3' },
+                        cursor:  currentSubscription === 'GEVORDERD' ? 'not-allowed' : 'pointer'
+                        }}>{currentSubscription === 'GEVORDERD' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
-                    <div className="m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" style={{ backgroundColor: '#9f1239' }}>
+                    <div
+                        className={
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
+                            (currentSubscription === "ELITE" ? " border-4 border-rose-200 ring-4 ring-rose-700" : "")}
+                        style={{ backgroundColor: "#b91c1c" }}
+                    >           
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Elite</h5>
-
                         <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
                             <span className="text-3xl font-semibold">€</span>
-                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.elite : ''}</span>
-                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.elite : monthlyPrices.elite}</span>
+                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.ELITE : ''}</span>
+                            <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.ELITE : monthlyPrices.ELITE}</span>
                             <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
@@ -336,7 +367,15 @@ const Subscription = () => {
                             </li>
                         </ul>
 
-                        <button onClick={() => openSubscriptionModal('elite')} type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" style={{ color: '#881337', backgroundColor: '#ffe4e6', hover: { backgroundColor: '#fecdd3' } }}>Choose plan</button>
+                        <button 
+                        onClick={() => openSubscriptionModal('ELITE')} 
+                        disabled={currentSubscription === 'ELITE'}
+                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
+                        style={{ color: '#881337', 
+                            backgroundColor: '#ffe4e6', 
+                            hover: { backgroundColor: '#fecdd3' },
+                            cursor:  currentSubscription === 'ELITE' ? 'not-allowed' : 'pointer'
+                            }}>{currentSubscription === 'ELITE' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
                 </div>
                 <div className='flex flex-row items-center mb-8 justify-center rounded-lg' style={{background: '#e11d48', color: '#fafaf9'}}>

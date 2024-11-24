@@ -37,6 +37,8 @@ const CompleteProfile = () => {
 
         if (uploadError) throw uploadError;
       }
+
+
       // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
@@ -51,7 +53,8 @@ const CompleteProfile = () => {
 
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
-      console.log(endDate);
+
+
 
       // Insert the user's profile data into the 'subscriptions' table and start free trial
       const { error: subscriptionError } = await supabase
@@ -65,7 +68,9 @@ const CompleteProfile = () => {
       if (subscriptionError){
         console.log("starting free trial failed", subscriptionError);
       } 
-      
+
+
+
       navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
       setError('Er ging iets mis. Probeer het opnieuw.');
