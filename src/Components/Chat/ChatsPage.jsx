@@ -4,8 +4,8 @@ import { ChatWindow } from './ChatWindow/ChatWindow.jsx';
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
 import { useMatches } from '../../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
-import TopNavigationBar from '../common/TopNavigationBar.jsx';
 import useCheckUserProfile from '../../hooks/useCheckUserProfile.jsx';
+import UserCardChats from './ChatWindow/UserCardChats.jsx';
 
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -20,10 +20,14 @@ const ChatsPage = () => {
   if (authLoading || matchesLoading) return <LoadingSpinner />;
   if (authError || matchesError) return <div className="text-red-500 text-center p-4">{authError || matchesError}</div>;
 
+  // Find the selected match object
+  const selectedMatchDetails = matches.find(m => m.match_id === selectedMatch);
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="container mx-auto py-8 mt-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          {/* Left Column: Chats List */}
           <div className="md:col-span-3">
             {matches.length === 0 ? (
               <p className="text-center text-gray-500 bg-white p-4 rounded-lg shadow">
@@ -38,11 +42,12 @@ const ChatsPage = () => {
             )}
           </div>
 
+          {/* Middle Column: Chat Window */}
           <div className="md:col-span-6">
-            {selectedMatch ? (
+            {selectedMatchDetails ? (
               <ChatWindow
-                matchId={selectedMatch}
-                otherUserName={matches.find(m => m.match_id === selectedMatch).otherUserName}
+                matchId={selectedMatchDetails.match_id}
+                otherUserName={selectedMatchDetails.otherUserName}
               />
             ) : (
               <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500">
@@ -51,7 +56,16 @@ const ChatsPage = () => {
             )}
           </div>
 
-          <div className="md:col-span-3"></div>
+          {/* Right Column: User Card Chats */}
+          <div className="md:col-span-3">
+            <div>
+              {selectedMatchDetails ? (
+                <UserCardChats user={selectedMatchDetails.otherUserId} />
+              ) : (
+                <div></div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

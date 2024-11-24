@@ -29,8 +29,6 @@ const CompleteProfile = () => {
     setError('');
 
     try {
-      let imageUrl = null;
-
       // If an image is selected, upload it to Supabase storage
       if (image) {
         const { data, error: uploadError } = await supabase.storage
@@ -38,17 +36,16 @@ const CompleteProfile = () => {
           .upload(`profiles/${Date.now()}_${image.name}`, image);
 
         if (uploadError) throw uploadError;
-
-        imageUrl = data.path;  // Image URL that will be stored in the database
       }
-  
+
+
       // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
         .update({
           name: name,
           birthday: birthdate,
-          profilepictureBASE64: imageUrl
+          //profilepictureBASE64: imageUrl
         })
         .eq('id', user.id);
 
@@ -56,6 +53,8 @@ const CompleteProfile = () => {
 
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
+
+
 
       // Insert the user's profile data into the 'subscriptions' table and start free trial
       const { error: subscriptionError } = await supabase
@@ -69,6 +68,8 @@ const CompleteProfile = () => {
       if (subscriptionError){
         console.log("starting free trial failed", subscriptionError);
       } 
+
+
 
       navigate('/');  // Navigate to the home page after successful profile creation
     } catch (err) {
@@ -85,8 +86,7 @@ const CompleteProfile = () => {
       <div
         className="flex items-center justify-center flex-1 relative bg-cover bg-center"
         style={{
-          backgroundImage: `url(${butterflyImage})`,
-          backgroundColor: '#ffccd3',
+          backgroundColor: 'bg-rose-100',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

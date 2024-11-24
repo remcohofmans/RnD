@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/helper/supabaseClient';
 
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -9,6 +10,24 @@ export function AuthProvider({ children }) {
   // const [profileComplete, setProfileComplete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Helper function to update the 'facility_enum' column in 'users' table
+  const updateFacilityEnum = async (signUpEmail, selectedFacility) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({ facility_enum: selectedFacility })
+        .eq('email', signUpEmail); // Update the user with the provided userId
+
+      if (error) {
+        console.error('Error updating facility_enum:', error);
+        throw new Error('Error updating facility_enum');
+      }
+      console.log('Facility updated successfully:', data);
+    } catch (error) {
+      console.error('An error occurred during the update process:', error);
+    }
+  };
 
   // Helper to fetch user role
   const fetchUserRole = async (userId) => {
@@ -55,9 +74,9 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
+
       if (error) throw error;
-  
+
       const loggedInUser = data.user;
       setUser(loggedInUser);
       await fetchUserRole(loggedInUser.id);
@@ -72,7 +91,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
-  
+
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor) => {
@@ -140,7 +159,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout, updateFacilityEnum }}>
       {children}
     </AuthContext.Provider>
   );

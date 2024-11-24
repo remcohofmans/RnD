@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/helper/supabaseClient.js';
-import ImageUpload from './ImageUpload.jsx';
-import PasswordChangeForm from './PasswordChangeForm.jsx';
-import UserFilterForm from './UserFilterForm.jsx';
-import ProfielPauzeren from './ProfielPauzeren.jsx';
+import { Settings, Filter, Key, Image, PauseCircle } from 'lucide-react';
+import ImageUpload from './ImageUpload';
+import { supabase } from '../../lib/helper/supabaseClient';
+import UserFilterForm from './UserFilterForm';
+import PasswordChangeForm from './PasswordChangeForm';
+import ProfielPauzeren from './ProfielPauzeren';
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
@@ -23,6 +24,39 @@ const SettingsUser = () => {
     };
     fetchUserData();
   }, []);
+
+  const buttonStyles = {
+    primary: "bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition-colors duration-200",
+    secondary: "bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200",
+    menuItem: "w-full text-left transition-colors duration-200 rounded-lg"
+  };
+
+  const settingsOptions = [
+    {
+      id: "Filtervoorkeuren",
+      icon: Filter,
+      component: "UserFilterForm",
+      description: "Pas je matchingvoorkeuren aan"
+    },
+    {
+      id: "Wachtwoord Bewerken",
+      icon: Key,
+      component: "PasswordChangeForm",
+      description: "Verander je wachtwoord"
+    },
+    {
+      id: "Foto's Aanpassen",
+      icon: Image,
+      component: "ImageUpload",
+      description: "Beheer je profielfoto's"
+    },
+    {
+      id: "Profiel Pauzeren",
+      icon: PauseCircle,
+      component: null,
+      description: "Zet je profiel tijdelijk op pauze"
+    }
+  ];
 
   const handleOptionClick = (option) => {
     if (option === "Filtervoorkeuren") {
@@ -47,57 +81,90 @@ const SettingsUser = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Navigation Drawer */}
-      <div className="h-full w-80 bg-white shadow-lg border-r-4 border-rose-300 flex flex-col">
-        <div className="p-4 bg-rose-500 text-white text-lg font-bold text-center">
-          Instellingen
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* Sidebar */}
+      <div className="flex flex-col h-full w-40 md:w-80 sm:w-56 bg-white shadow-lg">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white">
+          <Settings className="w-6 h-6 text-rose-500" />
+          <h1 className="text-xl font-semibold text-gray-900">Instellingen</h1>
         </div>
-        <div className="p-4 flex flex-col gap-8 flex-grow">
+
+        {/* Sidebar Content */}
+        <div className="p-4 flex flex-col gap-3 flex-grow overflow-y-auto">
+          {/* Notifications */}
           {error && (
-            <div className="p-2 text-sm text-red-600 bg-red-100 rounded">
+            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
               {error}
             </div>
           )}
           {success && (
-            <div className="p-2 text-sm text-green-600 bg-green-100 rounded">
+            <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
               {success}
             </div>
           )}
 
-          {["Filtervoorkeuren", "Foto's Aanpassen", "Wachtwoord Bewerken", "Profiel Pauzeren"].map(
-            (option) => (
+          {/* Menu Items */}
+          {settingsOptions.map((option) => {
+            const Icon = option.icon;
+            const isActive = activeComponent === option.component ||
+              (option.id === "Profiel Pauzeren" && isConfirming);
+
+            return (
               <button
-                key={option}
-                className="px-4 py-2 text-center w-full bg-rose-500 text-white rounded-lg transition hover:bg-rose-700"
-                onClick={() => handleOptionClick(option)}
+                key={option.id}
+                onClick={() => handleOptionClick(option.id)}
+                className={`${buttonStyles.menuItem} ${isActive
+                  ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                  : 'text-gray-700 hover:bg-gray-50'
+                  }`}
               >
-                {option}
+                <div className="flex-row items-center gap-3 p-3">
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-rose-500' : 'text-gray-500'}`} />
+                  <div>
+                    <div className="font-medium">{option.id}</div>
+                    <div className="text-sm text-gray-500">{option.description}</div>
+                  </div>
+                </div>
               </button>
-            )
-          )}
+            );
+          })}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100 overflow-y-auto">
-        {/* Scrollable content */}
-        {activeComponent === "UserFilterForm" && <UserFilterForm />}
-        {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
-        {activeComponent === "ImageUpload" && (
-          <div className="overflow-y-auto h-full">
-            {/* Ensure scrolling for ImageUpload */}
-            <ImageUpload />
-          </div>
-        )}
-        {isConfirming && (
-          <ProfielPauzeren
-            userId={userId}
-            onSuccess={handleSuccess}
-            onError={handleError}
-            setIsConfirming={setIsConfirming}
-          />
-        )}
+      <div className="flex-1 justify-center items-center pt-16 bg-rose-50 overflow-y-auto">
+        <div className="w-full rounded-xl p-6">
+          {/* Dynamic Content */}
+          {activeComponent === "UserFilterForm" && <UserFilterForm />}
+          {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
+          {activeComponent === "ImageUpload" && (
+            <div className="overflow-y-auto h-full">
+              <ImageUpload />
+            </div>
+          )}
+          {isConfirming && (
+            <ProfielPauzeren
+              userId={userId}
+              onSuccess={handleSuccess}
+              onError={handleError}
+              setIsConfirming={setIsConfirming}
+            />
+          )}
+
+          {/* Welcome Screen */}
+          {!activeComponent && !isConfirming && (
+            <div className="h-full flex flex-col items-center justify-center text-center text-gray-500 py-20">
+              <Settings className="w-16 h-16 mb-6 text-gray-400" />
+              <h2 className="text-2xl font-medium text-gray-700 mb-3">
+                Welkom bij Instellingen
+              </h2>
+              <p className="text-gray-500 max-w-md">
+                Selecteer een optie aan de linkerkant om je voorkeuren aan te passen
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

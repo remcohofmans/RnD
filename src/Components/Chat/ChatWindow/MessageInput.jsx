@@ -73,7 +73,7 @@ export const MessageInput = ({ onSendMessage }) => {
                 {showEmojiPicker && (
                     <div 
                         ref={emojiPickerRef}
-                        className="fixed z-50"
+                        className="fixed z-40"
                         style={{
                             position: 'fixed',
                             bottom: '80px', 

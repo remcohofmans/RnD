@@ -109,12 +109,11 @@ const MentorBanUser = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="flex items-center justify-center min-h-screen bg-rose-100">
       <div
         className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-80"
         style={{
-          backgroundColor: '#FFFFFF',
-          border: '4px solid #fda4af', 
+          backgroundColor: '#FFFFFF', 
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
           height: '90vh', // Limit the height to 90% of the viewport height
           maxHeight: '1000px', // Max height limit for bigger screens
