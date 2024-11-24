@@ -31,9 +31,10 @@ const CompleteProfile = () => {
     try {
       // If an image is selected, upload it to Supabase storage
       if (image) {
-        const { data, error: uploadError } = await supabase.storage
-          .from('user-images')
-          .upload(`profiles/${Date.now()}_${image.name}`, image);
+        console.log(user.id)
+        const { error: uploadError } = await supabase.storage
+          .from('pictures')
+          .upload(`${user.id}/profielAfbeelding/${image.name}`, image);
 
         if (uploadError) throw uploadError;
       }
@@ -45,7 +46,6 @@ const CompleteProfile = () => {
         .update({
           name: name,
           birthday: birthdate,
-          //profilepictureBASE64: imageUrl
         })
         .eq('id', user.id);
 

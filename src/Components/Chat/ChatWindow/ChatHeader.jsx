@@ -3,7 +3,7 @@ import { UserPicture } from '../../UserSettings/UserPicture';
 import { UnmatchButton } from './UnmatchButton';
 
 
-export const ChatHeader = ({ otherUserName, otherUserId , matchId}) => {
+export const ChatHeader = ({ otherUserName, otherUserId , matchId }) => {
 
   const [showReportWindow, setShowReportWindow] = useState(false);
 
@@ -37,7 +37,6 @@ export const ChatHeader = ({ otherUserName, otherUserId , matchId}) => {
     setShowReportWindow(false);
   }
   */
-
 
   return (
     <div className="bg-rose-100 px-4 py-3 border-b border-rose-200">
