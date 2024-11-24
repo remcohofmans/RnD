@@ -92,28 +92,49 @@ export function AuthProvider({ children }) {
     }
   };
 
-
   // Function for email/password sign-up
-  const signUpWithEmail = async (email, password, isMentor) => {
-    setLoading(true);
+  const signUpWithEmail = async (email, password, isMentor, selectedFacility) => {
+    setLoading(true); // Show loading state
     try {
+      // Sign up the user using Supabase Auth
       const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error;
+      if (error) throw new Error(`Sign-up failed: ${error.message}`);
 
       const newUser = data.user;
       const role = isMentor ? 'STAFF_MEMBER' : 'USER';
 
-      await supabase.from('users').upsert({ id: newUser.id, email, role });
+      // Fetch the facility ID based on the selected facility name
+      const { data: facilityData, error: facilityError } = await supabase
+        .from('facility_enum')
+        .select('id')
+        .eq('name', selectedFacility);
 
+      if (facilityError) throw new Error(`Failed to fetch facility ID: ${facilityError.message}`);
+      const facilityId = facilityData[0]?.id;
+
+      console.log(facilityId);
+
+      // Upsert the user into the 'users' table
+      const { error: userError } = await supabase.from('users').upsert({
+        id: newUser.id,
+        email,
+        role,
+        facility_id: facilityId,
+      });
+
+      if (userError) throw new Error(`Failed to insert user into the database: ${userError.message}`);
+
+      // Set user state or perform post-sign-up actions
       setUser(newUser);
       setRole(role);
-      // await checkProfileCompletion(newUser.id);
       setError(null);
+
+      console.log('User successfully registered:', { email, role, facilityId });
     } catch (err) {
       console.error('Error signing up:', err.message);
-      setError(err.message);
+      setError(err.message); // Display error to the user
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading state
     }
   };
 

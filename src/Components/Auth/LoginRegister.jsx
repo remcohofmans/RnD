@@ -5,6 +5,8 @@ import { Mail, Lock, Heart } from 'lucide-react';
 import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
 import { useNavigate } from 'react-router-dom';  // Import the hook
 
+import { supabase } from '../../lib/helper/supabaseClient';
+
 
 const LoginRegister = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -69,9 +71,15 @@ const LoginRegister = () => {
 
     // Helper functions for validation
     const isValidFacilityCode = (facilityCode, selectedFacility) => {
-      if (selectedFacility === "facility1" && facilityCode !== "12345") return "Ongeldige faciliteitscode voor Facility 1. Toegang geweigerd.";
-      if (selectedFacility === "facility2" && facilityCode !== "67890") return "Ongeldige faciliteitscode voor Facility 2. Toegang geweigerd.";
-      if (selectedFacility === "facility3" && facilityCode !== "ABCDEF") return "Ongeldige faciliteitscode voor Facility 3. Toegang geweigerd.";
+      if (selectedFacility === "Bloemetje" && facilityCode !== "12345") return "Ongeldige faciliteitscode voor faciliteit Bloemetje. Toegang geweigerd.";
+      if (selectedFacility === "De Regenboog" && facilityCode !== "67890") return "Ongeldige faciliteitscode voor faciliteit De Regenboog. Toegang geweigerd.";
+      if (selectedFacility === "De Wensboom" && facilityCode !== "23390") return "Ongeldige faciliteitscode voor faciliteit De Wensboom. Toegang geweigerd.";
+      if (selectedFacility === "De Witte Roos" && facilityCode !== "22489") return "Ongeldige faciliteitscode voor faciliteit De Witte Roos. Toegang geweigerd.";
+      if (selectedFacility === "TienOpTien" && facilityCode !== "18234") return "Ongeldige faciliteitscode voor faciliteit TienOpTien. Toegang geweigerd.";
+      if (selectedFacility === "De Kerselaar" && facilityCode !== "89251") return "Ongeldige faciliteitscode voor faciliteit De Kerselaar. Toegang geweigerd.";
+      if (selectedFacility === "Jasmijntje" && facilityCode !== "90119") return "Ongeldige faciliteitscode voor faciliteit Jasmijntje. Toegang geweigerd.";
+      if (selectedFacility === "De Springplank" && facilityCode !== "44557") return "Ongeldige faciliteitscode voor faciliteit De Springplank. Toegang geweigerd.";
+
       return null;
     };
 
@@ -90,7 +98,7 @@ const LoginRegister = () => {
     };
 
     const validateFields = () => {
-      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor ? !mentorCode : !selectedFacility)) {
+      if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor ? !mentorCode : !facilityCode) || !selectedFacility) {
         return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
       }
 
@@ -131,19 +139,39 @@ const LoginRegister = () => {
     }
 
     // Call signUpWithEmail function if all validations pass
-    signUpWithEmail(signUpEmail, signUpPassword, isMentor)
+    signUpWithEmail(signUpEmail, signUpPassword, isMentor, selectedFacility)
       .then(async (response) => {
         if (response) {
           setSignupError(response.toString);
           return;
         }
 
-        // Now update the 'facility_enum' in the 'users' table if no errors and not a mentor
-        if (!isMentor) {
-          // Call the helper function to update the 'facility_enum'
-          await updateFacilityEnum(signUpEmail, selectedFacility);  // Pass the user ID and selected facility
+        // Query the facility_enum table
+        // const { data: facilityData, error: facilityError } = await supabase
+        //   .from('facility_enum')
+        //   .select('id')
+        //   .eq('name', selectedFacility)
+        //   .single();
+
+        // if (facilityError) {
+        //   setSignupError('Error finding facility: ' + facilityError.message);
+        //   return;
+        // }
+
+        // const facilityId = facilityData.id;
+
+        // Update the users table with the facility ID
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ facility_id: 'Test' })
+          .eq('email', signUpEmail);
+
+        if (updateError) {
+          setSignupError('Error updating user facility: ' + updateError.message);
+          return;
         }
-      })
+      }
+      )
       .catch((error) => {
         console.error("Error during sign-up:", error);
         setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
@@ -235,7 +263,7 @@ const LoginRegister = () => {
             <img
               src={happyPeople}
               alt="Image"
-              className="w-full h-1/2 object-cover" 
+              className="w-full h-1/2 object-cover"
             />
           )}
 
@@ -491,14 +519,18 @@ const LoginRegister = () => {
                       onChange={(e) => setSelectedFacility(e.target.value)}
                       className="w-full py-4 pl-4 pr-10 text-sm border border-gray-300 rounded-lg bg-gray-100 appearance-none focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
                       required
-                      disabled={isMentor}
                     >
                       <option value="" disabled>
                         Selecteer uw faciliteit
                       </option>
-                      <option value="facility1">Faciliteit 1</option>
-                      <option value="facility2">Faciliteit 2</option>
-                      <option value="facility3">Faciliteit 3</option>
+                      <option value="Bloemetje">Bloemetje</option>
+                      <option value="De Regenboog">De Regenboog</option>
+                      <option value="De Wensboom">De Wensboom</option>
+                      <option value="De Witte Roos">De Witte Roos</option>
+                      <option value="TienOpTien">TienOpTien</option>
+                      <option value="De Kerselaar">De Kerselaar</option>
+                      <option value="Jasmijntje">Jasmijntje</option>
+                      <option value="De Springplank">De Springplank</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -551,7 +583,8 @@ const LoginRegister = () => {
                     (isMentor ? !mentorCode : !facilityCode) ||
                     !signUpEmail ||
                     !signUpPassword ||
-                    !confirmPassword
+                    !confirmPassword ||
+                    !selectedFacility
                   }
                 >
                   Registreer
