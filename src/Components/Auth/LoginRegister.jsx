@@ -122,10 +122,6 @@ const LoginRegister = () => {
         }
       }
 
-      if (isMentor && facilityCode) {
-        return "Faciliteitscode mag niet ingevuld worden als u een mentor bent.";
-      }
-
       return null;
     };
 
