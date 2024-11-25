@@ -11,6 +11,79 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+  const fetchUsersForMentor = async (mentorId) => {
+    try {
+      const { data: mentorData, error: mentorError } = await supabase
+        .from('users')
+        .select('facility_id')
+        .eq('id', mentorId)
+        .single();
+  
+      if (mentorError) throw mentorError;
+  
+      const mentorFacility = mentorData.facility_id;
+  
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'USER')
+        .eq('access_granted', 'PENDING')
+        .eq('facility_id', mentorFacility)
+        .not('birthday', 'is', null)
+        .not('name', 'is', null);
+  
+      if (error) throw error;
+  
+      return data.sort((a, b) => {
+        const nameA = a.name ? a.name.toLowerCase() : '';
+        const nameB = b.name ? b.name.toLowerCase() : '';
+        return nameA.localeCompare(nameB);
+      });
+    } catch (error) {
+      console.error('Error fetching users for mentor:', error.message);
+      throw error;
+    }
+  };
+  
+  const fetchProfilePictureUrl = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .storage
+        .from('pictures')
+        .list(`${userId}/profielAfbeelding`);
+  
+      if (error || data.length === 0) return null;
+  
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('pictures')
+        .getPublicUrl(`${userId}/profielAfbeelding/${data[0].name}`);
+  
+      return publicUrlData?.publicUrl || null;
+    } catch (error) {
+      console.error('Error fetching profile picture:', error.message);
+      return null;
+    }
+  };
+  
+  const updateAccessStatus = async (userId, status) => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ access_granted: status })
+        .eq('id', userId);
+  
+      if (error) throw error;
+  
+      return true; // Success
+    } catch (error) {
+      console.error('Error updating access status:', error.message);
+      throw error;
+    }
+  };
+  
+
   // Helper function to update the 'facility_enum' column in 'users' table
   const updateFacilityEnum = async (signUpEmail, selectedFacility) => {
     try {
@@ -180,7 +253,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout, updateFacilityEnum }}>
+    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout, updateFacilityEnum, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus}}>
       {children}
     </AuthContext.Provider>
   );
