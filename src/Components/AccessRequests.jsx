@@ -16,27 +16,43 @@ const AccessRequests = ({ mentorEmail }) => {
   // Fetch users function
   const fetchUsers = async () => {
     try {
+
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      console.log(user);
+
+
+      const mentorId = user.id;
+      console.log(mentorId);
+
       const { data: mentorData, error: mentorError } = await supabase
         .from('users')
-        .select('facility')
-        .eq('email', mentorEmail);
+        .select('facility_id')
+        .eq('id', mentorId)
+        .single();
+      
+      const mentorFacility = mentorData.facility_id
+      console.log(mentorData.facility_id);
+      
 
-      if (mentorError) {
-        setError(mentorError.message);
-        return;
-      }
-
-      const mentorFacility = mentorData.facility;
+      
+      
 
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('role', 'USER')
         .eq('access_granted', 'PENDING')
-        .not('birthday', 'is', null);
+        .eq('facility_id',mentorFacility)
+        .not('birthday', 'is', null)
+        .not('name', 'is',null );
 
       if (error) {
         setError(error.message);
+      
       } else {
         const sortedUsers = data.sort((a, b) => {
           const nameA = a.name ? a.name.toLowerCase() : '';
@@ -166,8 +182,7 @@ const AccessRequests = ({ mentorEmail }) => {
               <h3 className="text-xl font-semibold mb-4">Gebruiker Details</h3>
               <p><strong>Naam:</strong> {selectedUser.name || 'Geen naam'}</p>
               <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Telefoon:</strong> {selectedUser.phone || 'Niet beschikbaar'}</p>
-              <p><strong>Faciliteit:</strong> {selectedUser.facility || 'Niet beschikbaar'}</p>
+              <p><strong>Geboortedatum:</strong> {selectedUser.birthday || 'Niet beschikbaar'}</p>
               {selectedUser.profilepictureBASE64 && (
                 <img
                   src={`data:image/jpeg;base64,${selectedUser.profilepictureBASE64}`}
