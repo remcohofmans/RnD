@@ -13,6 +13,8 @@ const AccessRequests = ({ mentorEmail }) => {
   const usersPerPage = 10;
   const navigate = useNavigate();
 
+  
+
   // Fetch users function
   const fetchUsers = async () => {
     try {
@@ -91,6 +93,27 @@ const AccessRequests = ({ mentorEmail }) => {
     }
   };
 
+  const fetchProfilePicture = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .storage
+        .from('pictures')
+        .list(`${userId}/profielAfbeelding`);
+
+      if (error || data.length === 0) return null;
+
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('pictures')
+        .getPublicUrl(`${userId}/profielAfbeelding/${data[0].name}`);
+
+      return publicUrlData?.publicUrl || null;
+    } catch (error) {
+      console.error('Error fetching profile picture:', error.message);
+      return null;
+    }
+  };
+
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -104,9 +127,12 @@ const AccessRequests = ({ mentorEmail }) => {
     if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
   };
 
-  const handleViewDetails = (userId) => {
+  const handleViewDetails = async (userId) => {
     const selected = users.find(user => user.id === userId);
-    setSelectedUser(selected);
+    if (selected) {
+      const profilePictureUrl = await fetchProfilePicture(userId);
+      setSelectedUser({ ...selected, profilePictureUrl });
+    }
   };
 
   const handleGoBack = () => {
@@ -142,18 +168,16 @@ const AccessRequests = ({ mentorEmail }) => {
         {loading && <p>Laden ...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Only show the search bar if no user is selected */}
         {!selectedUser && (
           <input
             type="text"
             placeholder="Zoek op naam of email"
             value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={handleSearch}
             className="w-full p-2 border border-gray-300 rounded mb-4"
           />
         )}
 
-        {/* Scrollable container for users */}
         <div className="overflow-y-auto max-h-[55vh] mb-4">
           {!selectedUser && (
             <ul className="space-y-2">
@@ -183,9 +207,9 @@ const AccessRequests = ({ mentorEmail }) => {
               <p><strong>Naam:</strong> {selectedUser.name || 'Geen naam'}</p>
               <p><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Geboortedatum:</strong> {selectedUser.birthday || 'Niet beschikbaar'}</p>
-              {selectedUser.profilepictureBASE64 && (
+              {selectedUser.profilePictureUrl && (
                 <img
-                  src={`data:image/jpeg;base64,${selectedUser.profilepictureBASE64}`}
+                  src={selectedUser.profilePictureUrl}
                   alt="Profile"
                   className="w-32 h-32 object-cover rounded-full"
                 />
@@ -214,17 +238,12 @@ const AccessRequests = ({ mentorEmail }) => {
           )}
         </div>
 
-        {/* Only show pagination if no user is selected */}
         {!selectedUser && (
           <div className="flex justify-between items-center mt-auto">
             <button
               disabled={currentPage === 1}
               onClick={goToPreviousPage}
-              className={`px-3 py-1 rounded ${
-                currentPage === 1
-                  ? 'bg-gray-300'
-                  : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'}`}
             >
               Vorige
             </button>
@@ -234,11 +253,7 @@ const AccessRequests = ({ mentorEmail }) => {
             <button
               disabled={currentPage === totalPages}
               onClick={goToNextPage}
-              className={`px-3 py-1 rounded ${
-                currentPage === totalPages
-                  ? 'bg-gray-300'
-                  : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'}`}
             >
               Volgende
             </button>
