@@ -42,6 +42,8 @@ const MentorBanUser = () => {
   }, []);
 
   const handleBanUser = async (userId) => {
+    console.log('User ID to ban:', userId); // Add this log to confirm the userId
+
     try {
       const { error } = await supabase
         .from('users')
@@ -52,7 +54,11 @@ const MentorBanUser = () => {
         throw new Error('Failed to ban user');
       }
 
-      const { data } = await supabase.from('users').select('*');
+      const { data } = await supabase
+          .from('users')
+          .select('*')
+          .eq('role','USER')
+          .eq('access_granted','YES');
       setUsers(data);
       setFilteredUsers(data); // Update the filtered list
       setShowConfirmation(false);
