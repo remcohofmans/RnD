@@ -1,16 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react'; 
 import { supabase } from '../lib/helper/supabaseClient';
-
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  // const [profileComplete, setProfileComplete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Existing functions for mentor, user and profile management...
 
   const fetchUsersForMentor = async (mentorId) => {
     try {
@@ -19,11 +18,11 @@ export function AuthProvider({ children }) {
         .select('facility_id')
         .eq('id', mentorId)
         .single();
-  
+
       if (mentorError) throw mentorError;
-  
+
       const mentorFacility = mentorData.facility_id;
-  
+
       const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -32,9 +31,9 @@ export function AuthProvider({ children }) {
         .eq('facility_id', mentorFacility)
         .not('birthday', 'is', null)
         .not('name', 'is', null);
-  
+
       if (error) throw error;
-  
+
       return data.sort((a, b) => {
         const nameA = a.name ? a.name.toLowerCase() : '';
         const nameB = b.name ? b.name.toLowerCase() : '';
@@ -45,46 +44,88 @@ export function AuthProvider({ children }) {
       throw error;
     }
   };
-  
+
+  // Function to handle login
+  const loginWithEmail = async (email, password) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) throw error;
+
+      const loggedInUser = data.user;
+      setUser(loggedInUser);
+      await fetchUserRole(loggedInUser.id);
+      setError('');  // Clear any previous errors
+      return { success: true, user: loggedInUser };
+    } catch (err) {
+      console.error('Error logging in:', err.message);
+      setError(err.message);  // Set error state
+      return { success: false, error: err.message }; // Return error message
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch user role
+  const fetchUserRole = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      setRole(data.role);
+      console.log("Data object retrieved from fetchUserRole:", data);
+    } catch (err) {
+      console.error('Error fetching user role:', err.message);
+      setRole(null);
+    }
+  };
+
+  // Fetch profile picture URL
   const fetchProfilePictureUrl = async (userId) => {
     try {
       const { data, error } = await supabase
         .storage
         .from('pictures')
         .list(`${userId}/profielAfbeelding`);
-  
+
       if (error || data.length === 0) return null;
-  
+
       const { data: publicUrlData } = supabase
         .storage
         .from('pictures')
         .getPublicUrl(`${userId}/profielAfbeelding/${data[0].name}`);
-  
+
       return publicUrlData?.publicUrl || null;
     } catch (error) {
       console.error('Error fetching profile picture:', error.message);
       return null;
     }
   };
-  
+
+  // Update access status
   const updateAccessStatus = async (userId, status) => {
     try {
       const { error } = await supabase
         .from('users')
         .update({ access_granted: status })
         .eq('id', userId);
-  
+
       if (error) throw error;
-  
+
       return true; // Success
     } catch (error) {
       console.error('Error updating access status:', error.message);
       throw error;
     }
   };
-  
 
-  // Helper function to update the 'facility_enum' column in 'users' table
+  // Update facility_enum
   const updateFacilityEnum = async (signUpEmail, selectedFacility) => {
     try {
       const { data, error } = await supabase
@@ -102,81 +143,68 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Helper to fetch user role
-  const fetchUserRole = async (userId) => {
+  // Delete user (ban user by removing them from the database)
+  const deleteUser = async (userId) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
-
-      setRole(data.role);
-      console.log("Data object retrieved from fetchUserRole:", data);
-
+      const { error } = await supabase.from('users').delete().eq('id', userId);
+      if (error) throw new Error('Failed to delete user');
     } catch (err) {
-      console.error('Error fetching user role:', err.message);
-      setRole(null);
+      console.error('Error deleting user:', err.message);
+      throw err;
     }
   };
 
-  // Helper func to check profile completion
-  const checkProfileCompletion = async (userId) => {
+  // Fetch users by facility
+  const fetchUsersByFacility = async (facilityId) => {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('name, birthday')
-        .eq('id', userId)
-        .single();
+        .select('*')
+        .eq('role', 'USER')
+        .eq('facility_id', facilityId)
+        .eq('access_granted', 'YES');
 
-      if (error) throw error;
+      if (error) throw new Error('Failed to fetch users');
 
-      console.log("Checking profile ... Data object: ", data);
-
-      // setProfileComplete(!!data.name && !!data.birthday);
+      return data.sort((a, b) => a.name.localeCompare(b.name));
     } catch (err) {
-      console.error('Error checking profile completion:', err.message);
-      // setProfileComplete(false);
+      console.error('Error fetching users by facility:', err.message);
+      throw err;
     }
   };
 
-  // Function to handle login
-  const loginWithEmail = async (email, password) => {
-    setLoading(true);
+  // Fetch the current mentor's facility
+  const fetchMentorFacility = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-      if (error) throw error;
+      if (userError) throw new Error('Failed to fetch user information');
 
-      const loggedInUser = data.user;
-      setUser(loggedInUser);
-      await fetchUserRole(loggedInUser.id);
-      // await checkProfileCompletion(loggedInUser.id);
-      setError('');  // Clear any previous errors
-      return { success: true, user: loggedInUser };
+      const mentorId = user.id;
+      const { data: mentorData, error: mentorError } = await supabase
+        .from('users')
+        .select('facility_id')
+        .eq('id', mentorId)
+        .single();
+
+      if (mentorError) throw new Error('Failed to fetch mentor facility');
+      return mentorData.facility_id;
     } catch (err) {
-      console.error('Error logging in:', err.message);
-      setError(err.message);  // Set error state
-      return { success: false, error: err.message }; // Return error message
-    } finally {
-      setLoading(false);
+      console.error('Error fetching mentor facility:', err.message);
+      throw err;
     }
   };
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor, selectedFacility) => {
-    setLoading(true); // Show loading state
+    setLoading(true);
     try {
-      // Sign up the user using Supabase Auth
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw new Error(`Sign-up failed: ${error.message}`);
 
       const newUser = data.user;
       const role = isMentor ? 'STAFF_MEMBER' : 'USER';
 
-      // Fetch the facility ID based on the selected facility name
       const { data: facilityData, error: facilityError } = await supabase
         .from('facility_enum')
         .select('id')
@@ -187,7 +215,6 @@ export function AuthProvider({ children }) {
 
       console.log(facilityId);
 
-      // Upsert the user into the 'users' table
       const { error: userError } = await supabase.from('users').upsert({
         id: newUser.id,
         email,
@@ -197,17 +224,14 @@ export function AuthProvider({ children }) {
 
       if (userError) throw new Error(`Failed to insert user into the database: ${userError.message}`);
 
-      // Set user state or perform post-sign-up actions
       setUser(newUser);
       setRole(role);
       setError(null);
-
-      console.log('User successfully registered:', { email, role, facilityId });
     } catch (err) {
       console.error('Error signing up:', err.message);
-      setError(err.message); // Display error to the user
+      setError(err.message);
     } finally {
-      setLoading(false); // Hide loading state
+      setLoading(false);
     }
   };
 
@@ -218,7 +242,6 @@ export function AuthProvider({ children }) {
       await supabase.auth.signOut();
       setUser(null);
       setRole(null);
-      // setProfileComplete(false);
     } catch (err) {
       console.error('Error logging out:', err.message);
     } finally {
@@ -238,7 +261,6 @@ export function AuthProvider({ children }) {
         if (sessionUser) {
           setUser(sessionUser);
           await fetchUserRole(sessionUser.id);
-          // await checkProfileCompletion(sessionUser.id);
         }
       } catch (err) {
         console.error('Error restoring session:', err.message);
@@ -253,7 +275,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, error, loginWithEmail, signUpWithEmail, logout, updateFacilityEnum, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus}}>
+    <AuthContext.Provider value={{
+      user, role, loading, error,
+      loginWithEmail, signUpWithEmail, logout,
+      updateFacilityEnum, fetchUsersForMentor,
+      fetchProfilePictureUrl, updateAccessStatus,
+      deleteUser, fetchUsersByFacility, fetchMentorFacility,
+      fetchUserRole
+    }}>
       {children}
     </AuthContext.Provider>
   );
