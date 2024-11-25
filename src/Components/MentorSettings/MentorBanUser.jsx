@@ -15,35 +15,69 @@ const MentorBanUser = () => {
   const [successMessage, setSuccessMessage] = useState(null); // State for success message
   const usersPerPage = 10; // Users per page
   const navigate = useNavigate();
+  const [mentorFacility, setMentorFacility]= useState(null);
 
   useEffect(() => {
+    const fetchMentorFacility = async () => {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) throw new Error('Failed to fetch user information');
+
+        const mentorId = user.id;
+
+        const { data: mentorData, error: mentorError } = await supabase
+          .from('users')
+          .select('facility_id')
+          .eq('id', mentorId)
+          .single();
+
+        if (mentorError) throw new Error('Failed to fetch mentor facility');
+
+        setMentorFacility(mentorData.facility_id);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchMentorFacility();
+  }, []);
+
+  // Fetch Users
+  useEffect(() => {
     const fetchUsers = async () => {
+      if (!mentorFacility) return; // Wait until mentorFacility is set
+
       try {
         const { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('role','USER')
-          .eq('access_granted','YES');
+          .eq('role', 'USER')
+          .eq('facility_id', mentorFacility)
+          .eq('access_granted', 'YES');
+
         if (error) {
-          setError(error.message);
-        } else {
-          const sortedUsers = data.sort((a, b) => a.name.localeCompare(b.name));
-          setUsers(sortedUsers);
-          setFilteredUsers(sortedUsers); // Initialize filtered users with all users
+          throw new Error('Failed to fetch users');
         }
+
+        const sortedUsers = data.sort((a, b) => a.name.localeCompare(b.name));
+        setUsers(sortedUsers);
+        setFilteredUsers(sortedUsers);
       } catch (err) {
-        setError('Failed to fetch users');
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [mentorFacility]); // Runs only when mentorFacility is updated
 
   const handleBanUser = async (userId) => {
-    console.log('User ID to ban:', userId); // Add this log to confirm the userId
-
     try {
       const { error } = await supabase
         .from('users')
@@ -55,25 +89,23 @@ const MentorBanUser = () => {
       }
 
       const { data } = await supabase
-          .from('users')
-          .select('*')
-          .eq('role','USER')
-          .eq('access_granted','YES');
+        .from('users')
+        .select('*')
+        .eq('role', 'USER')
+        .eq('facility_id', mentorFacility)
+        .eq('access_granted', 'YES');
+
       setUsers(data);
-      setFilteredUsers(data); // Update the filtered list
+      setFilteredUsers(data);
       setShowConfirmation(false);
 
-      // Set success message
       setSuccessMessage('User has been successfully banned.');
 
-      // Remove the success message after 2 seconds
       setTimeout(() => {
         setSuccessMessage(null);
-      }, 2000); // 2000ms = 2 seconds
+      }, 2000);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -85,7 +117,7 @@ const MentorBanUser = () => {
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to the first page on search
+    setCurrentPage(1);
 
     if (query === '') {
       setFilteredUsers(users);
@@ -93,14 +125,13 @@ const MentorBanUser = () => {
       const filtered = users.filter(
         (user) =>
           (user.username && isMatchInSequence(user.username, query)) ||
-          (user.name && isMatchInSequence(user.name, query)) || // Added name search
-          (user.email && isMatchInSequence(user.email, query)) // Added email search
+          (user.name && isMatchInSequence(user.name, query)) ||
+          (user.email && isMatchInSequence(user.email, query))
       );
       setFilteredUsers(filtered);
     }
   };
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
