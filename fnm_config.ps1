@@ -1,17 +1,21 @@
-﻿# Installs fnm (Fast Node Manager) from the package repo to manage Node.js versions (lightweight and fast)
-# winget ensures that the latest version of fnm is installed cleanly without needing manual downloads
+﻿# Install Fast Node Manager (fnm)
 winget install Schniz.fnm
 
-# Generates the shell environment variables needed for fnm to manage Node.js, when changing directories, 
-# fnm will automatically switch to the correct Node.js version specified for that project
-# Add the npm configuration between literals to the profile file 
-Add-Content -Path $PROFILE -Value 'fnm env --use-on-cd | Out-String | Invoke-Expression'
+# Set execution policy to allow profile scripts to be executed
+Set-ExecutionPolicy RemoteSigned
 
-# Downloads and installs Node.js if not already installed and activates it for use in the current terminal session.
+# Ensure the PowerShell profile exists
+New-Item -Path $PROFILE -ItemType File -Force
+
+# Add fnm configuration to the PowerShell profile for managing Node.js versions
+Add-Content -Path $PROFILE -Value "`n# Set up fnm to manage Node.js versions`nfnm env --use-on-cd | Out-String | Invoke-Expression"
+
+# Reload the PowerShell profile to apply changes
+. $PROFILE
+
+# Install and use Node.js version 20 if not already installed
 fnm use --install-if-missing 20
 
-# Verifies the right Node.js version is active in the environment
-node -v # should print `v20.18.0`
-
-# Verifies the right npm version is in the environment, corresponds to the bundled npm version with the Node.js version
-npm -v # should print `10.8.2`
+# Verify the installed Node.js and npm versions
+node -v  # Expected: v20.18.0
+npm -v   # Expected: 10.8.2
