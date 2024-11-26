@@ -41,6 +41,8 @@ const LoginRegister = () => {
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
+    console.log(supabase);
+
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
       return;

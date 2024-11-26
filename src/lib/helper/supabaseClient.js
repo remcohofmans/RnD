@@ -2,9 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 
 // Create a single supabase client for interacting with your database
 
+console.log("test");
 
 export const supabase = createClient(
     process.env.REACT_APP_SUPABASE_URL,
     process.env.REACT_APP_SERVICE_ROLE
-    
   );
