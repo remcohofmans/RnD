@@ -99,7 +99,7 @@ const MentorBanUser = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-rose-100">
+    <div className="flex items-center justify-center min-h-screen bg-rose-50">
       <div
         className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-80"
         style={{
