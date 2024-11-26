@@ -5,6 +5,7 @@ import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect} from 'react';
 import { ToggleSlider }  from "react-toggle-slider";
 import { supabase } from '../lib/helper/supabaseClient'; 
+import { Await } from 'react-router-dom';
 
 const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
@@ -21,6 +22,41 @@ const Subscription = () => {
     const monthlyPrices = {BASIS: 10, GEVORDERD: 17, ELITE: 20}
     const annualPrices = {BASIS: 110, GEVORDERD: 187, ELITE: 220}
     const annualPricesSaved = {BASIS: 120, GEVORDERD: 204, ELITE: 240}
+
+    const checkoutBasis = () => {
+
+        payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+        window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+    };
+
+    const checkoutGevorderd = () => {
+
+        payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+        window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+    };
+
+    const checkoutElite = () => {
+
+        payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+        window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+    };
+
+    const goToCheckout = (selectedSubscription) => {
+        if (selectedSubscription === 'BASIS') {
+            checkoutBasis();
+        } 
+        if (selectedSubscription === 'GEVORDERD') {
+            checkoutGevorderd();
+        }
+        if (selectedSubscription ==='ELITE') {
+            checkoutElite();
+        }
+    }
+
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -118,6 +154,7 @@ const Subscription = () => {
             }
             console.log("subscription inserted");
         }        
+        goToCheckout(selectedSubscription);
         openFeedbackModal();
         setCurrentSubscription(selectedSubscription);
         closeSubscriptionModal();
