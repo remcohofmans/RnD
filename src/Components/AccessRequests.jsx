@@ -33,6 +33,7 @@ const AccessRequests = () => {
     }
   }, [user, fetchUsersForMentor]);
 
+  //search bar
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
