@@ -1,119 +1,71 @@
-import React, { useState, useEffect } from 'react'; 
-import { supabase } from '../../lib/helper/supabaseClient.js';
-import { useNavigate } from 'react-router-dom';
-import TopNavigationBar from '../common/TopNavigationBar.jsx';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../hooks/AuthContext';
 
 const MentorBanUser = () => {
+  const { deleteUser, fetchUsersByFacility, fetchMentorFacility, error } = useAuth();
+
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [userIdToBan, setUserIdToBan] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // State for the current page
-  const [successMessage, setSuccessMessage] = useState(null); // State for success message
-  const usersPerPage = 10; // Users per page
-  const navigate = useNavigate();
-  const [mentorFacility, setMentorFacility]= useState(null);
+  const [mentorFacility, setMentorFacility] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const usersPerPage = 10;
 
+  // Fetch mentor's facility ID
   useEffect(() => {
-    const fetchMentorFacility = async () => {
+    const getFacility = async () => {
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) throw new Error('Failed to fetch user information');
-
-        const mentorId = user.id;
-
-        const { data: mentorData, error: mentorError } = await supabase
-          .from('users')
-          .select('facility_id')
-          .eq('id', mentorId)
-          .single();
-
-        if (mentorError) throw new Error('Failed to fetch mentor facility');
-
-        setMentorFacility(mentorData.facility_id);
+        const facilityId = await fetchMentorFacility();
+        setMentorFacility(facilityId);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        console.error(err.message);
       }
     };
 
-    fetchMentorFacility();
-  }, []);
+    getFacility();
+  }, [fetchMentorFacility]);
 
-  // Fetch Users
+  // Fetch users for the facility
   useEffect(() => {
+    if (!mentorFacility) return;
+
     const fetchUsers = async () => {
-      if (!mentorFacility) return; // Wait until mentorFacility is set
-
       try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('role', 'USER')
-          .eq('facility_id', mentorFacility)
-          .eq('access_granted', 'YES');
-
-        if (error) {
-          throw new Error('Failed to fetch users');
-        }
-
-        const sortedUsers = data.sort((a, b) => a.name.localeCompare(b.name));
-        setUsers(sortedUsers);
-        setFilteredUsers(sortedUsers);
+        const data = await fetchUsersByFacility(mentorFacility);
+        setUsers(data);
+        setFilteredUsers(data);
       } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        console.error(err.message);
       }
     };
 
     fetchUsers();
-  }, [mentorFacility]); // Runs only when mentorFacility is updated
+  }, [mentorFacility, fetchUsersByFacility]);
 
+  // Handle banning a user
   const handleBanUser = async (userId) => {
     try {
-      const { error } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId);
-
-      if (error) {
-        throw new Error('Failed to ban user');
-      }
-
-      const { data } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'USER')
-        .eq('facility_id', mentorFacility)
-        .eq('access_granted', 'YES');
-
-      setUsers(data);
-      setFilteredUsers(data);
+      await deleteUser(userId);
+      const updatedUsers = await fetchUsersByFacility(mentorFacility);
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
       setShowConfirmation(false);
-
-      setSuccessMessage('User has been successfully banned.');
-
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 2000);
+      displaySuccessMessage('User has been successfully banned.');
     } catch (err) {
-      setError(err.message);
+      console.error(err.message);
     }
   };
 
-  const isMatchInSequence = (text, query) => {
-    if (!text || !query) return false;
-    return text.toLowerCase().startsWith(query.toLowerCase());
+  // Display success message
+  const displaySuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(null), 2000);
   };
 
+  // Filter users based on search query
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -124,14 +76,15 @@ const MentorBanUser = () => {
     } else {
       const filtered = users.filter(
         (user) =>
-          (user.username && isMatchInSequence(user.username, query)) ||
-          (user.name && isMatchInSequence(user.name, query)) ||
-          (user.email && isMatchInSequence(user.email, query))
+          (user.username && user.username.toLowerCase().includes(query)) ||
+          (user.name && user.name.toLowerCase().includes(query)) ||
+          (user.email && user.email.toLowerCase().includes(query))
       );
       setFilteredUsers(filtered);
     }
   };
 
+  // Pagination logic
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -146,49 +99,43 @@ const MentorBanUser = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-rose-100">
+    <div className="flex items-center justify-center min-h-screen bg-rose-50">
       <div
         className="flex flex-col gap-4 p-6 rounded-xl shadow-lg w-80"
         style={{
-          backgroundColor: '#FFFFFF', 
+          backgroundColor: '#FFFFFF',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-          height: '90vh', // Limit the height to 90% of the viewport height
-          maxHeight: '1000px', // Max height limit for bigger screens
+          height: '90vh',
+          maxHeight: '1000px',
         }}
       >
-        {loading && <div>Laden...</div>}
         {error && <div className="p-2 text-sm text-red-600 bg-red-100 rounded">{error}</div>}
 
-        {/* Success Message */}
         {successMessage && (
           <div className="p-2 text-sm text-green-600 bg-green-100 rounded mb-4">
             {successMessage}
           </div>
         )}
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban gebruikers</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          Je kan enkel mensen bannen van jouw eigen faciliteit.
-        </p>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Users</h2>
+        <p className="text-sm text-gray-600 mb-4">You can only ban users from your own facility.</p>
 
-        {/* Search Bar */}
         <input
           type="text"
-          placeholder="Zoek op naam of email"
+          placeholder="Search by name or email"
           value={searchQuery}
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
         />
 
-        {/* User List */}
         <div className="space-y-2 overflow-y-auto flex-grow">
           {currentUsers.map((user) => (
             <div key={user.id} className="flex items-center justify-between p-2 border-b border-gray-300">
               <div className="flex flex-col">
-                <span>{user.name || user.username}</span> {/* Display name or username */}
+                <span>{user.name || user.username}</span>
                 <span className="text-sm text-gray-500">
                   <button
-                    className="text-[#f43f5e] hover:underline" // Ensures the email button is pink
+                    className="text-[#f43f5e] hover:underline"
                     onClick={() => {
                       setUserIdToBan(user.id);
                       setShowConfirmation(true);
@@ -202,61 +149,48 @@ const MentorBanUser = () => {
           ))}
         </div>
 
-        {/* Pagination Controls */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={goToPreviousPage}
             disabled={currentPage === 1}
             className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Vorige
+            Previous
           </button>
           <span className="text-sm text-gray-600">
-            Pagina {currentPage} van {totalPages}
+            Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
             className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Volgende
+            Next
           </button>
         </div>
-
-       
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div
-            className="p-6 bg-white rounded-lg shadow-lg w-80"
-            style={{
-              border: '4px solid #fda4af', // Same pink border for the confirmation modal
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <h2 className="text-lg font-semibold text-gray-800">Bevestig Ban</h2>
+          <div className="p-6 bg-white rounded-lg shadow-lg w-80">
+            <h2 className="text-lg font-semibold text-gray-800">Confirm Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
-            Bent u zeker dat u dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
+              Are you sure you want to ban this user? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
                 className="px-4 py-2 text-gray-800 rounded-lg"
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '2px solid #fda4af',
-                }}
+                style={{ backgroundColor: '#FFFFFF', border: '2px solid #fda4af' }}
                 onClick={() => setShowConfirmation(false)}
               >
-                Annuleer
+                Cancel
               </button>
               <button
                 className="px-4 py-2 text-white rounded-lg"
                 style={{ backgroundColor: '#f43f5e' }}
                 onClick={() => handleBanUser(userIdToBan)}
               >
-                Bevestig Ban
+                Ban User
               </button>
             </div>
           </div>

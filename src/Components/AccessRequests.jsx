@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/helper/supabaseClient.js';
+import { useAuth } from '../hooks/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const AccessRequests = ({ mentorEmail }) => {
+const AccessRequests = () => {
+  const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,70 +12,26 @@ const AccessRequests = ({ mentorEmail }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
   const usersPerPage = 10;
-  const navigate = useNavigate();
 
-  
-
-  // Fetch users function
-  const fetchUsers = async () => {
-    try {
-
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      console.log(user);
-
-
-      const mentorId = user.id;
-      console.log(mentorId);
-
-      const { data: mentorData, error: mentorError } = await supabase
-        .from('users')
-        .select('facility_id')
-        .eq('id', mentorId)
-        .single();
-      
-      const mentorFacility = mentorData.facility_id
-      console.log(mentorData.facility_id);
-      
-
-      
-      
-
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'USER')
-        .eq('access_granted', 'PENDING')
-        .eq('facility_id',mentorFacility)
-        .not('birthday', 'is', null)
-        .not('name', 'is',null );
-
-      if (error) {
-        setError(error.message);
-      
-      } else {
-        const sortedUsers = data.sort((a, b) => {
-          const nameA = a.name ? a.name.toLowerCase() : '';
-          const nameB = b.name ? b.name.toLowerCase() : '';
-          return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-        });
-
-        setUsers(sortedUsers);
-        setFilteredUsers(sortedUsers);
-      }
-    } catch (err) {
-      setError('Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchUsers();
-  }, [mentorEmail]);
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const fetchedUsers = await fetchUsersForMentor(user.id);
+        setUsers(fetchedUsers);
+        setFilteredUsers(fetchedUsers);
+      } catch (err) {
+        setError('Failed to fetch users');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchUsers();
+    }
+  }, [user, fetchUsersForMentor]);
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -93,24 +50,26 @@ const AccessRequests = ({ mentorEmail }) => {
     }
   };
 
-  const fetchProfilePicture = async (userId) => {
+  const handleViewDetails = async (userId) => {
+    const selected = users.find(user => user.id === userId);
+    if (selected) {
+      const profilePictureUrl = await fetchProfilePictureUrl(userId);
+      setSelectedUser({ ...selected, profilePictureUrl });
+    }
+  };
+
+  const handleGoBack = () => {
+    setSelectedUser(null);
+  };
+
+  const handleAccessChange = async (userId, status) => {
     try {
-      const { data, error } = await supabase
-        .storage
-        .from('pictures')
-        .list(`${userId}/profielAfbeelding`);
-
-      if (error || data.length === 0) return null;
-
-      const { data: publicUrlData } = supabase
-        .storage
-        .from('pictures')
-        .getPublicUrl(`${userId}/profielAfbeelding/${data[0].name}`);
-
-      return publicUrlData?.publicUrl || null;
-    } catch (error) {
-      console.error('Error fetching profile picture:', error.message);
-      return null;
+      await updateAccessStatus(userId, status);
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+      setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
+      setSelectedUser(null);
+    } catch {
+      setError('Failed to update access status');
     }
   };
 
@@ -120,48 +79,15 @@ const AccessRequests = ({ mentorEmail }) => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prevPage) => prevPage + 1);
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
   const goToPreviousPage = () => {
-    if (currentPage > 1) setCurrentPage((prevPage) => prevPage - 1);
-  };
-
-  const handleViewDetails = async (userId) => {
-    const selected = users.find(user => user.id === userId);
-    if (selected) {
-      const profilePictureUrl = await fetchProfilePicture(userId);
-      setSelectedUser({ ...selected, profilePictureUrl });
-    }
-  };
-
-  const handleGoBack = () => {
-    setSelectedUser(null);
-  };
-
-  // Update access_granted in Supabase
-  const handleAccessChange = async (userId, status) => {
-    // Update access_granted in Supabase
-    const { error } = await supabase
-      .from('users')
-      .update({ access_granted: status })
-      .eq('id', userId);
-
-    if (error) {
-      setError('Failed to update access status');
-    } else {
-      // Optionally, remove the user from the current list after the change
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-      setFilteredUsers((prevFilteredUsers) => prevFilteredUsers.filter((user) => user.id !== userId));
-
-      // Refetch users to get the updated list
-      await fetchUsers();
-      setSelectedUser(null); // Optionally close details view after the change
-    }
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-rose-100">
+    <div className="flex items-center justify-center min-h-screen bg-rose-50">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
 
@@ -217,43 +143,41 @@ const AccessRequests = ({ mentorEmail }) => {
               <div className="mt-4">
                 <button
                   onClick={() => handleAccessChange(selectedUser.id, 'YES')}
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
+                  className="px-4 py-2 bg-green-500 text-white rounded mr-2"
                 >
-                  Toestaan
+                  Goedkeuren
                 </button>
                 <button
                   onClick={() => handleAccessChange(selectedUser.id, 'NO')}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  className="px-4 py-2 bg-red-500 text-white rounded"
                 >
-                  Weigeren
+                  Afwijzen
                 </button>
               </div>
               <button
                 onClick={handleGoBack}
-                className="mt-4 px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#be123c]"
+                className="mt-4 text-gray-500 underline"
               >
-                Terug naar Toegangsverzoeken
+                Terug
               </button>
             </div>
           )}
         </div>
 
         {!selectedUser && (
-          <div className="flex justify-between items-center mt-auto">
+          <div className="flex justify-between">
             <button
-              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
               onClick={goToPreviousPage}
-              className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'}`}
+              disabled={currentPage === 1}
             >
               Vorige
             </button>
-            <span className="text-sm text-gray-600">
-              Pagina {currentPage} van {totalPages}
-            </span>
+            <p>Pagina {currentPage} van {totalPages}</p>
             <button
-              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
               onClick={goToNextPage}
-              className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white hover:bg-[#be123c]'}`}
+              disabled={currentPage === totalPages}
             >
               Volgende
             </button>
