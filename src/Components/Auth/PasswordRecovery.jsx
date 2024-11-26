@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, SendHorizonal, ArrowLeft, ShieldCheck, Key } from 'lucide-react';
+import { supabase } from '../../lib/helper/supabaseClient';
+
 
 const PasswordRecovery = () => {
   const navigate = useNavigate();
@@ -22,7 +24,11 @@ const PasswordRecovery = () => {
     setMessage('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Use Supabase to send a password reset email
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) {
+        throw error;
+      }
       setMessage('E-mail voor wachtwoordherstel verzonden. Controleer je inbox.');
     } catch (err) {
       setError('Het verzenden van de wachtwoordherstel e-mail is mislukt. Probeer het later opnieuw.');
