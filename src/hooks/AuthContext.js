@@ -249,6 +249,43 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const deleteCurrentUserAccount = async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+  
+      if (userError || !user) {
+        throw new Error('Unable to fetch user.');
+      }
+  
+      const { error: deleteError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', user.id);
+  
+      if (deleteError) {
+        throw new Error('Failed to delete user data.');
+      }
+  
+      return true; // Deletion successful
+    } catch (err) {
+      console.error('Error deleting account:', err.message);
+      throw err;
+    }
+  };
+  
+  // Function to log out and navigate
+  const logoutAndNavigate = async (navigate) => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error('Error during logout and navigation:', err.message);
+    }
+  };
+
   // Restore session on app load
   useEffect(() => {
     const restoreSession = async () => {
@@ -281,7 +318,7 @@ export function AuthProvider({ children }) {
       updateFacilityEnum, fetchUsersForMentor,
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
-      fetchUserRole
+      fetchUserRole,deleteCurrentUserAccount, logoutAndNavigate
     }}>
       {children}
     </AuthContext.Provider>
