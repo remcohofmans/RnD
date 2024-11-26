@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
-import { supabase } from '../../supabaseClient.js';
+import { supabase } from '../../lib/helper/supabaseClient.js';
 import { useAuth } from '../../hooks/AuthContext.js';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
 import  TopNavigationBar from '../common/TopNavigationBar.jsx' 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DistanceControl from '../filter/DistanceControl';
 import AgeRangeControl from '../filter/AgeRangeControl';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../filter/AvailableHobbiesPage';
 
 const FilterForm = () => {
