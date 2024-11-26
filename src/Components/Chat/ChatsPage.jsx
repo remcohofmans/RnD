@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChatsList } from './ChatsList/ChatsList.jsx';
 import { ChatWindow } from './ChatWindow/ChatWindow.jsx';
-import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
+import { useAuth } from '../../hooks/AuthContext.js';
 import { useMatches } from '../../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
 import useCheckUserProfile from '../../hooks/useCheckUserProfile.jsx';
@@ -9,7 +9,7 @@ import UserCardChats from './ChatWindow/UserCardChats.jsx';
 
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
-  const { currentUser, loading: authLoading, error: authError } = useSupabaseAuth();
+  const { currentUser, loading: authLoading, error: authError } = useAuth();
   const { checkUserProfile } = useCheckUserProfile(currentUser);
   const { matches, loading: matchesLoading, error: matchesError } = useMatches(currentUser?.id);
 

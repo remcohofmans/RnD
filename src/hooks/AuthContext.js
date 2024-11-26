@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'; 
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/helper/supabaseClient';
 
 const AuthContext = createContext();
@@ -10,6 +10,18 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);
 
   // Existing functions for mentor, user and profile management...
+
+  const fetchCurrentUser = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      setUser(user);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUsersForMentor = async (mentorId) => {
     try {
@@ -255,27 +267,27 @@ export function AuthProvider({ children }) {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
-  
+
       if (userError || !user) {
         throw new Error('Unable to fetch user.');
       }
-  
+
       const { error: deleteError } = await supabase
         .from('users')
         .delete()
         .eq('id', user.id);
-  
+
       if (deleteError) {
         throw new Error('Failed to delete user data.');
       }
-  
+
       return true; // Deletion successful
     } catch (err) {
       console.error('Error deleting account:', err.message);
       throw err;
     }
   };
-  
+
   // Function to log out and navigate
   const logoutAndNavigate = async (navigate) => {
     try {
@@ -309,6 +321,8 @@ export function AuthProvider({ children }) {
     };
 
     restoreSession();
+
+    fetchCurrentUser();
   }, []);
 
   return (
@@ -318,7 +332,7 @@ export function AuthProvider({ children }) {
       updateFacilityEnum, fetchUsersForMentor,
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
-      fetchUserRole,deleteCurrentUserAccount, logoutAndNavigate
+      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate
     }}>
       {children}
     </AuthContext.Provider>
