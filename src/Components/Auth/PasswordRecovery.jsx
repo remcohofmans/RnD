@@ -22,8 +22,11 @@ const PasswordRecovery = () => {
     setMessage('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setMessage('E-mail voor wachtwoordherstel verzonden. Controleer je inbox.');
+      // Use Supabase to send a password reset email
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) {
+        throw error;
+      }      setMessage('E-mail voor wachtwoordherstel verzonden. Controleer je inbox.');
     } catch (err) {
       setError('Het verzenden van de wachtwoordherstel e-mail is mislukt. Probeer het later opnieuw.');
       console.error('Password recovery error:', err);
