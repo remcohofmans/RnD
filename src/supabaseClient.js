@@ -4,7 +4,7 @@ const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseServiceKey = process.env.REACT_APP_SERVICE_ROLE;
 
 if (!supabaseUrl || !s) {
-    throw new Error("Missing Supabase environment variables: REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY");
+    throw new Error("Missing Supabase environment variables: REACT_APP_SUPABASE_URL and REACT_APP_SERVICE_ROLE");
   }
 
 export const supabase = createClient(supabaseUrl, supabaseServiceKey);
