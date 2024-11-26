@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import { supabase } from '../../supabaseClient.js';
-import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
+import { useAuth } from '../../hooks/AuthContext.js';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
 import  TopNavigationBar from '../common/TopNavigationBar.jsx' 
 
@@ -17,7 +17,7 @@ const CATEGORIES = {
 };
 
 const ImageUpload = ({ onUploadComplete }) => {
-  const { currentUser, loading, error } = useSupabaseAuth();
+  const { currentUser, loading, error } = useAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
   );
