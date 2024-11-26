@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Lock, SendHorizonal } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, SendHorizonal, ArrowLeft } from 'lucide-react';
 
 const PasswordRecovery = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -30,13 +32,30 @@ const PasswordRecovery = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 to-rose-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 to-rose-100 p-4 relative">
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-6 left-6 group p-3 bg-white/50 backdrop-blur-sm rounded-full 
+        hover:bg-white/70 transition-all duration-300 shadow-md hover:shadow-lg 
+        focus:outline-none focus:ring-2 focus:ring-rose-500"
+        aria-label="Ga terug"
+      >
+        <ArrowLeft 
+          size={24} 
+          className="text-neutral-800 group-hover:text-rose-600 transition-colors duration-300"
+        />
+      </button>
+
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-rose-100 overflow-hidden">
         <div className="p-8 bg-white">
           <div className="flex items-center justify-center mb-6">
             <Lock size={48} className="text-rose-600 mr-4 drop-shadow-sm" />
-            <h2 className="text-3xl font-bold text-neutral-900">Paswoordherstel</h2>
+            <h2 className="text-3xl font-bold text-neutral-900">Wachtwoord Herstel</h2>
           </div>
 
           {message && (
