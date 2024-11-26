@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 
 const AccessRequests = () => {
   const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
