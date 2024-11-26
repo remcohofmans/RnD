@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.REACT_APP_SERVICE_ROLE;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Missing Supabase environment variables: REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY");
+if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error("Missing Supabase environment variables: REACT_APP_SUPABASE_URL and REACT_APP_SERVICE_ROLE");
   }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseServiceKey);

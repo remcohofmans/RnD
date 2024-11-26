@@ -35,7 +35,7 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { user, loginWithEmail, signUpWithEmail, updateFacilityEnum } = useAuth();
+  const { user, loginWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();  // Use navigate here, inside the component
 
   const handleLoginSubmit = (e) => {

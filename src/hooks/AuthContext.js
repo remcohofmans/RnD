@@ -160,6 +160,12 @@ export function AuthProvider({ children }) {
     try {
       const { error } = await supabase.from('users').delete().eq('id', userId);
       if (error) throw new Error('Failed to delete user');
+      
+      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(userId);
+      if (authDeleteError) {
+        console.error('Auth delete error details:', authDeleteError);
+        throw new Error('Failed to delete user data from authentication.');
+      }
     } catch (err) {
       console.error('Error deleting user:', err.message);
       throw err;
@@ -263,6 +269,7 @@ export function AuthProvider({ children }) {
 
   const deleteCurrentUserAccount = async () => {
     try {
+      
       const {
         data: { user },
         error: userError,
@@ -280,7 +287,13 @@ export function AuthProvider({ children }) {
       if (deleteError) {
         throw new Error('Failed to delete user data.');
       }
-
+  
+      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
+      if (authDeleteError) {
+        console.error('Auth delete error details:', authDeleteError);
+        throw new Error('Failed to delete user data from authentication.');
+      }
+  
       return true; // Deletion successful
     } catch (err) {
       console.error('Error deleting account:', err.message);
