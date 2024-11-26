@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
-import { ArrowLeft, Key, ShieldCheck } from 'lucide-react';
+import { Key, ShieldCheck } from 'lucide-react';
 
 const PasswordUpdate = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -75,20 +75,7 @@ const PasswordUpdate = () => {
       {/* Decorative Background Elements */}
       <div className="absolute -top-20 -left-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
-
-      <button
-        onClick={handleGoBack}
-        className="absolute top-6 left-6 group p-3 bg-white/50 backdrop-blur-sm rounded-full 
-        hover:bg-white/70 transition-all duration-300 shadow-md hover:shadow-lg 
-        focus:outline-none focus:ring-2 focus:ring-rose-500 z-10"
-        aria-label="Ga terug"
-      >
-        <ArrowLeft
-          size={24}
-          className="text-neutral-800 group-hover:text-rose-600 transition-colors duration-300"
-        />
-      </button>
-
+      
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-rose-100 overflow-hidden">
           <div className="p-8 relative">
