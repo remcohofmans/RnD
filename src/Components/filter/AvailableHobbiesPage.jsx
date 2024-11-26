@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import DistanceControl from './DistanceControl';
-import AgeRangeControl from './AgeRangeControl';
-
-
-const availableHobbies = [
+export const availableHobbies = [
   // Collectie & Leren
   { name: 'Geschiedenis', icon: '📜', category: 'Leren' },
   { name: 'Munten verzamelen', icon: '🪙', category: 'Leren' },
@@ -95,7 +91,7 @@ const availableHobbies = [
 ];
 
 
-const ButtonGroup = ({ options, value, onChange, error }) => (
+export const ButtonGroup = ({ options, value, onChange, error }) => (
   <div className="flex gap-2">
     {options.map((option) => (
       <button
@@ -115,7 +111,7 @@ const ButtonGroup = ({ options, value, onChange, error }) => (
 );
 
 
-const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
+export const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
   <div className="mb-6">
     <h3 className="text-base font-medium text-gray-900 mb-3">{category}</h3>
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -140,7 +136,7 @@ const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) => (
   </div>
 );
 
-const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHobbies }) => {
+export const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHobbies }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
 
@@ -180,7 +176,7 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
       >
         <div className="p-4 border-b flex items-center justify-between bg-gray-50 rounded-t-2xl">
           <h2 id="modal-title" className="text-xl font-semibold text-gray-900 pl-4">
-            Selecteer Hobby's
+             Hobby's
           </h2>
           <button
             onClick={() => setShowModal(false)}
@@ -254,190 +250,4 @@ const HobbiesModal = ({ showModal, setShowModal, selectedHobbies, setSelectedHob
   );
 };
 
-const FilterForm = () => {
-  const [formState, setFormState] = useState({
-    restriction: '',
-    interest: '',
-    distance: '5',
-    minAge: '18',
-    maxAge: '35'
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]);
-  const [errors, setErrors] = useState({});
-  const [submittedData, setSubmittedData] = useState(null);
-
-  const interestOptions = [
-    { value: 'man', label: 'Man 🤷‍♂️' },
-    { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
-    { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
-  ];
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formState.interest) newErrors.interest = 'Selecteer een interesse';
-    if (!formState.distance) newErrors.distance = 'Voer een afstand in';
-    if (!formState.minAge) newErrors.age = 'Selecteer een minimum leeftijd';
-    if (!formState.maxAge) newErrors.age = 'Selecteer een maximum leeftijd';
-    if (selectedHobbies.length === 0) newErrors.hobbies = 'Selecteer ten minste één hobby';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      const dataToSubmit = { ...formState, hobbies: selectedHobbies };
-      setSubmittedData(dataToSubmit);
-      console.log('Form submitted:', dataToSubmit);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormState(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const getHobbyIcon = (hobbyName) => {
-    const hobby = availableHobbies.find(h => h.name === hobbyName);
-    return hobby ? hobby.icon : '🎯';
-  };
-
-  return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Filter Voorkeuren</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100">
-        <div className="space-y-2">
-          <label htmlFor="restriction" className="block text-sm font-medium text-gray-700">
-            Beperkingen
-          </label>
-          <input
-            type="text"
-            id="restriction"
-            name="restriction"
-            value={formState.restriction}
-            onChange={handleInputChange}
-            className="w-full h-12 border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-rose-500 bg-gray-50 focus:bg-white transition duration-150 ease-in-out"
-            placeholder="Voer eventuele beperkingen in..."
-          />
-          {errors.restriction && <div className="text-red-500 text-sm mt-1">{errors.restriction}</div>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Waar heb je interesse in?
-          </label>
-          <ButtonGroup
-            options={interestOptions}
-            value={formState.interest}
-            onChange={(value) => {
-              setFormState(prev => ({ ...prev, interest: value }));
-              if (errors.interest) setErrors(prev => ({ ...prev, interest: '' }));
-            }}
-          />
-          {errors.interest && <div className="text-red-500 text-sm">{errors.interest}</div>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Leeftijdsvoorkeur
-          </label>
-          <AgeRangeControl
-            minValue={formState.minAge}
-            maxValue={formState.maxAge}
-            onChangeMin={(value) => {
-              setFormState(prev => ({ ...prev, minAge: value }));
-              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
-            }}
-            onChangeMax={(value) => {
-              setFormState(prev => ({ ...prev, maxAge: value }));
-              if (errors.age) setErrors(prev => ({ ...prev, age: '' }));
-            }}
-          />
-          {errors.age && <div className="text-red-500 text-sm">{errors.age}</div>}
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Maximale afstand
-          </label>
-          <DistanceControl
-            value={formState.distance}
-            onChange={(value) => {
-              setFormState(prev => ({ ...prev, distance: value }));
-              if (errors.distance) setErrors(prev => ({ ...prev, distance: '' }));
-            }}
-          />
-          {errors.distance && <div className="text-red-500 text-sm">{errors.distance}</div>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Geselecteerde Hobby's
-          </label>
-          <div className="flex flex-wrap gap-2 min-h-[44px] p-2 bg-gray-50 rounded-xl border border-gray-200">
-            {selectedHobbies.map((hobby) => (
-              <div 
-                key={hobby} 
-                className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm"
-              >
-                <span>{getHobbyIcon(hobby)}</span>
-                <span className="text-sm font-medium">{hobby}</span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedHobbies(prev => prev.filter(h => h !== hobby))}
-                  className="ml-1 text-gray-400 hover:text-red-500"
-                  aria-label={`Verwijder ${hobby}`}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-          {errors.hobbies && <div className="text-red-500 text-sm">{errors.hobbies}</div>}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowModal(true)}
-          className="w-full border border-gray-300 rounded-xl p-3 text-left hover:bg-gray-50 focus:ring-2 focus:ring-rose-500"
-        >
-          {selectedHobbies.length === 0 ? 'Selecteer hobby\'s...' : `${selectedHobbies.length} hobby's geselecteerd`}
-        </button>
-
-        <button 
-          type="submit" 
-          className="w-full bg-rose-500 text-white p-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
-        >
-          Verzenden
-        </button>
-        
-        {submittedData && (
-          <div className="bg-green-50 text-green-800 p-4 rounded-xl text-center animate-fade-in">
-            <h2 className="text-lg font-semibold">Gegevens Verzonden!</h2>
-            <p><strong>Beperkingen:</strong> {submittedData.restriction}</p>
-            <p><strong>Leeftijdsvoorkeur:</strong> {submittedData.minAge} - {submittedData.maxAge} jaar</p>
-            <p><strong>Interesse:</strong> {submittedData.interest}</p>
-            <p><strong>Maximale Afstand:</strong> {submittedData.distance}</p>
-            <p><strong>Geselecteerde Hobby's:</strong> {submittedData.hobbies.join(', ')}</p>
-          </div>
-        )}
-      </form>
-      
-      <HobbiesModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        selectedHobbies={selectedHobbies}
-        setSelectedHobbies={setSelectedHobbies}
-      />
-    </div>
-  );
-};
-
-export default FilterForm;
+export default availableHobbies;

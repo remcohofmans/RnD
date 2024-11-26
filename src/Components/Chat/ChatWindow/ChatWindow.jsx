@@ -1,15 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../../../supabaseClient';
+import { supabase } from '../../../lib/helper/supabaseClient';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { ChatHeader } from './ChatHeader';
+import { RefreshCw } from 'lucide-react';
+import { LoadingSpinner } from '../../common/LoadingSpinner'; 
 
 export const ChatWindow = ({ matchId, otherUserName }) => {
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [matchedUserId, setMatchedUserId] = useState(null);
   const [error, setError] = useState(null);
+  const [showSuggestion, setShowSuggestion] = useState(false);
+  const [currentSuggestion, setCurrentSuggestion] = useState(null);
+  const [loading, setLoading] = useState(true); // New loading state
   const messagesContainerRef = useRef(null);
+
+  const suggestedMessages = [
+    "Wat doe je graag in je vrije tijd?",
+    "Heb je een favoriete plek om te ontspannen?",
+    "Wat was het leukste dat je deze week hebt gedaan?",
+    "Heb je onlangs een goede film gezien?",
+    "Wat voor muziek luister je het liefst?",
+    "Heb je leuke plannen voor het weekend?",
+    "Wat is je favoriete manier om een dag door te brengen?",
+    "Als je één ding zou kunnen leren, wat zou dat zijn?",
+    "Wat is het mooiste reisbestemming die je ooit hebt bezocht?",
+    "Heb je een favoriete hobby waar je veel tijd mee doorbrengt?"
+  ];
 
   useEffect(() => {
     fetchCurrentUser();
@@ -21,6 +39,17 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (!loading) {
+      setShowSuggestion(messages.length === 0);
+      if (messages.length === 0) {
+        setCurrentSuggestion(
+          suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]
+        );
+      }
+    }
+  }, [messages, loading]);
 
   const fetchCurrentUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -43,7 +72,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       if (error) throw error;
 
       if (data) {
-        // Determine which ID is the matched user's ID
         const { data: { user } } = await supabase.auth.getUser();
         const otherUserId = data.id === user.id ? data.matched_user_id : data.id;
         setMatchedUserId(otherUserId);
@@ -55,30 +83,35 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
   };
 
   const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from('chats')
-      .select('*')
-      .eq('match_id', matchId)
-      .order('created_at', { ascending: true });
+    setLoading(true); // Start loading
+    try {
+      const { data, error } = await supabase
+        .from('chats')
+        .select('*')
+        .eq('match_id', matchId)
+        .order('created_at', { ascending: true });
 
-    if (error) {
+      if (error) throw error;
+
+      setMessages(data);
+    } catch (error) {
       console.error('Error fetching messages:', error);
       setError('Failed to load messages');
-    } else {
-      setMessages(data);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
   const setupRealtimeSubscription = () => {
     const channel = supabase
       .channel(`match_${matchId}`)
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'chats', 
-          filter: `match_id=eq.${matchId}` 
-        }, 
+      .on('postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chats',
+          filter: `match_id=eq.${matchId}`
+        },
         handleNewMessage
       )
       .subscribe((status) => {
@@ -107,10 +140,10 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     try {
       const { data, error } = await supabase
         .from('chats')
-        .insert({ 
-          match_id: matchId, 
-          sender_id: currentUser.id, 
-          message: messageText 
+        .insert({
+          match_id: matchId,
+          sender_id: currentUser.id,
+          message: messageText
         })
         .select()
         .single();
@@ -124,6 +157,15 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     }
   };
 
+  const handleSendSuggestion = () => {
+    sendMessage(currentSuggestion);
+    setShowSuggestion(false);
+  };
+
+  const handleRefreshSuggestion = () => {
+    setCurrentSuggestion(suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]);
+  };
+
   const scrollToBottom = () => {
     messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -134,11 +176,44 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
 
   return (
     <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
-      <ChatHeader otherUserName={otherUserName} otherUserId={matchedUserId}/>
+      <ChatHeader 
+        otherUserName={otherUserName}
+        otherUserId={matchedUserId}
+        matchId={matchId}
+      />
       <div className="flex-grow overflow-auto p-4" ref={messagesContainerRef}>
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          showSuggestion && (
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center mb-4">
+              <p className="text-gray-600 text-sm">
+                Als je niets weet te zeggen, gebruik een gespreksstarter:
+              </p>
+              <div className="flex items-center justify-center space-x-3 mt-2">
+                <p className="text-gray-800 font-medium">
+                  "{currentSuggestion} "
+                </p>
+                <button
+                  onClick={handleRefreshSuggestion}
+                  className="px-2 py-1.5 text-gray-600 hover:bg-rose-200 rounded-lg focus:outline-none"
+                >
+                  <RefreshCw className="h-5 w-5" />
+                </button>
+                <button 
+                  onClick={handleSendSuggestion}
+                  className="px-4 py-1.5 bg-rose-500 text-white text-sm rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          )
+        )}
         <MessageList 
           messages={messages}
           currentUser={currentUser}
+          matchId={matchId}
         />
       </div>
       <MessageInput onSendMessage={sendMessage} />
