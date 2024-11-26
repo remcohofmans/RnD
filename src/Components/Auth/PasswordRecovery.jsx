@@ -36,7 +36,7 @@ const PasswordRecovery = () => {
         <div className="p-8 bg-white">
           <div className="flex items-center justify-center mb-6">
             <Lock size={48} className="text-rose-600 mr-4 drop-shadow-sm" />
-            <h2 className="text-3xl font-bold text-neutral-900">Wachtwoord Herstel</h2>
+            <h2 className="text-3xl font-bold text-neutral-900">Paswoordherstel</h2>
           </div>
 
           {message && (
