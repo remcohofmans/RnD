@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
