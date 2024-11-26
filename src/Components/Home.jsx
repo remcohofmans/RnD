@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import butterflyImage from '../Assets/Butterfly.png'; // Import the butterfly image
 import { supabase } from '../lib/helper/supabaseClient';
 import { useAuth } from '../hooks/AuthContext';
+import { useAnalytics } from '../hooks/analyticsContext';
 
 const Home = () => {
+  const { track } = useAnalytics();
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false); // State to control modal visibility
   const { user, logout, role } = useAuth();
@@ -12,6 +14,7 @@ const Home = () => {
   const loggedIn = !!user;
 
   useEffect(() => {
+    track('go to feed');
     console.log("User:", user);
     console.log("email:", email);
     console.log("Role:", role);
@@ -21,6 +24,7 @@ const Home = () => {
   }, [navigate, role]);
 
   const handleButtonClick = useCallback(() => {
+    
     if (loggedIn) {
       logout();
       navigate('/login');
@@ -30,6 +34,7 @@ const Home = () => {
   }, [loggedIn, logout, navigate]);
 
   const handleGoToFeed = useCallback(async () => {
+    track('go to feed');
     try {
       const { data, error } = await supabase
         .from('users')
