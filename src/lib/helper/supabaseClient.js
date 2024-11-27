@@ -1,10 +1,13 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-// Create a single supabase client for interacting with your database
+// Server-side client
+export const supabaseServer = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-console.log("test");
-
-export const supabase = createClient(
-    process.env.REACT_APP_SUPABASE_URL,
-    process.env.REACT_APP_SERVICE_ROLE
-  );
+// Client-side client
+export const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
