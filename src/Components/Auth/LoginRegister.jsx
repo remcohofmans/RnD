@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
-import { Mail, Lock, Heart, Building } from 'lucide-react';
+import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
 import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
 import { useNavigate } from 'react-router-dom';  // Import the hook
 
@@ -480,7 +480,7 @@ const LoginRegister = () => {
                       <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
                     </div>
                     <div className="relative">
-                    <Building className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
+                      <Building className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={facilityCode}
@@ -498,6 +498,7 @@ const LoginRegister = () => {
                       <span>Geef uw mentor ID in. (*)</span>
                     </div>
                     <div className="relative">
+                      <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={mentorCode}
