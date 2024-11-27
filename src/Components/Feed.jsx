@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Sparkle } from 'lucide-react';
 import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
@@ -195,9 +196,12 @@ const Feed = () => {
           <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
             Ontdek je Match
           </h1>
-          <p className="text-xl text-rose-700 max-w-2xl mx-auto">
+          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
+            <Sparkle />
             Spin het wiel en laat het toeval je naar de ware verbinding leiden
+            <Sparkle />
           </p>
+
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
