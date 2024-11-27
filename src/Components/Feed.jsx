@@ -6,7 +6,6 @@ import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
 
-
 const Feed = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState([]);
@@ -18,7 +17,6 @@ const Feed = () => {
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
 
-  // Function to calculate the user's age
   const calculateAge = (birthday) => {
     if (!birthday) return null;
     const birthDate = new Date(birthday);
@@ -27,7 +25,6 @@ const Feed = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
-  // Fetch user data and filter based on preferences
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -142,7 +139,6 @@ const Feed = () => {
     setMustSpin(false);
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -153,7 +149,6 @@ const Feed = () => {
     );
   }
 
-  // Error or no users found
   if (error || users.length === 0) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -176,47 +171,42 @@ const Feed = () => {
 
   return (
     <div className="min-h-screen bg-rose-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pt-20 py-12"> {/* Added pt-16 for extra top padding */}
-        
-      <div className="text-center mb-12">
-          
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pt-20 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-semibold text-rose-950 mb-4">Spin en ontdek echte liefde!</h1>
+          <p className="text-lg text-gray-700">Klik op de knop om te draaien en je volgende match te ontdekken!</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column - Wheel */}
-          <div className="flex flex-col items-center justify-start bg-rose-50">
-
-          <div className="text-center mb-12">
-          <h1 className="text-4xl font-semibold text-rose-950">Spin en ontdek echte liefde!</h1>
-        </div>
-          
-              <div className="relative w-full max-w-md mx-auto">
-                <Wheel
-                  mustStartSpinning={mustSpin}
-                  prizeNumber={currentIndex}
-                  data={wheelData}
-                  onStopSpinning={handleWheelStop}
-                  radiusLineWidth={1}
-                  radiusLineColor="rgb(255, 255, 255)"
-                  outerBorderWidth={2}
-                  outerBorderColor="rgb(251, 113, 133)"
-                  fontSize={16}
-                  perpendicularText
-                  textDistance={70}
-                />
-                <motion.button
-                  className="absolute inset-0 w-20 h-20 m-auto rounded-full bg-white shadow-lg text-rose-400 font-bold z-10 flex items-center justify-center hover:bg-rose-50 transition-colors duration-200"
-                  onClick={handleSpinClick}
-                  disabled={mustSpin}
-                  whileHover={{ scale: mustSpin ? 1 : 1.1 }}
-                >
-                  {mustSpin ? 'Spinning...' : 'Spin'}
-                </motion.button>
-              </div>
+          <div className="flex flex-col items-center justify-center bg-rose-50 p-8 rounded-xl shadow-md">
+            <div className="relative w-full max-w-md mx-auto mb-8">
+              <Wheel
+                mustStartSpinning={mustSpin}
+                prizeNumber={currentIndex}
+                data={wheelData}
+                onStopSpinning={handleWheelStop}
+                radiusLineWidth={1}
+                radiusLineColor="rgb(255, 255, 255)"
+                outerBorderWidth={2}
+                outerBorderColor="rgb(251, 113, 133)"
+                fontSize={16}
+                perpendicularText
+                textDistance={70}
+              />
+              <motion.button
+                className="absolute inset-0 w-20 h-20 m-auto rounded-full bg-white shadow-lg text-rose-400 font-bold z-10 flex items-center justify-center hover:bg-rose-50 transition-all duration-200"
+                onClick={handleSpinClick}
+                disabled={mustSpin}
+                whileHover={{ scale: mustSpin ? 1 : 1.1 }}
+              >
+                {mustSpin ? 'Spinning...' : 'Spin'}
+              </motion.button>
+            </div>
           </div>
 
           {/* Right Column - User Card */}
-          <div className="flex flex-col items-center justify-start bg-rose-50 ">
+          <div className="flex flex-col items-center justify-center bg-rose-50 p-8 rounded-xl shadow-md">
             <AnimatePresence mode="wait">
               {mustSpin ? (
                 <motion.div
@@ -227,7 +217,7 @@ const Feed = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12  border-b-2 border-rose-400"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-400"></div>
                     <p>Onze vinder is op zoek naar een mogelijke vlinder...</p>
                   </div>
                 </motion.div>
