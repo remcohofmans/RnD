@@ -61,6 +61,29 @@ export function AuthProvider({ children }) {
   const loginWithEmail = async (email, password) => {
     setLoading(true);
     try {
+
+      console.log('email',email);
+      
+      
+      const {data: userData, error: userError} = await supabase
+        .from('users')
+        .select('*')
+        .eq('email',email);
+      
+      if (userError) {
+        
+        console.error("Error fetching user data:", userError.message);
+        throw new Error("Failed to verify account.");
+      }
+  
+      console.log("Userdata: ", userData);
+  
+      if (!userData || userData.length === 0) {
+        setError("This account was deleted");
+        return { success: false, error: "This account was deleted" }; // Stop further execution
+      }
+      
+
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
@@ -161,11 +184,7 @@ export function AuthProvider({ children }) {
       const { error } = await supabase.from('users').delete().eq('id', userId);
       if (error) throw new Error('Failed to delete user');
       
-      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(userId);
-      if (authDeleteError) {
-        console.error('Auth delete error details:', authDeleteError);
-        throw new Error('Failed to delete user data from authentication.');
-      }
+      
     } catch (err) {
       console.error('Error deleting user:', err.message);
       throw err;
@@ -286,12 +305,6 @@ export function AuthProvider({ children }) {
 
       if (deleteError) {
         throw new Error('Failed to delete user data.');
-      }
-  
-      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
-      if (authDeleteError) {
-        console.error('Auth delete error details:', authDeleteError);
-        throw new Error('Failed to delete user data from authentication.');
       }
   
       return true; // Deletion successful
