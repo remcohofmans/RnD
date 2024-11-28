@@ -31,73 +31,89 @@ const Feed = () => {
       console.error("Distance Matrix Service not ready.");
       return;
     }
-
+  
+    setLoading(true);
+    setError(null);
+  
     try {
-      setLoading(true);
-      setError(null);
-
-      const { data: userPreferences } = await supabase
-        .from('userpreferences')
-        .select('distance, min_age, max_age, interest')
-        .eq('id', user.id)
-        .single();
-
-      const { data: currentUserData } = await supabase
-        .from('users')
-        .select('city')
-        .eq('id', user.id)
-        .single();
-
-      if (!currentUserData?.city) {
+      const [userPreferences, currentUserData] = await Promise.all([
+        supabase.from('userpreferences')
+          .select('distance, min_age, max_age, interest')
+          .eq('id', user.id)
+          .single(),
+        supabase.from('users')
+          .select('city')
+          .eq('id', user.id)
+          .single()
+      ]);
+  
+      if (!currentUserData.data?.city) {
         throw new Error("Your location is not set. Please update your profile.");
       }
-
-      const currentUserCity = currentUserData.city;
-      const maxDistance = userPreferences.distance;
-
+  
+      const currentUserCity = currentUserData.data.city;
+      const maxDistance = userPreferences.data.distance;
+  
       const { data: fetchedUsers } = await supabase
         .from('users')
-        .select('id, birthday, name, city, facility, gender')
+        .select('id, birthday, name, facility_id, gender')
         .not('name', 'is', null)
         .not('birthday', 'is', null)
-        .not('city', 'is', null)
+        .not('facility_id', 'is', null)
         .limit(USERS_TO_FETCH);
-
+  
       if (!fetchedUsers || fetchedUsers.length === 0) {
         setUsers([]);
         return;
       }
-
+  
+      // Fetch facility details for all users
+      const facilityIds = fetchedUsers.map(user => user.facility_id);
+      const { data: facilities } = await supabase
+        .from('facility_enum')
+        .select('id, name, city')
+        .in('id', facilityIds);
+  
+      const facilityMap = (facilities || []).reduce((acc, facility) => {
+        acc[facility.id] = facility;
+        return acc;
+      }, {});
+  
       const usersWithDetails = await Promise.all(
         fetchedUsers.map(async (potentialUser) => {
           const age = calculateAge(potentialUser.birthday);
-
+  
           if (
-            age < userPreferences.min_age ||
-            age > userPreferences.max_age ||
-            (userPreferences.interest !== 'geen-voorkeur' &&
-              potentialUser.gender !== userPreferences.interest)
+            age < userPreferences.data.min_age ||
+            age > userPreferences.data.max_age ||
+            (userPreferences.data.interest !== 'geen-voorkeur' &&
+              potentialUser.gender !== userPreferences.data.interest)
           ) {
             return null;
           }
-
-          const distance = await calculateDistance(currentUserCity, potentialUser.city);
-
+  
+          const facility = facilityMap[potentialUser.facility_id];
+          if (!facility) {
+            return null;
+          }
+  
+          const distance = await calculateDistance(currentUserCity, facility.city);
+  
           if (parseFloat(distance) > maxDistance) {
             return null;
           }
-
+  
           const { data: preferencesData } = await supabase
             .from('userpreferences')
             .select('hobbies')
             .eq('id', potentialUser.id)
             .single();
-
+  
           return {
             id: potentialUser.id,
             name: potentialUser.name || 'Anonymous',
-            location: `${potentialUser.city} (${distance})`,
-            facility: potentialUser.facility,
+            location: `${facility.city} (${distance})`,
+            facility: facility.name,
             birthday: potentialUser.birthday,
             age,
             hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : [],
@@ -105,7 +121,7 @@ const Feed = () => {
           };
         })
       );
-
+  
       setUsers(usersWithDetails.filter(Boolean).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
@@ -113,6 +129,7 @@ const Feed = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (isDistanceServiceInitialized) {
