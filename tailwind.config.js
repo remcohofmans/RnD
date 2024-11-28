@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
+        dynapuff: ['DynaPuff', 'sans-serif'],
       },
     },
     plugins: [],
