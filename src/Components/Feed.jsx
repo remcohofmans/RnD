@@ -57,6 +57,7 @@ const Feed = () => {
       const { data: fetchedUsers } = await supabase
         .from('users')
         .select('id, birthday, name, facility_id, gender')
+        .eq('access_granted', 'YES')  // Check for access_granted
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null)
@@ -129,6 +130,7 @@ const Feed = () => {
       setLoading(false);
     }
   };
+  
   
 
   useEffect(() => {
