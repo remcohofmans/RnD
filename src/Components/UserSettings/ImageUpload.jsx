@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/helper/supabaseClient.js';
-import { useAuth } from '../../hooks/AuthContext.js';
+import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -16,7 +16,7 @@ const CATEGORIES = {
 };
 
 const ImageUpload = ({ onUploadComplete }) => {
-  const { currentUser, loading, error } = useAuth();
+  const { currentUser, loading, error } = useSupabaseAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
   );
