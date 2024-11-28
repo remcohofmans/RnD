@@ -105,12 +105,12 @@ const Home = () => {
 
       {/* Hero Section */}
       <header className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-32 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-28 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-8xl font-extrabold text-rose-900 mt-16 mb-6 font-dynapuff"
+            className="text-8xl font-extrabold text-rose-900 mt-20 mb-6 font-dynapuff"
           >
             V(l)inder
           </motion.h1>
