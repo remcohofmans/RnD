@@ -198,12 +198,12 @@ const Home = () => {
               {
                 quote: "V(l)inder heeft mijn leven compleet veranderd. Ik heb niet alleen mijn soulmate gevonden, maar ook mezelf herontdekt!",
                 name: "Sophie R.",
-                location: "Amsterdam"
+                location: "Leuven"
               },
               {
                 quote: "Als introvert vond ik het altijd lastig om nieuwe mensen te ontmoeten. V(l)inder maakte dat proces zo natuurlijk en leuk!",
                 name: "Mark T.",
-                location: "Rotterdam"
+                location: "Brugge"
               }
             ].map((testimonial, index) => (
               <motion.div

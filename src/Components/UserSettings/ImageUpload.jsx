@@ -3,7 +3,6 @@ import { Upload, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/helper/supabaseClient.js';
 import { useAuth } from '../../hooks/AuthContext.js';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
-import  TopNavigationBar from '../common/TopNavigationBar.jsx' 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
