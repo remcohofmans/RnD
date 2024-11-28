@@ -36,32 +36,55 @@ const Feed = () => {
     setError(null);
   
     try {
-      const [userPreferences, currentUserData] = await Promise.all([
-        supabase.from('userpreferences')
-          .select('distance, min_age, max_age, interest')
-          .eq('id', user.id)
-          .single(),
-        supabase.from('users')
-          .select('city')
-          .eq('id', user.id)
-          .single()
-      ]);
+      // Fetch user preferences
+      const { data: userPreferences, error: userPreferencesError } = await supabase
+        .from('userpreferences')
+        .select('distance, min_age, max_age, interest')
+        .eq('id', user.id)
+        .single();
   
-      if (!currentUserData.data?.city) {
+      if (userPreferencesError) {
+        throw new Error("Failed to fetch user preferences.");
+      }
+  
+      // Fetch current user's facility ID and then facility details to get the city
+      const { data: currentUser, error: currentUserError } = await supabase
+        .from('users')
+        .select('facility_id')
+        .eq('id', user.id)
+        .single();
+  
+      if (currentUserError || !currentUser?.facility_id) {
         throw new Error("Your location is not set. Please update your profile.");
       }
   
-      const currentUserCity = currentUserData.data.city;
-      const maxDistance = userPreferences.data.distance;
+      const { data: currentUserFacility, error: currentUserFacilityError } = await supabase
+        .from('facility_enum')
+        .select('city')
+        .eq('id', currentUser.facility_id)
+        .single();
   
-      const { data: fetchedUsers } = await supabase
+      if (currentUserFacilityError || !currentUserFacility?.city) {
+        throw new Error("Failed to fetch your facility details.");
+      }
+  
+      const currentUserCity = currentUserFacility.city;
+      const maxDistance = userPreferences.distance;
+  
+      // Fetch users with access granted and not the current user
+      const { data: fetchedUsers, error: fetchedUsersError } = await supabase
         .from('users')
         .select('id, birthday, name, facility_id, gender')
-        .eq('access_granted', 'YES')  // Check for access_granted
+        .eq('access_granted', 'YES')
+        .neq('id', user.id)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null)
         .limit(USERS_TO_FETCH);
+  
+      if (fetchedUsersError) {
+        throw new Error("Failed to fetch users.");
+      }
   
       if (!fetchedUsers || fetchedUsers.length === 0) {
         setUsers([]);
@@ -70,10 +93,14 @@ const Feed = () => {
   
       // Fetch facility details for all users
       const facilityIds = fetchedUsers.map(user => user.facility_id);
-      const { data: facilities } = await supabase
+      const { data: facilities, error: facilitiesError } = await supabase
         .from('facility_enum')
         .select('id, name, city')
         .in('id', facilityIds);
+  
+      if (facilitiesError) {
+        throw new Error("Failed to fetch facilities.");
+      }
   
       const facilityMap = (facilities || []).reduce((acc, facility) => {
         acc[facility.id] = facility;
@@ -85,10 +112,10 @@ const Feed = () => {
           const age = calculateAge(potentialUser.birthday);
   
           if (
-            age < userPreferences.data.min_age ||
-            age > userPreferences.data.max_age ||
-            (userPreferences.data.interest !== 'geen-voorkeur' &&
-              potentialUser.gender !== userPreferences.data.interest)
+            age < userPreferences.min_age ||
+            age > userPreferences.max_age ||
+            (userPreferences.interest !== 'geen-voorkeur' &&
+              potentialUser.gender !== userPreferences.interest)
           ) {
             return null;
           }
@@ -104,11 +131,15 @@ const Feed = () => {
             return null;
           }
   
-          const { data: preferencesData } = await supabase
+          const { data: preferencesData, error: preferencesDataError } = await supabase
             .from('userpreferences')
             .select('hobbies')
             .eq('id', potentialUser.id)
             .single();
+  
+          if (preferencesDataError) {
+            return null;
+          }
   
           return {
             id: potentialUser.id,
@@ -130,6 +161,7 @@ const Feed = () => {
       setLoading(false);
     }
   };
+  
   
   
 
