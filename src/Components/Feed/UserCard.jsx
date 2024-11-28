@@ -10,9 +10,11 @@ import {
   faComment 
 } from '@fortawesome/free-solid-svg-icons';
 
+import { useAnalytics } from '../../hooks/analyticsContext.js';
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
 import { supabase } from '../../supabaseClient';
 import CarouselCard from '../Feed/CarouselCard';
+
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
@@ -24,6 +26,7 @@ const defaultHobbyIcon = faStar;
 const UserCard = ({ user, currentUserId }) => {
 
   const hobbies = Array.isArray(user?.hobbies) ? user.hobbies : [];
+  const { track } = useAnalytics();
 
 
   const handleLoveClick = async () => {
@@ -87,6 +90,10 @@ const UserCard = ({ user, currentUserId }) => {
           alert('Error creating match, please try again.');
           return;
         }
+        track('users matched', {
+          userOne: currentUserId,
+          userTwo: user.id
+        })
   
       // Delete first like (current user's like)
       const { error: deleteFirstLikeError } = await supabase
