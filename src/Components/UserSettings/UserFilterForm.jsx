@@ -11,17 +11,17 @@ const FilterForm = () => {
     minAge: '18',
     maxAge: '35',
   });
-  
+
   const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]); 
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const interestOptions = [
-    { value: 'man', label: 'Man 🤷‍♂️' },
-    { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
-    { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
+    { value: 'man', label: 'Man 👨' },
+    { value: 'vrouw', label: 'Vrouw 👩' },
+    { value: 'geen-voorkeur', label: 'Geen Voorkeur 🌈' },
   ];
 
   useEffect(() => {
