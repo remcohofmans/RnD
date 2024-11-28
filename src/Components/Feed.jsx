@@ -292,18 +292,25 @@ const Feed = () => {
                 onStartSpinning={() => console.log('Wheel started spinning!')} // Optional, for debugging or actions when spinning starts
               />
 
-              <motion.button
-                className="absolute inset-0 w-24 h-24 m-auto rounded-full 
-                  bg-rose-500 text-white shadow-lg font-bold z-10 
-                  flex items-center justify-center hover:bg-rose-600 
-                  transition-all duration-300 transform"
-                onClick={handleSpinClick}
-                disabled={mustSpin}
-                whileHover={{ scale: mustSpin ? 1 : 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {mustSpin ? 'Draaien...' : 'Spin'}
-              </motion.button>
+            <motion.button
+              className="absolute inset-0 w-32 h-32 m-auto rounded-full 
+                bg-gradient-to-br from-rose-500 to-rose-700 
+                shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
+                text-white font-bold z-10 
+                flex items-center justify-center 
+                pulse-animation
+                active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
+                hover:brightness-110 
+                transition-all duration-300 
+                disabled:opacity-50 disabled:cursor-not-allowed
+                text-2xl tracking-wider"
+              onClick={handleSpinClick}
+              disabled={mustSpin}
+              whileHover={{ scale: mustSpin ? 1 : 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {mustSpin ? 'Draaien...' : 'SPIN'}
+            </motion.button>
             </div>
           </motion.div>
 
