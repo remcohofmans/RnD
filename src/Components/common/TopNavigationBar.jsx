@@ -43,11 +43,11 @@ const TopNavigationBar = () => {
   const NavItem = ({ item, isActive }) => (
     <div
       className={`group flex flex-col items-center justify-center cursor-pointer relative py-2 h-full ${
-        isActive ? 'bg-rose-700' : 'hover:bg-rose-700'
+        isActive && typeof item.icon !== 'string' ? 'bg-rose-700' : 'hover:bg-rose-700'
       }`}
       onClick={() => handleNavigate(item.path)}
     >
-      <div className={`flex flex-col items-center px-4 ${isActive ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white' : ''}`}>
+      <div className={`flex flex-col items-center px-4 ${(isActive && typeof item.icon !== 'string') ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white' : ''}`}>
         {/* Render either FontAwesomeIcon or custom (logo) image */}
         {typeof item.icon === 'string' ? (
           <img src={item.icon} alt={item.label} className="h-12 w-12 rounded-full" />
