@@ -58,7 +58,7 @@ const ChatsPage = () => {
               />
             ) : (
               <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500">
-                Select a match to start chatting
+                Selecteer een match om het gesprek te openen.
               </div>
             )}
           </div>
