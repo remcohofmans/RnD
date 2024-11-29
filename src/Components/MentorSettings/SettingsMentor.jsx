@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Settings, ScrollText, Ban, Trash, LogOut } from 'lucide-react';
+import { Settings, ScrollText, Ban, Trash,CreditCard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AccessRequests from '../../Components/AccessRequests';
 import MentorBanUser from '../../Components/MentorSettings/MentorBanUser';
+import SubscriptionRequests from '../../Components/MentorSettings/SubscriptionRequests'; // Import your new component
 import { useAuth } from '../../hooks/AuthContext';
 
 const SettingsMentor = () => {
@@ -36,20 +37,27 @@ const SettingsMentor = () => {
       id: 'Toegangsverzoeken',
       icon: ScrollText,
       component: 'AccessRequests',
-      description: 'Bekijk en beheer toegang verzoeken'
+      description: 'Bekijk en beheer toegang verzoeken',
+    },
+    {
+      id: 'Abonnement verzoeken',
+      icon: CreditCard, // Replace with a relevant icon if available
+      component: 'SubscriptionRequests',
+      description: 'Bekijk en beheer abonnement verzoeken',
     },
     {
       id: 'Ban gebruiker',
       icon: Ban,
       component: 'MentorBanUser',
-      description: 'Beheer verboden gebruikers'
+      description: 'Beheer verboden gebruikers',
     },
     {
       id: 'Verwijder profiel',
       icon: Trash,
       component: null,
-      description: 'Verwijder je profiel permanent'
-    }
+      description: 'Verwijder je profiel permanent',
+    },
+    
   ];
 
   const handleOptionClick = (option) => {
@@ -59,6 +67,8 @@ const SettingsMentor = () => {
       setActiveComponent('MentorBanUser');
     } else if (option === 'Verwijder profiel') {
       setShowConfirmation(true);
+    } else if (option === 'Abonnement verzoeken') {
+      setActiveComponent('SubscriptionRequests');
     }
   };
 
@@ -134,6 +144,7 @@ const SettingsMentor = () => {
           {/* Dynamic Content */}
           {activeComponent === 'AccessRequests' && <AccessRequests />}
           {activeComponent === 'MentorBanUser' && <MentorBanUser />}
+          {activeComponent === 'SubscriptionRequests' && <SubscriptionRequests />}
 
           {/* Confirmation Modal */}
           {showConfirmation && (
