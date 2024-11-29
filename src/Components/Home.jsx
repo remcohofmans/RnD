@@ -10,12 +10,13 @@ const Home = () => {
   const { track } = useAnalytics();
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
-  const { user, logout, role } = useAuth();
+  const { user, logout, role , checkSubscription} = useAuth();
   const email = user?.email;
   const loggedIn = !!user;
 
   useEffect(() => {
     track('go to feed');
+    checkSubscription(navigate);
 
     if (role === 'STAFF_MEMBER') {
       navigate('/settingsMentor');
