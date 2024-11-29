@@ -82,7 +82,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
   
       // Create match if there's a mutual like (either both love or both friend)
       if (mutualLikeData) {
-        const matchValue = (likeValue === 'love' && mutualLikeData.love_like === 'love') ? 'love' : 'friend';
+        const matchValue = (likeValue === 'true' && mutualLikeData.love_like === 'true') ? 'true' : 'false';
         
         const { error: matchError } = await supabase
           .from('matches')
