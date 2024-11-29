@@ -324,6 +324,29 @@ export function AuthProvider({ children }) {
       console.error('Error during logout and navigation:', err.message);
     }
   };
+  // Function to check if user has an active subscription
+  const checkSubscription = async (navigate) => {
+    try {
+      const { data: subscriptionCheck, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('active, end_date')
+      .eq('user_id', user.id);
+
+      if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
+      else {
+        const today = new Date();
+        const endDate = new Date(subscriptionCheck[0].end_date);
+        if (subscriptionCheck[0].active === false && endDate < today) {
+          navigate('/subscription');
+          console.log("Subscription ended");
+        }
+      }
+
+    } catch (err) {
+      console.error('Error during the fetching of the subscription: ', err.message);
+    }
+
+  };
 
   // Restore session on app load
   useEffect(() => {
@@ -381,7 +404,7 @@ export function AuthProvider({ children }) {
       updateFacilityEnum, fetchUsersForMentor,
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
-      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate
+      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate, checkSubscription
     }}>
       {children}
     </AuthContext.Provider>
