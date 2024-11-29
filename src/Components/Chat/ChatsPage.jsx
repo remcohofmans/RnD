@@ -4,20 +4,27 @@ import { ChatWindow } from './ChatWindow/ChatWindow.jsx';
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
 import { useMatches } from '../../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
+import ChatsPageSkeleton from './ChatPageSkeleton.jsx';
 import useCheckUserProfile from '../../hooks/useCheckUserProfile.jsx';
 import UserCardChats from './ChatWindow/UserCardChats.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthContext';
 
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const { currentUser, loading: authLoading, error: authError } = useSupabaseAuth();
   const { checkUserProfile } = useCheckUserProfile(currentUser);
   const { matches, loading: matchesLoading, error: matchesError } = useMatches(currentUser?.id);
+  const { checkSubscription } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkUserProfile();
+    checkSubscription(navigate);
   }, [checkUserProfile]);
 
-  if (authLoading || matchesLoading) return <LoadingSpinner />;
+  //if (authLoading || matchesLoading) return <LoadingSpinner />;
+  if (authLoading || matchesLoading) return <ChatsPageSkeleton />;
   if (authError || matchesError) return <div className="text-red-500 text-center p-4">{authError || matchesError}</div>;
 
   // Find the selected match object
@@ -51,7 +58,7 @@ const ChatsPage = () => {
               />
             ) : (
               <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500">
-                Select a match to start chatting
+                Selecteer een match om het gesprek te openen.
               </div>
             )}
           </div>

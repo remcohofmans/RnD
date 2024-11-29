@@ -4,21 +4,27 @@ import { motion } from 'framer-motion';
 import { Heart, Users, Shield, Star } from 'lucide-react';
 import { supabase } from '../lib/helper/supabaseClient';
 import { useAuth } from '../hooks/AuthContext';
+import { useAnalytics } from '../hooks/analyticsContext';
 
 const Home = () => {
+  const { track } = useAnalytics();
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
-  const { user, logout, role } = useAuth();
+  const { user, logout, role , checkSubscription} = useAuth();
   const email = user?.email;
   const loggedIn = !!user;
 
   useEffect(() => {
+    track('go to feed');
+    checkSubscription(navigate);
+
     if (role === 'STAFF_MEMBER') {
       navigate('/settingsMentor');
     }
   }, [navigate, role]);
 
   const handleButtonClick = useCallback(() => {
+    
     if (loggedIn) {
       logout();
       navigate('/login');
@@ -28,6 +34,7 @@ const Home = () => {
   }, [loggedIn, logout, navigate]);
 
   const handleGoToFeed = useCallback(async () => {
+    track('go to feed');
     try {
       const { data, error } = await supabase
         .from('users')

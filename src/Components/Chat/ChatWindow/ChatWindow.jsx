@@ -36,9 +36,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     setupRealtimeSubscription();
   }, [matchId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   useEffect(() => {
     if (!loading) {
@@ -204,7 +201,7 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
                   onClick={handleSendSuggestion}
                   className="px-4 py-1.5 bg-rose-500 text-white text-sm rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                 >
-                  Send
+                  Verstuur
                 </button>
               </div>
             </div>

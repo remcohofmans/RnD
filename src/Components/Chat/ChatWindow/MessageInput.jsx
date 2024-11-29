@@ -60,13 +60,13 @@ export const MessageInput = ({ onSendMessage }) => {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         className="flex-grow px-3 py-2 bg-white border border-rose-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        placeholder="Type a message..."
+                        placeholder="schrijf een bericht"
                     />
                     <button 
                         type="submit" 
                         className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                     >
-                        Send
+                        Verstuur
                     </button>
                 </div>
     

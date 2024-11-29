@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkle } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
-import UserCard from '../Components/Feed/UserCard';
+import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
-import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
-import NavigationButton from './Feed/NavigationButton';
+import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
 import { useNavigate } from 'react-router-dom';
 import FeedSkeleton from './FeedSkeleton';
+import FriendFeedSkeleton from './FriendFeedSkeleton';
 
-const Feed = () => {
+const FeedFriends = () => {
   const { user, checkSubscription } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
-  const [checkingAccess, setCheckingAccess] = useState(true);
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
@@ -32,28 +31,6 @@ const Feed = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
-  const checkUserAccess = async () => {
-    setCheckingAccess(true);
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('access_granted')
-        .eq('id', user.id)
-        .single();
-  
-      if (error) throw error;
-      
-      setHasAccess(data.access_granted === 'YES');
-      return data.access_granted === 'YES';
-    } catch (error) {
-      console.error('Error checking access:', error);
-      setError('Er ging iets mis bij het controleren van je toegang.');
-      return false;
-    } finally {
-      setCheckingAccess(false);  // New line
-    }
-  };
-
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -62,13 +39,6 @@ const Feed = () => {
   
     setLoading(true);
     setError(null);
-
-    // First check if user has access
-    const userHasAccess = await checkUserAccess()
-      if (!userHasAccess) {
-        setLoading(false);
-          return;
-      }
   
     try {
       // Fetch user preferences
@@ -227,32 +197,10 @@ const Feed = () => {
     setMustSpin(false);
   };
 
-  // Show skeleton loader while checking access
-if (checkingAccess) {
-  return (
-    <FeedSkeleton />
-  );
-}
-
-  if (!hasAccess) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-rose-900 mb-4">Toegang Vereist</h2>
-          <p className="text-gray-800 mb-4">
-            Wacht op de toegang van je begeleider
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
-    return (
-      <FeedSkeleton />
-    );
+    return <FriendFeedSkeleton />;
   }
-
+  
   if (error || users.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
@@ -271,99 +219,118 @@ if (checkingAccess) {
               ? `Oeps! Er ging iets mis: ${error}`
               : 'Geen matches gevonden. Pas je voorkeuren aan.'}
           </p>
-          <NavigationButton />
+          <button
+            onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
+            className="px-6 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors"
+          >
+            {error ? 'Opnieuw proberen' : 'Filter aanpassen'}
+          </button>
         </div>
       </div>
     );
   }
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
-    <div className="container mx-auto px-4 max-w-6xl">
-      <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
-          Ontdek je Match
-        </h1>
-        <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
-          <Sparkle />
-          Spin het wiel en laat het toeval je naar de ware verbinding leiden
-          <Sparkle />
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12 relative overflow-hidden">
+      {/* Decorative heart background elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+        <div className="absolute top-10 left-10">
+          <Heart className="text-rose-200 w-24 h-24" />
+        </div>
+        <div className="absolute bottom-20 right-20">
+          <Heart className="text-rose-200 w-32 h-32" />
+        </div>
+        <div className="absolute top-1/3 left-1/4">
+          <Heart className="text-rose-200 w-16 h-16" />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Wheel Column */}
-        <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
-          <div className="relative w-full max-w-md mb-8">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={currentIndex}
-              data={wheelData}
-              onStopSpinning={handleWheelStop}
-              radiusLineWidth={3}
-              radiusLineColor="border-pink-500"
-              outerBorderWidth={6}
-              outerBorderColor="border-pink-400"
-              fontSize={18}
-              perpendicularText
-              textDistance={85}
-              backgroundColors={[
-                'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100',
-                'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
-                'bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200',
-                'bg-gradient-to-r from-green-200 via-green-300 to-blue-100',
-                'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
-                'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
-              ]}
-              textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
-              textColor="text-white"
-              animationDuration={3000}
-              spinEase="ease-out"
-              wheelSize={300}
-              onStartSpinning={() => console.log('Wheel started spinning!')}
-            />
-
-            <button
-              className="absolute inset-0 w-32 h-32 m-auto rounded-full 
-                bg-gradient-to-br from-rose-500 to-rose-700 
-                shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
-                text-white font-bold z-10 
-                flex items-center justify-center 
-                pulse-animation
-                active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
-                hover:brightness-110 
-                transition-all duration-300 
-                disabled:opacity-50 disabled:cursor-not-allowed
-                text-2xl tracking-wider"
-              onClick={handleSpinClick}
-              disabled={mustSpin}
-            >
-              {mustSpin ? 'Draaien...' : 'SPIN'}
-            </button>
-          </div>
+      <div className="container mx-auto px-4 max-w-6xl relative z-10">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight flex items-center justify-center gap-4">
+            <Sparkles className="text-rose-500 animate-pulse" />
+            Vind Je Perfecte Vriend
+            <Sparkles className="text-rose-500 animate-pulse" />
+          </h1>
+          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
+            Ontdek verbindingen door het lot te laten beslissen
+          </p>
         </div>
 
-        {/* User Card Column */}
-        <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
-          <AnimatePresence mode="wait">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Wheel Column */}
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-2xl border border-rose-100 p-8 flex flex-col items-center">
+            <div className="relative w-full max-w-md mb-8">
+              <Wheel
+                mustStartSpinning={mustSpin}
+                prizeNumber={currentIndex}
+                data={users.map((user, index) => ({
+                  option: user.name,
+                  style: {
+                    backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
+                    textColor: index % 3 === 0 ? '#881337' : '#ffffff'
+                  }
+                }))}
+                onStopSpinning={handleWheelStop}
+                radiusLineWidth={3}
+                radiusLineColor="border-rose-500"
+                outerBorderWidth={6}
+                outerBorderColor="border-rose-400"
+                fontSize={18}
+                perpendicularText
+                textDistance={85}
+                backgroundColors={[
+                  'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100',
+                  'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
+                  'bg-gradient-to-r from-red-200 via-rose-300 to-pink-100',
+                ]}
+                textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
+                textColor="text-white"
+                animationDuration={3000}
+                spinEase="ease-out"
+                wheelSize={300}
+              />
+
+              <button
+                className="absolute inset-0 w-32 h-32 m-auto rounded-full 
+                  bg-gradient-to-br from-rose-500 to-rose-700 
+                  shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
+                  text-white font-bold z-10 
+                  flex items-center justify-center 
+                  pulse-animation
+                  active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
+                  hover:brightness-110 
+                  transition-all duration-300 
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                  text-2xl tracking-wider"
+                onClick={handleSpinClick}
+                disabled={mustSpin}
+              >
+                {mustSpin ? 'Draaien...' : 'DRAAI'}
+              </button>
+            </div>
+          </div>
+
+          {/* User Card Column */}
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex flex-col items-center">
             {mustSpin ? (
-              <div className="text-center text-rose-100 p-8">
+              <div className="text-center text-rose-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale match...</p>
+                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
                 </div>
               </div>
             ) : (
               <div className="w-full">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} />
+                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={false} />
               </div>
             )}
-          </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
-export default Feed;
+
+export default FeedFriends;
