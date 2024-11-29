@@ -27,8 +27,6 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
 
   const handleLoveClick = async (isLove) => {
     try {
-      console.log("Logged-in user ID: ", currentUserId, "liked_user_id: ", user.id);
-
       // Check if like already exists
       const { data: existingLike, error: checkError } = await supabase
         .from('likes')
@@ -36,32 +34,37 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
         .eq('user_id', currentUserId)
         .eq('liked_user_id', user.id)
         .single();
-
-      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is the "no rows returned" error
+  
+      if (checkError && checkError.code !== 'PGRST116') {
         console.error('Error checking existing like:', checkError);
         return;
       }
-
+  
       if (existingLike) {
         alert('You have already liked this user!');
         return;
       }
-
+  
       // Insert new like
-      const { data: likeData, error: likeError } = await supabase
+      const { error: likeError } = await supabase
         .from('likes')
         .insert([{
           user_id: currentUserId,
           liked_user_id: user.id,
-          love_like: isLove ? 'TRUE' : 'FALSE' // Ensure the enum value is inserted correctly
+          love_like: isLove
         }]);
-
+  
       if (likeError) {
         console.error('Supabase error:', likeError);
         alert('Error liking user, please try again.');
         return;
       }
-
+  
+      track('User Liked', {
+        userOne: currentUserId,
+        userTwo: user.id
+      });
+  
       // Check if the other user has already liked the current user
       const { data: mutualLikeData, error: mutualLikeError } = await supabase
         .from('likes')
@@ -69,68 +72,66 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
         .eq('user_id', user.id)
         .eq('liked_user_id', currentUserId)
         .single();
-
+  
       if (mutualLikeError && mutualLikeError.code !== 'PGRST116') {
         console.error('Error checking mutual like:', mutualLikeError);
         return;
       }
-
-      // If there's a mutual like, create a match and remove the likes
-      if (mutualLikeData) {
-        // Insert into matches table with both user IDs
+  
+      // Check if both users have the same type of like (both love or both friend)
+      if (mutualLikeData && mutualLikeData.love_like === isLove) {
+        // Insert into matches table
         const { error: matchError } = await supabase
           .from('matches')
           .insert([{
-            id: currentUserId,
-            matched_user_id: user.id
+            user_id: currentUserId,
+            matched_user_id: user.id,
+            love_like: isLove
           }]);
-
+  
         if (matchError) {
           console.error('Error creating match:', matchError);
           alert('Error creating match, please try again.');
           return;
         }
+  
         track('users matched', {
           userOne: currentUserId,
-          userTwo: user.id
+          userTwo: user.id,
+          matchType: isLove ? 'love' : 'friend'
         });
-
-        // Delete first like (current user's like)
-        const { error: deleteFirstLikeError } = await supabase
-          .from('likes')
-          .delete()
-          .eq('user_id', currentUserId)
-          .eq('liked_user_id', user.id);
-
-        if (deleteFirstLikeError) {
-          console.error('Error removing first like:', deleteFirstLikeError);
+  
+        // Delete both likes
+        const deleteLikes = await Promise.all([
+          supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', currentUserId)
+            .eq('liked_user_id', user.id),
+          supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('liked_user_id', currentUserId)
+        ]);
+  
+        if (deleteLikes.some(({ error }) => error)) {
+          console.error('Error removing likes:', deleteLikes);
           alert('Error updating match status, please try again.');
           return;
         }
-
-        // Delete second like (other user's like)
-        const { error: deleteSecondLikeError } = await supabase
-          .from('likes')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('liked_user_id', currentUserId);
-
-        if (deleteSecondLikeError) {
-          console.error('Error removing second like:', deleteSecondLikeError);
-          alert('Error updating match status, please try again.');
-          return;
-        }
-
-        alert('It\'s a match! 🎉');
+  
+        alert(`It's a ${isLove ? 'love' : 'friend'} match! 🎉`);
       } else {
         alert('User liked successfully!');
       }
-
+  
     } catch (error) {
       console.error('Error in handleLoveClick:', error.message || error);
       alert('An error occurred, please try again.');
     }
   };
+
 
   return (
     <div className="user-card bg-rose-200 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
