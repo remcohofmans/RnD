@@ -76,12 +76,27 @@ const FeedFriends = () => {
       const currentUserCity = currentUserFacility.city;
       const maxDistance = userPreferences.distance;
   
-      // Fetch users with access granted and not the current user
+      // Fetch the list of users the current user has already liked
+      const { data: likedUsers, error: likedUsersError } = await supabase
+        .from('likes')
+        .select('liked_user_id')
+        .eq('user_id', user.id);
+  
+      if (likedUsersError) {
+        throw new Error("Failed to fetch liked users.");
+      }
+  
+      const likedUserIds = likedUsers.map(like => like.liked_user_id);
+
+      console.log("liked user ids", likedUserIds);
+  
+      // Fetch users with access granted and not the current user, and not already liked
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
         .from('users')
         .select('id, birthday, name, facility_id, gender')
         .eq('access_granted', 'YES')
         .neq('id', user.id)
+        .neq('id', likedUserIds)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null)
@@ -116,6 +131,7 @@ const FeedFriends = () => {
         fetchedUsers.map(async (potentialUser) => {
           const age = calculateAge(potentialUser.birthday);
   
+          // Age and interest preferences filter
           if (
             age < userPreferences.min_age ||
             age > userPreferences.max_age ||
@@ -132,10 +148,12 @@ const FeedFriends = () => {
   
           const distance = await calculateDistance(currentUserCity, facility.city);
   
+          // Distance preference filter
           if (parseFloat(distance) > maxDistance) {
             return null;
           }
   
+          // Fetch user preferences for hobbies
           const { data: preferencesData, error: preferencesDataError } = await supabase
             .from('userpreferences')
             .select('hobbies')
@@ -166,7 +184,6 @@ const FeedFriends = () => {
       setLoading(false);
     }
   };
-  
   
   
 
