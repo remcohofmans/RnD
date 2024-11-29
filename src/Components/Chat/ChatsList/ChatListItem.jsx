@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/helper/supabaseClient';
+import { UserPicture } from '../../UserSettings/UserPicture'; // Adjust the path based on your folder structure
 
 export const ChatListItem = ({ match, isSelected, onSelect }) => {
   const [hasSentMessage, setHasSentMessage] = useState(false);
@@ -16,7 +17,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       setIsLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       const currentUser = session?.user;
-      
+
       if (!currentUser) {
         console.error('No user session found');
         return;
@@ -48,7 +49,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       const hasMessages = Boolean(messages && messages.length > 0);
       setHasSentMessage(hasMessages);
       setLastMessage(lastMessageData?.[0] || null);
-      
+
       // Check if the last message is from the other user
       if (lastMessageData?.[0]) {
         setIsOtherUserLastSender(lastMessageData[0].sender_id !== currentUser.id);
@@ -63,7 +64,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
 
   const StatusBadge = () => {
     if (isLoading) return null;
-    
+
     if (!hasSentMessage) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
@@ -71,7 +72,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
         </span>
       );
     }
-    
+
     if (isOtherUserLastSender) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
@@ -90,14 +91,24 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       }`}
       onClick={() => onSelect(match.match_id)}
     >
-      <div className="p-4 flex justify-between items-center">
+      <div className="p-4 flex items-center gap-3">
+        {/* Add the UserPicture component here */}
+        <UserPicture
+          userId={match.otherUserId}
+          category="profielAfbeelding"
+          variant="circle"
+          size="md" // Adjust size based on your design
+          fallbackText={match.otherUserName || 'U'}
+        />
         <div className="flex-1">
-          <h3 className="text-lg font-medium text-rose-900">
+          <h3 className="text-lg font-semibold text-rose-900">
             {match.otherUserName || 'Unknown name in db'}
           </h3>
           {lastMessage && (
-            <p className="text-sm text-rose-500 truncate">
-              {lastMessage.message.length > 30 ? lastMessage.message.slice(0, 30) + '...' : lastMessage.message}
+            <p className="text-sm text-gray-600 truncate mt-1">
+              {lastMessage.message.length > 30
+                ? lastMessage.message.slice(0, 25) + '...'
+                : lastMessage.message}
             </p>
           )}
         </div>
