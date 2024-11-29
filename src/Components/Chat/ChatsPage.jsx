@@ -4,6 +4,7 @@ import { ChatWindow } from './ChatWindow/ChatWindow.jsx';
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth.js';
 import { useMatches } from '../../hooks/useMatches.jsx';
 import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
+import ChatsPageSkeleton from './ChatPageSkeleton.jsx';
 import useCheckUserProfile from '../../hooks/useCheckUserProfile.jsx';
 import UserCardChats from './ChatWindow/UserCardChats.jsx';
 
@@ -17,7 +18,8 @@ const ChatsPage = () => {
     checkUserProfile();
   }, [checkUserProfile]);
 
-  if (authLoading || matchesLoading) return <LoadingSpinner />;
+  //if (authLoading || matchesLoading) return <LoadingSpinner />;
+  if (authLoading || matchesLoading) return <ChatsPageSkeleton />;
   if (authError || matchesError) return <div className="text-red-500 text-center p-4">{authError || matchesError}</div>;
 
   // Find the selected match object
