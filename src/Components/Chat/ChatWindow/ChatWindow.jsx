@@ -36,9 +36,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     setupRealtimeSubscription();
   }, [matchId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   useEffect(() => {
     if (!loading) {
