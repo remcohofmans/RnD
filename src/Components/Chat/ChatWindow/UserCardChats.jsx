@@ -112,47 +112,60 @@ const UserCardChats = ({ user: userId }) => {
   }
 
   return (
-    <div className="user-card bg-rose-100 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
+    <div className="user-card bg-white rounded-xl shadow-md p-6 mb-8 w-full max-w-md mx-auto">
       {/* Profile Picture */}
-      <CarouselCard userId={userId} />
-
-      {/* User Info */}
-      <h2 className="name text-2xl font-semibold text-[#360009] text-center">{userData.name}</h2>
-      <div className="info text-left mt-4">
-        <p className="age text-[#360009]">
-          <FontAwesomeIcon icon={faUser} className="mr-2" />
-          {age} jaar
-        </p>
-        <p className="location text-[#360009]">
-          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-          {userData.city}
-        </p>
-        <p className="facility text-[#360009]">
-          <FontAwesomeIcon icon={faBuilding} className="mr-2" />
-          {userData.facility}
-        </p>
+      <div className="profile-picture mb-6">
+        <CarouselCard userId={userId} />
       </div>
-
+  
+      {/* User Info */}
+      <div className="user-info text-center">
+        <h2 className="name text-3xl font-bold text-gray-800 mb-2">{userData.name}</h2>
+        <div className="details text-gray-600">
+          <p className="age flex items-center justify-center gap-2">
+            <FontAwesomeIcon icon={faUser} className="text-gray-500" />
+            {age ? `${age} jaar` : "Age not available"}
+          </p>
+          <p className="location flex items-center justify-center gap-2 mt-2">
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
+            {userData.city || "City not available"}
+          </p>
+          <p className="facility flex items-center justify-center gap-2 mt-2">
+            <FontAwesomeIcon icon={faBuilding} className="text-gray-500" />
+            {userData.facility || "Facility not available"}
+          </p>
+        </div>
+      </div>
+  
+      {/* Divider */}
+      <div className="divider my-6 border-t border-gray-200"></div>
+  
       {/* Hobbies Section */}
-      <div className="hobbies mt-4 text-left">
-        <span className="hobbies-label text-[#fb7185] font-bold">Hobbies:</span>
-        <div className="hobby-icons flex flex-wrap gap-3 mt-2">
+      <div className="hobbies text-left">
+        <h3 className="hobbies-label text-lg font-semibold text-gray-800 mb-3">
+          Hobbies
+        </h3>
+        <div className="hobby-icons flex flex-wrap gap-4">
           {hobbies.length > 0 ? (
             hobbies.map((hobby, index) => (
-              <span key={index} className="hobby-item flex items-center text-[#360009] text-sm">
-                <span role="img" aria-label={hobby.name} className="mr-2 text-xl">
+              <div
+                key={index}
+                className="hobby-item flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2 shadow-sm text-sm text-gray-700"
+              >
+                <span role="img" aria-label={hobby.name} className="text-lg">
                   {hobby.icon}
                 </span>
                 {hobby.name}
-              </span>
+              </div>
             ))
           ) : (
-            <p className="text-[#360009]">No hobbies listed</p>
+            <p className="text-gray-500">No hobbies listed</p>
           )}
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default UserCardChats;
