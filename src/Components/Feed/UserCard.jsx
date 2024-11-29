@@ -61,6 +61,10 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
         alert('Error liking user, please try again.');
         return;
       }
+      track('User Liked', {
+        userOne: currentUserId,
+        userTwo: user.id
+      });
 
       // Check if the other user has already liked the current user
       const { data: mutualLikeData, error: mutualLikeError } = await supabase
