@@ -34,7 +34,7 @@ const TopNavigationBar = () => {
   const leftItem = { icon: logo, path: '/' }; // Using image for home
   const centerItems = [
     { icon: faHeart, label: 'Liefde', path: '/feed' },
-    { icon: faUserFriends, label: 'Vriendschap', path: '/feed' },
+    { icon: faUserFriends, label: 'Vriendschap', path: '/feedFriends' },
     { icon: faComment, label: 'Berichten', path: '/chats' },
     { icon: faCog, label: 'Instellingen', path: '/settingsUser' }
   ];

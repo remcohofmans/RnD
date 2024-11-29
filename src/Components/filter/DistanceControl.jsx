@@ -24,7 +24,7 @@ const DistanceControl = ({ value, onChange, id = 'distance-input' }) => {
     const newDistance = Math.min(Math.max(1, parseInt(newValue)), 300);
     
     if (newDistance !== parseInt(newValue)) {
-      setError('Value must be between 1 and 100');
+      setError('Value must be between 1 and 300');
     }
 
     setDistance(newDistance);
