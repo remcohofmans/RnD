@@ -16,6 +16,7 @@ import SubscriptionPlans from './Components/SubscriptionPlans'
 
 import MainLayout from './MainLayout';
 import ProtectedRoute from './ProtectedRoute';
+import TopNavigationBar from './Components/common/TopNavigationBar';
 
 function AppRoutes() {
 
@@ -27,6 +28,7 @@ function AppRoutes() {
       <Route path="/login" element={!user ? <LoginRegister /> : <Navigate to="/" />} />
       <Route path="/forgotPassword" element={<PasswordRecovery />} />
       <Route path="/updatePassword" element={<PasswordUpdate />} />
+      <Route path="/topbar" element={<TopNavigationBar />} />
 
       {/* Protected Routes */}
       <Route

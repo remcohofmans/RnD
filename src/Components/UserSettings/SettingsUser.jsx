@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Filter, Key, Image, PauseCircle } from 'lucide-react';
+import { Ellipsis , Settings, Filter, Key, Image, PauseCircle } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import { supabase } from '../../lib/helper/supabaseClient';
 import UserFilterForm from './UserFilterForm';
@@ -76,7 +76,7 @@ const SettingsUser = () => {
       {/* Sidebar */}
       <div className={`flex flex-col h-full ${sidebarOpen ? 'w-80' : 'w-0'} md:w-80 bg-white shadow-lg transition-all duration-300`}>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white mt-12 md:mt-16">
           <Settings className="w-6 h-6 text-rose-500" />
           <h1 className="text-xl font-semibold text-gray-900">Instellingen</h1>
         </div>
@@ -123,17 +123,17 @@ const SettingsUser = () => {
       </div>
 
       {/* Hamburger button for small screens */}
-      <div className="lg:hidden md:hidden fixed top-4 left-4 z-10">
+      <div className="lg:hidden md:hidden fixed top-14 left-4 z-10">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="text-rose-500 bg-white p-2 rounded-full shadow-lg">
-          <Settings className="w-6 h-6" />
+          <Ellipsis  className="w-6 h-6" />
         </button>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 justify-center items-center bg-rose-50 overflow-y-auto">
-        <div className="w-full rounded-xl p-6">
+        <div className="w-full rounded-xl p-6 mt-12">
           {/* Dynamic Content */}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
