@@ -317,7 +317,7 @@ if (checkingAccess) {
               ]}
               textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
               textColor="text-white"
-              animationDuration={4000}
+              animationDuration={3000}
               spinEase="ease-out"
               wheelSize={300}
               onStartSpinning={() => console.log('Wheel started spinning!')}

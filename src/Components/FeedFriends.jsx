@@ -8,6 +8,8 @@ import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
 import { useNavigate } from 'react-router-dom';
+import FeedSkeleton from './FeedSkeleton';
+import FriendFeedSkeleton from './FriendFeedSkeleton';
 
 const FeedFriends = () => {
   const { user, checkSubscription } = useAuth();
@@ -196,20 +198,9 @@ const FeedFriends = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-          <div className="animate-pulse space-y-4">
-            <div className="h-24 bg-rose-200 rounded-lg"></div>
-            <div className="h-12 bg-rose-100 rounded-lg"></div>
-            <div className="h-6 bg-rose-50 rounded-lg"></div>
-          </div>
-          <p className="mt-4 text-rose-600 font-medium">Matches aan het verzamelen...</p>
-        </div>
-      </div>
-    );
+    return <FriendFeedSkeleton />;
   }
-
+  
   if (error || users.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
@@ -238,28 +229,24 @@ const FeedFriends = () => {
       </div>
     );
   }
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12 relative overflow-hidden">
       {/* Decorative heart background elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
-        <div className="absolute top-10 left-10 animate-float">
+        <div className="absolute top-10 left-10">
           <Heart className="text-rose-200 w-24 h-24" />
         </div>
-        <div className="absolute bottom-20 right-20 animate-float-delayed">
+        <div className="absolute bottom-20 right-20">
           <Heart className="text-rose-200 w-32 h-32" />
         </div>
-        <div className="absolute top-1/3 left-1/4 animate-float-reverse">
+        <div className="absolute top-1/3 left-1/4">
           <Heart className="text-rose-200 w-16 h-16" />
         </div>
       </div>
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight flex items-center justify-center gap-4">
             <Sparkles className="text-rose-500 animate-pulse" />
             Vind Je Perfecte Vriend
@@ -268,16 +255,11 @@ const FeedFriends = () => {
           <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
             Ontdek verbindingen door het lot te laten beslissen
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Wheel Column */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-2xl border border-rose-100 p-8 flex flex-col items-center"
-          >
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-2xl border border-rose-100 p-8 flex flex-col items-center">
             <div className="relative w-full max-w-md mb-8">
               <Wheel
                 mustStartSpinning={mustSpin}
@@ -304,12 +286,12 @@ const FeedFriends = () => {
                 ]}
                 textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
                 textColor="text-white"
-                animationDuration={4000}
+                animationDuration={3000}
                 spinEase="ease-out"
                 wheelSize={300}
               />
 
-              <motion.button
+              <button
                 className="absolute inset-0 w-32 h-32 m-auto rounded-full 
                   bg-gradient-to-br from-rose-500 to-rose-700 
                   shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
@@ -323,49 +305,27 @@ const FeedFriends = () => {
                   text-2xl tracking-wider"
                 onClick={handleSpinClick}
                 disabled={mustSpin}
-                whileHover={{ scale: mustSpin ? 1 : 1.1 }}
-                whileTap={{ scale: 0.95 }}
               >
                 {mustSpin ? 'Draaien...' : 'DRAAI'}
-              </motion.button>
+              </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* User Card Column */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex flex-col items-center"
-          >
-            <AnimatePresence mode="wait">
-              {mustSpin ? (
-                <motion.div
-                  className="text-center text-rose-800 p-8"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex flex-col items-center space-y-6">
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                    <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={users[currentIndex]?.id}
-                  className="w-full"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={false} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex flex-col items-center">
+            {mustSpin ? (
+              <div className="text-center text-rose-800 p-8">
+                <div className="flex flex-col items-center space-y-6">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
+                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full">
+                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={false} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
