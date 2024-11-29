@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
-import { Mail, Lock, Heart } from 'lucide-react';
+import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
 import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
 import { useNavigate } from 'react-router-dom';  // Import the hook
 
@@ -35,11 +35,13 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { user, loginWithEmail, signUpWithEmail, updateFacilityEnum } = useAuth();
+  const { user, loginWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();  // Use navigate here, inside the component
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
+
+    console.log(supabase);
 
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
@@ -478,6 +480,7 @@ const LoginRegister = () => {
                       <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
                     </div>
                     <div className="relative">
+                      <Building className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={facilityCode}
@@ -495,6 +498,7 @@ const LoginRegister = () => {
                       <span>Geef uw mentor ID in. (*)</span>
                     </div>
                     <div className="relative">
+                      <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={mentorCode}
@@ -543,15 +547,27 @@ const LoginRegister = () => {
                 {/* Terms & Conditions Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="terms-checkbox"
                     type="checkbox"
                     checked={isTermsAgreed}
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label 
+                    htmlFor="terms-checkbox" 
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>
+                    <a 
+                      href="#" 
+                      className="text-[#e11d48]" 
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        setShowTermsModal(true); 
+                      }}
+                    >
                       Terms and Conditions
                     </a>.
                   </label>
@@ -560,15 +576,27 @@ const LoginRegister = () => {
                 {/* Privacy Policy Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="privacy-checkbox"
                     type="checkbox"
                     checked={isPrivacyPolicyAgreed}
                     onChange={(e) => setIsPrivacyPolicyAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label 
+                    htmlFor="privacy-checkbox" 
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>
+                    <a 
+                      href="#" 
+                      className="text-[#e11d48]" 
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        setShowPrivacyModal(true); 
+                      }}
+                    >
                       Privacy Policy
                     </a>.
                   </label>

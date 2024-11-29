@@ -45,13 +45,19 @@ const PasswordUpdate = () => {
     setMessage('');
 
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const resetToken = urlParams.get('token');
+
+      // Then use this token in your update request
       const { data, error } = await supabase.auth.updateUser({
         token: resetToken,
         password: newPassword,
       });
 
       if (error) {
-        throw error;
+        console.error("Error updating password:", error.message);
+      } else {
+        console.log("Password updated successfully:", data);
       }
 
       setMessage('Uw paswoord is succesvol gewijzigd.');
@@ -75,7 +81,7 @@ const PasswordUpdate = () => {
       {/* Decorative Background Elements */}
       <div className="absolute -top-20 -left-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
-      
+
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-rose-100 overflow-hidden">
           <div className="p-8 relative">

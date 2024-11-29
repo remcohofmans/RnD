@@ -8,7 +8,7 @@ import {
   faStar,
   faComment,
 } from '@fortawesome/free-solid-svg-icons';
-import { supabase } from '../../../supabaseClient';
+import { supabase } from '../../../lib/helper/supabaseClient';
 import CarouselCard from '../../Feed/CarouselCard';
 import { LoadingSpinner } from '../../common/LoadingSpinner';
 

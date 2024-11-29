@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../../../supabaseClient';
+import { supabase } from '../../../lib/helper/supabaseClient';
 
 export const UnmatchButton = ({ otherUserName, otherUserId, matchId, onUnmatch }) => {
   const [showUnmatchModal, setShowUnmatchModal] = useState(false);

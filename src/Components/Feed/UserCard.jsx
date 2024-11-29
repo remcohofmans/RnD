@@ -12,7 +12,7 @@ import {
 
 import { useAnalytics } from '../../hooks/analyticsContext.js';
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 import CarouselCard from '../Feed/CarouselCard';
 
 

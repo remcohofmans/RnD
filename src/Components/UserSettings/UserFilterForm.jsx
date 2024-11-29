@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DistanceControl from '../filter/DistanceControl';
 import AgeRangeControl from '../filter/AgeRangeControl';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../lib/helper/supabaseClient';
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../filter/AvailableHobbiesPage';
 
 const FilterForm = () => {
@@ -11,17 +11,17 @@ const FilterForm = () => {
     minAge: '18',
     maxAge: '35',
   });
-  
+
   const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]); 
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const interestOptions = [
-    { value: 'man', label: 'Man 🤷‍♂️' },
-    { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
-    { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
+    { value: 'man', label: 'Man 👨' },
+    { value: 'vrouw', label: 'Vrouw 👩' },
+    { value: 'geen-voorkeur', label: 'Geen Voorkeur 🌈' },
   ];
 
   useEffect(() => {
