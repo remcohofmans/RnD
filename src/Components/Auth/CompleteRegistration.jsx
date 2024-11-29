@@ -63,7 +63,7 @@ const CompleteProfile = () => {
           user_id: user.id,
           subscription: 'BASIS',
           end_date: endDate,
-          active: true
+          active: false
         })
       if (subscriptionError){
         console.log("starting free trial failed", subscriptionError);

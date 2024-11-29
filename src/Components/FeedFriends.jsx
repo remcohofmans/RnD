@@ -7,9 +7,10 @@ import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
+import { useNavigate } from 'react-router-dom';
 
 const FeedFriends = () => {
-  const { user } = useAuth();
+  const { user, checkSubscription } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,7 @@ const FeedFriends = () => {
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
+  const navigate = useNavigate();
 
   const calculateAge = (birthday) => {
     if (!birthday) return null;
@@ -169,6 +171,7 @@ const FeedFriends = () => {
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
+      checkSubscription(navigate);
     }
   }, [isDistanceServiceInitialized]);
 

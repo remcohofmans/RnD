@@ -7,9 +7,10 @@ import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
 import NavigationButton from './Feed/NavigationButton';
+import { useNavigate } from 'react-router-dom';
 
 const Feed = () => {
-  const { user } = useAuth();
+  const { user, checkSubscription } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -20,6 +21,7 @@ const Feed = () => {
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
+  const navigate = useNavigate();
 
   const calculateAge = (birthday) => {
     if (!birthday) return null;
@@ -200,6 +202,7 @@ const Feed = () => {
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
+      checkSubscription(navigate);
     }
   }, [isDistanceServiceInitialized]);
 
