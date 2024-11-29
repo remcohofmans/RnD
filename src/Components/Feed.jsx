@@ -257,7 +257,7 @@ const Feed = () => {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-rose-900 rounded-2xl shadow-xl p-8 flex flex-col items-center"
+            className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center"
           >
             <div className="relative w-full max-w-md mb-8">
               <Wheel
@@ -315,12 +315,12 @@ const Feed = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-rose-900 rounded-2xl p-8 flex flex-col items-center"
+            className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center"
           >
             <AnimatePresence mode="wait">
               {mustSpin ? (
                 <motion.div
-                  className="text-center text-rose-800 p-8"
+                  className="text-center text-rose-100 p-8"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
