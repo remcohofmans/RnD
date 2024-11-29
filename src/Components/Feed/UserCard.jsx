@@ -27,7 +27,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
 
   const handleLoveClick = async (isLove) => {
     try {
-      const likeValue = isLove ? 'love' : 'friend';
+      const likeValue = isLove ? 'true' : 'false';
   
       // Check existing like
       const { data: existingLike, error: checkError } = await supabase
