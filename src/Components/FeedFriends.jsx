@@ -87,8 +87,10 @@ const FeedFriends = () => {
       }
   
       const likedUserIds = likedUsers.map(like => like.liked_user_id);
-
       console.log("liked user ids", likedUserIds);
+  
+      // Format likedUserIds for Supabase `not.in` filter
+      const likedUserIdsFormatted = `(${likedUserIds.map(id => `"${id}"`).join(',')})`;
   
       // Fetch users with access granted and not the current user, and not already liked
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
@@ -96,13 +98,14 @@ const FeedFriends = () => {
         .select('id, birthday, name, facility_id, gender')
         .eq('access_granted', 'YES')
         .neq('id', user.id)
-        .neq('id', likedUserIds)
+        .not('id', 'in', likedUserIdsFormatted)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null)
         .limit(USERS_TO_FETCH);
   
       if (fetchedUsersError) {
+        console.error("Error fetching users:", fetchedUsersError);
         throw new Error("Failed to fetch users.");
       }
   
@@ -119,6 +122,7 @@ const FeedFriends = () => {
         .in('id', facilityIds);
   
       if (facilitiesError) {
+        console.error("Error fetching facilities:", facilitiesError);
         throw new Error("Failed to fetch facilities.");
       }
   
@@ -161,6 +165,7 @@ const FeedFriends = () => {
             .single();
   
           if (preferencesDataError) {
+            console.error("Error fetching user preferences for hobbies:", preferencesDataError);
             return null;
           }
   
@@ -180,11 +185,11 @@ const FeedFriends = () => {
       setUsers(usersWithDetails.filter(Boolean).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
+      console.error("Error fetching user data:", error);
     } finally {
       setLoading(false);
     }
   };
-  
   
 
   useEffect(() => {
