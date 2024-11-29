@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthContext';
 
-
 const AccessRequests = () => {
   const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
   const [users, setUsers] = useState([]);
@@ -12,7 +11,6 @@ const AccessRequests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
   const usersPerPage = 10;
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -33,7 +31,6 @@ const AccessRequests = () => {
     }
   }, [user, fetchUsersForMentor]);
 
-  //search bar
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -52,7 +49,7 @@ const AccessRequests = () => {
   };
 
   const handleViewDetails = async (userId) => {
-    const selected = users.find(user => user.id === userId);
+    const selected = users.find((user) => user.id === userId);
     if (selected) {
       const profilePictureUrl = await fetchProfilePictureUrl(userId);
       setSelectedUser({ ...selected, profilePictureUrl });
@@ -105,7 +102,7 @@ const AccessRequests = () => {
           />
         )}
 
-        <div className="overflow-y-auto max-h-[55vh] mb-4">
+        <div className="overflow-y-auto max-h-[50vh] mb-4">
           {!selectedUser && (
             <ul className="space-y-2">
               {currentUsers.map((user) => (
@@ -129,7 +126,7 @@ const AccessRequests = () => {
           )}
 
           {selectedUser && (
-            <div className="bg-white p-6 border border-gray-300 rounded mt-4">
+            <div className="bg-white p-6 border border-gray-300 rounded">
               <h3 className="text-xl font-semibold mb-4">Gebruiker Details</h3>
               <p><strong>Naam:</strong> {selectedUser.name || 'Geen naam'}</p>
               <p><strong>Email:</strong> {selectedUser.email}</p>
@@ -155,18 +152,21 @@ const AccessRequests = () => {
                   Afwijzen
                 </button>
               </div>
-              <button
-                onClick={handleGoBack}
-                className="mt-4 text-gray-500 underline"
-              >
-                Terug
-              </button>
             </div>
           )}
         </div>
 
+        {selectedUser && (
+          <button
+            onClick={handleGoBack}
+            className="mt-4 text-gray-500 underline self-start"
+          >
+            Terug
+          </button>
+        )}
+
         {!selectedUser && (
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-4">
             <button
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
               onClick={goToPreviousPage}

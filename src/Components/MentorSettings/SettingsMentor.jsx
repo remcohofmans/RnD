@@ -70,6 +70,8 @@ const SettingsMentor = () => {
     } else if (option === 'Abonnement verzoeken') {
       setActiveComponent('SubscriptionRequests');
     }
+
+    console.log('Active component: ',option)
   };
 
   return (
