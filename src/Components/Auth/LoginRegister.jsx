@@ -547,15 +547,27 @@ const LoginRegister = () => {
                 {/* Terms & Conditions Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="terms-checkbox"
                     type="checkbox"
                     checked={isTermsAgreed}
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label 
+                    htmlFor="terms-checkbox" 
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>
+                    <a 
+                      href="#" 
+                      className="text-[#e11d48]" 
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        setShowTermsModal(true); 
+                      }}
+                    >
                       Terms and Conditions
                     </a>.
                   </label>
@@ -564,15 +576,27 @@ const LoginRegister = () => {
                 {/* Privacy Policy Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="privacy-checkbox"
                     type="checkbox"
                     checked={isPrivacyPolicyAgreed}
                     onChange={(e) => setIsPrivacyPolicyAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label 
+                    htmlFor="privacy-checkbox" 
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>
+                    <a 
+                      href="#" 
+                      className="text-[#e11d48]" 
+                      onClick={(e) => { 
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        setShowPrivacyModal(true); 
+                      }}
+                    >
                       Privacy Policy
                     </a>.
                   </label>
