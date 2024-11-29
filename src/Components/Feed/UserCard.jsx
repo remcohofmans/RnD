@@ -29,6 +29,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
     try {
       const likeValue = isLove ? 'true' : 'false';
   
+      // Check if the current user has already liked the other user
       const { data: existingLike, error: checkError } = await supabase
         .from('likes')
         .select('*')
@@ -41,19 +42,21 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
         return;
       }
   
-      const likeOperation = existingLike ? 
-        supabase
-          .from('likes')
-          .update({ love_like: likeValue })
-          .eq('user_id', currentUserId)
-          .eq('liked_user_id', user.id) :
-        supabase
-          .from('likes')
-          .insert([{
-            user_id: currentUserId,
-            liked_user_id: user.id,
-            love_like: likeValue
-          }]);
+      const likeOperation = existingLike
+        ? supabase
+            .from('likes')
+            .update({ love_like: likeValue })
+            .eq('user_id', currentUserId)
+            .eq('liked_user_id', user.id)
+        : supabase
+            .from('likes')
+            .insert([
+              {
+                user_id: currentUserId,
+                liked_user_id: user.id,
+                love_like: likeValue,
+              },
+            ]);
   
       const { error: likeError } = await likeOperation;
   
@@ -65,9 +68,23 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
   
       track('User Liked', {
         userOne: currentUserId,
-        userTwo: user.id
+        userTwo: user.id,
       });
   
+      // Check if there is an existing match before proceeding to create a new match
+      const { data: existingMatch, error: matchCheckError } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('id', currentUserId)
+        .eq('matched_user_id', user.id)
+        .single();
+  
+      if (existingMatch) {
+        alert('You and this user are already matched!');
+        return;
+      }
+  
+      // Check for a mutual like between the two users
       const { data: mutualLikeData, error: mutualLikeError } = await supabase
         .from('likes')
         .select('*')
@@ -83,11 +100,13 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
       if (mutualLikeData && mutualLikeData.love_like === likeValue) {
         const { error: matchError } = await supabase
           .from('matches')
-          .insert([{
-            id: currentUserId,
-            matched_user_id: user.id,
-            love_like: likeValue
-          }]);
+          .insert([
+            {
+              id: currentUserId,
+              matched_user_id: user.id,
+              love_like: likeValue,
+            },
+          ]);
   
         if (matchError) {
           console.error('Error creating match:', matchError);
@@ -96,8 +115,16 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
         }
   
         const deleteLikes = await Promise.all([
-          supabase.from('likes').delete().eq('user_id', currentUserId).eq('liked_user_id', user.id),
-          supabase.from('likes').delete().eq('user_id', user.id).eq('liked_user_id', currentUserId)
+          supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', currentUserId)
+            .eq('liked_user_id', user.id),
+          supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('liked_user_id', currentUserId),
         ]);
   
         if (deleteLikes.some(({ error }) => error)) {
@@ -110,12 +137,12 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
       } else {
         alert(`User ${existingLike ? 'updated to love' : 'liked'} successfully!`);
       }
-  
     } catch (error) {
       console.error('Error in handleLoveClick:', error.message || error);
       alert('An error occurred, please try again.');
     }
   };
+  
 
 
   return (
