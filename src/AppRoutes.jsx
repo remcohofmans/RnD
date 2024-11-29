@@ -8,6 +8,7 @@ import PasswordUpdate from './Components/Auth/PasswordUpdate';
 import Home from './Components/Home';
 import ChatsPage from './Components/Chat/ChatsPage';
 import Feed from './Components/Feed';
+import FeedFriends from './Components/FeedFriends';
 import SettingsUser from './Components/UserSettings/SettingsUser';
 import SettingsMentor from './Components/MentorSettings/SettingsMentor';
 import CompleteRegistration from './Components/Auth/CompleteRegistration';
@@ -69,6 +70,17 @@ function AppRoutes() {
           <ProtectedRoute allowedRoles={['USER']}>
             <MainLayout>
               <Feed />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/feedFriends"
+        element={
+          <ProtectedRoute allowedRoles={['USER']}>
+            <MainLayout>
+              <FeedFriends />
             </MainLayout>
           </ProtectedRoute>
         }
