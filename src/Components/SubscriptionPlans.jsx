@@ -5,6 +5,7 @@ import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect} from 'react';
 import { ToggleSlider }  from "react-toggle-slider";
 import { supabase } from '../lib/helper/supabaseClient'; 
+import { useAnalytics } from '../hooks/analyticsContext';
 
 const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
@@ -16,7 +17,7 @@ const Subscription = () => {
     const [payAnnually, setPayAnnually] = useState(false);
     const [userId, setUserId] = useState(null);
 
-
+    const { track } = useAnalytics();
 
     const monthlyPrices = {BASIS: 10, GEVORDERD: 17, ELITE: 20}
     const annualPrices = {BASIS: 110, GEVORDERD: 187, ELITE: 220}
@@ -47,6 +48,10 @@ const Subscription = () => {
     const openSubscriptionModal = (subscription) => {
         setSelectedSubscription(subscription);
         setIsSubscriptionModalOpen(true);
+        track('Subscription Checkout', {
+            user: userId,
+            subscription: selectedSubscription
+        });
     };
 
     const closeSubscriptionModal = () => {
@@ -118,6 +123,10 @@ const Subscription = () => {
             }
             console.log("subscription inserted");
         }        
+        track('Subscription Confirmed', {
+            user: userId,
+            subscription: selectedSubscription
+        });
         openFeedbackModal();
         setCurrentSubscription(selectedSubscription);
         closeSubscriptionModal();
