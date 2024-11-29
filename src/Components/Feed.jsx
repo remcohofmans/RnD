@@ -230,7 +230,7 @@ if (checkingAccess) {
       <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
         <div className="animate-pulse space-y-4">
           <div className="h-24 bg-rose-200 rounded-lg"></div>
-          <div className="h-12 bg-rose-100 rounded-lg"></div>
+          <div className="h-12 bg-rose-100 rounded-lg"></div>*
           <div className="h-6 bg-rose-50 rounded-lg"></div>
         </div>
         <p className="mt-4 text-rose-600 font-medium">Toegang controleren...</p>
