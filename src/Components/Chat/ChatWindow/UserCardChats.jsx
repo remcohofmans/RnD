@@ -4,15 +4,11 @@ import {
   faUser,
   faMapMarkerAlt,
   faBuilding,
-  faHeart,
-  faStar,
-  faComment,
 } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../../lib/helper/supabaseClient';
 import CarouselCard from '../../Feed/CarouselCard';
 import { LoadingSpinner } from '../../common/LoadingSpinner';
-
-const defaultHobbyIcon = faStar;
+import { availableHobbies } from '../../filter/AvailableHobbiesPage';
 
 const UserCardChats = ({ user: userId }) => {
   const [userData, setUserData] = useState(null);
@@ -30,36 +26,73 @@ const UserCardChats = ({ user: userId }) => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (!userId) return;
-
+    
       try {
-        // Fetch user details
         const { data: userDetails, error: userError } = await supabase
           .from('users')
-          .select('birthday, city, facility, name')
+          .select(`
+            birthday,
+            name,
+            facility_id,
+            facility_enum (
+              name,
+              city
+            )
+          `)
           .eq('id', userId)
           .single();
-
+    
         if (userError) {
           console.error('Error fetching user details:', userError);
           return;
         }
-
-        setUserData(userDetails);
+    
+        setUserData({
+          name: userDetails.name,
+          birthday: userDetails.birthday,
+          facility: userDetails.facility_enum?.name,
+          city: userDetails.facility_enum?.city,
+        });
+    
         const calculatedAge = calculateAge(userDetails.birthday);
         setAge(calculatedAge);
-
-        // Fetch hobbies
+    
         const { data: hobbyData, error: hobbyError } = await supabase
           .from('userpreferences')
           .select('hobbies')
           .eq('id', userId);
-
+    
         if (hobbyError) {
           console.error('Error fetching hobbies:', hobbyError);
           return;
         }
-
-        setHobbies(hobbyData.map((entry) => entry.hobbies));
+    
+        console.log("the user id is: ", userId);
+        console.log("the users hobbies are: ", hobbyData);
+    
+        // Process hobbies
+        const flattenedHobbies = hobbyData
+          .map((entry) => {
+            try {
+              // Parse hobbies JSON string into an array
+              return JSON.parse(entry.hobbies);
+            } catch (error) {
+              console.error("Error parsing hobbies JSON:", entry.hobbies);
+              return [];
+            }
+          })
+          .flat()
+          .filter((hobby) => hobby && hobby.trim() !== '');
+    
+        console.log("flattened hobbies: ", flattenedHobbies);
+    
+        const matchedHobbies = flattenedHobbies.map((hobby) =>
+          availableHobbies.find((item) => item.name === hobby)
+        );
+    
+        console.log("matched hobbies: ", matchedHobbies);
+    
+        setHobbies(matchedHobbies.filter(Boolean)); // Filter out unmatched hobbies
       } catch (error) {
         console.error('Unexpected error:', error);
       }
@@ -72,7 +105,7 @@ const UserCardChats = ({ user: userId }) => {
     return (
       <div className="user-card bg-rose-100 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
         <h2 className="name text-2xl font-semibold text-[#360009] text-center">
-          <LoadingSpinner/>
+          <LoadingSpinner />
         </h2>
       </div>
     );
@@ -107,10 +140,10 @@ const UserCardChats = ({ user: userId }) => {
           {hobbies.length > 0 ? (
             hobbies.map((hobby, index) => (
               <span key={index} className="hobby-item flex items-center text-[#360009] text-sm">
-                <span className="mr-2 text-xl">
-                  <FontAwesomeIcon icon={defaultHobbyIcon} />
+                <span role="img" aria-label={hobby.name} className="mr-2 text-xl">
+                  {hobby.icon}
                 </span>
-                {hobby}
+                {hobby.name}
               </span>
             ))
           ) : (
@@ -118,8 +151,6 @@ const UserCardChats = ({ user: userId }) => {
           )}
         </div>
       </div>
-
-    
     </div>
   );
 };
