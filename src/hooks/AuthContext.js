@@ -324,13 +324,18 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const fetchSubscriptionRequests = async () => {
+  const fetchSubscriptionRequests = async (mf) => {
     try {
-      
+      console.log(mf);
+      console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
+
+      const mentorFacility = parseInt(mf, 8);  // Convert to integer
+      console.log('mentorFacility type after conversion:', typeof mentorFacility); // Should be INT, UUID, etc.
+
+
       // Fetch subscription requests using the 'subs' function
       const { data: subscriptions, error: subscriptionsError } = await supabase
-        .rpc('subs');  // Call the 'subs' function
-  
+        .rpc('fetch_subscription_requests', { mentorfacility : mentorFacility });
       if (subscriptionsError) {
         console.error('Error fetching subscription requests:', subscriptionsError.message);
         throw subscriptionsError;

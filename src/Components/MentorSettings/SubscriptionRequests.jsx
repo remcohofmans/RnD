@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
 
 const SubscriptionRequests = () => {
-  const { user, fetchSubscriptionRequests, updateAccessStatus, fetchProfilePictureUrl,updateSubscription } = useAuth();
+  const { user, fetchSubscriptionRequests, updateAccessStatus, fetchProfilePictureUrl,updateSubscription,fetchMentorFacility } = useAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [subscriptionRequests, setSubscriptionRequests] = useState([]); // Default to an empty array
   const usersPerPage = 10;
@@ -17,7 +18,10 @@ const SubscriptionRequests = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const fetchedUsers = await fetchSubscriptionRequests(); // Assuming this returns a list of users with their subscriptions
+        const mentorFacility = await fetchMentorFacility();
+        setMentorFacility(mentorFacility);
+        console.log("mf: ",mentorFacility);
+        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); // Assuming this returns a list of users with their subscriptions
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
       } catch (err) {
@@ -77,7 +81,7 @@ const SubscriptionRequests = () => {
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
       setSelectedUser(null);
-      
+
       const fetchedUsers = await fetchSubscriptionRequests(); // Assuming this returns a list of users with their subscriptions
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
