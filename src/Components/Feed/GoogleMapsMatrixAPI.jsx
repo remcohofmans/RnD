@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
-const API_KEY = 'AIzaSyBFR-QFJG4IC8k55TtTE7ClBzMyXWYUJTo'; // Your API key
+const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+console.log(API_KEY); // Will log your API key
+
 
 let distanceMatrixService;
 
