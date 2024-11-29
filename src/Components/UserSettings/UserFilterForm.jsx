@@ -158,12 +158,13 @@ const FilterForm = () => {
 
   return (
     <div className="min-h-screen mt-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100"
       >
         <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
+
           <label className="block text-sm font-medium text-gray-700">
             Waar heb je interesse in?
           </label>
