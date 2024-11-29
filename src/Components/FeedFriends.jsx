@@ -87,10 +87,6 @@ const FeedFriends = () => {
       }
   
       const likedUserIds = likedUsers.map(like => like.liked_user_id);
-      console.log("liked user ids", likedUserIds);
-  
-      // Format likedUserIds for Supabase `not.in` filter
-      const likedUserIdsFormatted = `(${likedUserIds.map(id => `"${id}"`).join(',')})`;
   
       // Fetch the list of users the current user has already matched with
       const { data: matchedUsers, error: matchedUsersError } = await supabase
@@ -103,19 +99,17 @@ const FeedFriends = () => {
       }
   
       const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
-      console.log("matched user ids", matchedUserIds);
   
-      // Format matchedUserIds for Supabase `not.in` filter
-      const matchedUserIdsFormatted = `(${matchedUserIds.map(id => `"${id}"`).join(',')})`;
+      // Merge likedUserIds and matchedUserIds into a single array for exclusion
+      const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds])];
   
-      // Fetch users with access granted and not the current user, not already liked, and not already matched
+      // Fetch users with access granted, not the current user, not already liked, and not already matched
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
         .from('users')
         .select('id, birthday, name, facility_id, gender')
         .eq('access_granted', 'YES')
         .neq('id', user.id)
-        .not('id', 'in', likedUserIdsFormatted)
-        .not('id', 'in', matchedUserIdsFormatted)
+        .not('id', 'in', `(${excludedUserIds.join(',')})`)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null)
@@ -207,6 +201,8 @@ const FeedFriends = () => {
       setLoading(false);
     }
   };
+  
+  
   
 
   useEffect(() => {
