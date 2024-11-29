@@ -5,6 +5,7 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import UserFilterForm from './UserFilterForm';
 import PasswordChangeForm from './PasswordChangeForm';
 import ProfielPauzeren from './ProfielPauzeren';
+import { useSearchParams } from 'react-router-dom';
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
@@ -13,6 +14,7 @@ const SettingsUser = () => {
   const [success, setSuccess] = useState(null);
   const [activeComponent, setActiveComponent] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,6 +26,18 @@ const SettingsUser = () => {
     };
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    // Check URL parameter bij het laden van de pagina
+    const section = searchParams.get('section');
+    if (section === 'filters') {
+      setActiveComponent('UserFilterForm');
+    }
+  }, [searchParams]);
+
+  // ... rest van de component blijft hetzelfde
+
+
 
   const buttonStyles = {
     primary: "bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition-colors duration-200",

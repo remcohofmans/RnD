@@ -6,6 +6,7 @@ import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
+import NavigationButton from './Feed/NavigationButton';
 
 const Feed = () => {
   const { user } = useAuth();
@@ -224,12 +225,7 @@ const Feed = () => {
               ? `Oeps! Er ging iets mis: ${error}`
               : 'Geen matches gevonden. Pas je voorkeuren aan.'}
           </p>
-          <button
-            onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
-            className="px-6 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors"
-          >
-            {error ? 'Opnieuw proberen' : 'Filter aanpassen'}
-          </button>
+          <NavigationButton />
         </div>
       </div>
     );
