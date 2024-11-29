@@ -15,6 +15,8 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mustSpin, setMustSpin] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
@@ -27,6 +29,28 @@ const Feed = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
+  const checkUserAccess = async () => {
+    setCheckingAccess(true);
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('access_granted')
+        .eq('id', user.id)
+        .single();
+  
+      if (error) throw error;
+      
+      setHasAccess(data.access_granted === 'YES');
+      return data.access_granted === 'YES';
+    } catch (error) {
+      console.error('Error checking access:', error);
+      setError('Er ging iets mis bij het controleren van je toegang.');
+      return false;
+    } finally {
+      setCheckingAccess(false);  // New line
+    }
+  };
+
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -35,6 +59,13 @@ const Feed = () => {
   
     setLoading(true);
     setError(null);
+
+    // First check if user has access
+    const userHasAccess = await checkUserAccess()
+      if (!userHasAccess) {
+        setLoading(false);
+          return;
+      }
   
     try {
       // Fetch user preferences
@@ -191,6 +222,35 @@ const Feed = () => {
   const handleWheelStop = () => {
     setMustSpin(false);
   };
+
+  // Show skeleton loader while checking access
+if (checkingAccess) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 bg-rose-200 rounded-lg"></div>
+          <div className="h-12 bg-rose-100 rounded-lg"></div>
+          <div className="h-6 bg-rose-50 rounded-lg"></div>
+        </div>
+        <p className="mt-4 text-rose-600 font-medium">Toegang controleren...</p>
+      </div>
+    </div>
+  );
+}
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+          <h2 className="text-2xl font-bold text-rose-900 mb-4">Toegang Vereist</h2>
+          <p className="text-gray-800 mb-4">
+            Wacht op de toegang van je begeleider
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
