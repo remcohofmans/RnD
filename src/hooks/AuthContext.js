@@ -348,6 +348,82 @@ export function AuthProvider({ children }) {
 
   };
 
+  const fetchSubscriptionRequests = async (mf) => {
+    try {
+      console.log(mf);
+      console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
+
+      const mentorFacility = parseInt(mf, 8);  // Convert to integer
+      console.log('mentorFacility type after conversion:', typeof mentorFacility); // Should be INT, UUID, etc.
+
+
+      // Fetch subscription requests using the 'subs' function
+      const { data: subscriptions, error: subscriptionsError } = await supabase
+        .rpc('fetch_subscription_requests', { mentorfacility : mentorFacility });
+      if (subscriptionsError) {
+        console.error('Error fetching subscription requests:', subscriptionsError.message);
+        throw subscriptionsError;
+      }
+  
+      console.log('Subscriptions:', subscriptions);
+      
+
+      const userIds = subscriptions.map(sub => sub.user_id);
+
+      const { data: users, error: usersError } = await supabase
+      .from('users')
+      .select('id, name, email')  // Assuming there's a 'name' column
+      .in('id', userIds);  // Filter users by the extracted user_ids
+
+    if (usersError) {
+      console.error('Error fetching user names:', usersError.message);
+      throw usersError;
+    }
+
+    console.log('Users:', users);
+
+    const subscriptionsWithNames = subscriptions.map(sub => {
+      const user = users.find(user => user.id === sub.user_id);
+      return { ...sub, name: user ? user.name : 'Unknown',email: user.email };
+    });
+
+    console.log('Subscriptions with User Names:', subscriptionsWithNames);
+      return subscriptionsWithNames;
+  
+    } catch (err) {
+      console.error('Error fetching subscription requests:', err.message);
+      throw err;
+    }
+  };
+
+  const updateSubscription = async (userId, sub) => {
+    try {
+
+      console.log("UserID: ",userId," with request for ",sub);
+
+      const { error } = await supabase
+        .from('subscriptions')
+        .update({
+          subscription: sub,          // Correct field name for subscription
+          subscription_request: sub,  // Correct field name for subscription request
+        })
+        .eq('user_id', userId);
+  
+      if (error) throw error;
+  
+      return true; // Success
+    } catch (error) {
+      console.error('Error updating subscription status:', error.message);
+      throw error;
+    }
+  };
+  
+  
+  
+  
+  
+  
+
   // Restore session on app load
   useEffect(() => {
     const restoreSession = async () => {
@@ -404,7 +480,9 @@ export function AuthProvider({ children }) {
       updateFacilityEnum, fetchUsersForMentor,
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
-      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate, checkSubscription
+      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
+      fetchSubscriptionRequests ,updateSubscription,checkSubscription
+
     }}>
       {children}
     </AuthContext.Provider>
