@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
 import NavigationButton from './Feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
+import FeedSkeleton from './FeedSkeleton';
 
 const Feed = () => {
   const { user, checkSubscription } = useAuth();
@@ -229,16 +230,7 @@ const Feed = () => {
   // Show skeleton loader while checking access
 if (checkingAccess) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-        <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-rose-200 rounded-lg"></div>
-          <div className="h-12 bg-rose-100 rounded-lg"></div>*
-          <div className="h-6 bg-rose-50 rounded-lg"></div>
-        </div>
-        <p className="mt-4 text-rose-600 font-medium">Toegang controleren...</p>
-      </div>
-    </div>
+    <FeedSkeleton />
   );
 }
 
@@ -257,16 +249,7 @@ if (checkingAccess) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-          <div className="animate-pulse space-y-4">
-            <div className="h-24 bg-rose-200 rounded-lg"></div>
-            <div className="h-12 bg-rose-100 rounded-lg"></div>
-            <div className="h-6 bg-rose-50 rounded-lg"></div>
-          </div>
-          <p className="mt-4 text-rose-600 font-medium">Matches aan het verzamelen...</p>
-        </div>
-      </div>
+      <FeedSkeleton />
     );
   }
 
@@ -296,62 +279,51 @@ if (checkingAccess) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
-            Ontdek je Match
-          </h1>
-          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
-            <Sparkle />
-            Spin het wiel en laat het toeval je naar de ware verbinding leiden
-            <Sparkle />
-          </p>
+    <div className="container mx-auto px-4 max-w-6xl">
+      <div className="text-center mb-16">
+        <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
+          Ontdek je Match
+        </h1>
+        <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
+          <Sparkle />
+          Spin het wiel en laat het toeval je naar de ware verbinding leiden
+          <Sparkle />
+        </p>
+      </div>
 
-        </motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Wheel Column */}
+        <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
+          <div className="relative w-full max-w-md mb-8">
+            <Wheel
+              mustStartSpinning={mustSpin}
+              prizeNumber={currentIndex}
+              data={wheelData}
+              onStopSpinning={handleWheelStop}
+              radiusLineWidth={3}
+              radiusLineColor="border-pink-500"
+              outerBorderWidth={6}
+              outerBorderColor="border-pink-400"
+              fontSize={18}
+              perpendicularText
+              textDistance={85}
+              backgroundColors={[
+                'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100',
+                'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
+                'bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200',
+                'bg-gradient-to-r from-green-200 via-green-300 to-blue-100',
+                'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
+                'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
+              ]}
+              textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
+              textColor="text-white"
+              animationDuration={4000}
+              spinEase="ease-out"
+              wheelSize={300}
+              onStartSpinning={() => console.log('Wheel started spinning!')}
+            />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Wheel Column */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center"
-          >
-            <div className="relative w-full max-w-md mb-8">
-              <Wheel
-                mustStartSpinning={mustSpin}
-                prizeNumber={currentIndex}
-                data={wheelData}
-                onStopSpinning={handleWheelStop}
-                radiusLineWidth={3}
-                radiusLineColor="border-pink-500"
-                outerBorderWidth={6}
-                outerBorderColor="border-pink-400"
-                fontSize={18}
-                perpendicularText
-                textDistance={85}
-                backgroundColors={[
-                  'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100', // Gradient background
-                  'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
-                  'bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200',
-                  'bg-gradient-to-r from-green-200 via-green-300 to-blue-100',
-                  'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
-                  'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
-                ]} // Multi-color gradient segments for the wheel
-                textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)" // Stronger text shadow for better contrast
-                textColor="text-white" // Make text white for more contrast with gradients
-                animationDuration={4000} // Longer and smoother animation
-                spinEase="ease-out"  // Smooth deceleration
-                wheelSize={300} // Slightly larger wheel size for better visuals
-                onStartSpinning={() => console.log('Wheel started spinning!')} // Optional, for debugging or actions when spinning starts
-              />
-
-            <motion.button
+            <button
               className="absolute inset-0 w-32 h-32 m-auto rounded-full 
                 bg-gradient-to-br from-rose-500 to-rose-700 
                 shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
@@ -365,53 +337,33 @@ if (checkingAccess) {
                 text-2xl tracking-wider"
               onClick={handleSpinClick}
               disabled={mustSpin}
-              whileHover={{ scale: mustSpin ? 1 : 1.1 }}
-              whileTap={{ scale: 0.95 }}
             >
               {mustSpin ? 'Draaien...' : 'SPIN'}
-            </motion.button>
-            </div>
-          </motion.div>
+            </button>
+          </div>
+        </div>
 
-          {/* User Card Column */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center"
-          >
-            <AnimatePresence mode="wait">
-              {mustSpin ? (
-                <motion.div
-                  className="text-center text-rose-100 p-8"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex flex-col items-center space-y-6">
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                    <p className="text-lg font-medium">Op zoek naar je ideale match...</p>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={users[currentIndex]?.id}
-                  className="w-full"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <UserCard user={users[currentIndex]} currentUserId={user.id} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+        {/* User Card Column */}
+        <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
+          <AnimatePresence mode="wait">
+            {mustSpin ? (
+              <div className="text-center text-rose-100 p-8">
+                <div className="flex flex-col items-center space-y-6">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
+                  <p className="text-lg font-medium">Op zoek naar je ideale match...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full">
+                <UserCard user={users[currentIndex]} currentUserId={user.id} />
+              </div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Feed;
