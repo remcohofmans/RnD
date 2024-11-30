@@ -417,48 +417,25 @@ export function AuthProvider({ children }) {
       throw error;
     }
   };
-  
-  
-  
-  
-  
-  
 
   // Restore session on app load
   useEffect(() => {
     const restoreSession = async () => {
-      setLoading(true);
+      console.log('Entered ...');
       try {
+        setLoading(true);
+  
         const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
-
-        
-
+  
         const sessionUser = data.session?.user;
         if (sessionUser) {
           setUser(sessionUser);
           await fetchUserRole(sessionUser.id);
+        } else {
+          setUser(null);
+          setRole(null);
         }
-
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('id',sessionUser.id);
-      
-        if (userError) {
-      
-          console.error("Error fetching user data:", userError.message);
-          throw new Error("Failed to verify account.");
-        }
-    
-        console.log("Userdata: ", userData);
-    
-        if (!userData || userData.length === 0) {
-          logoutAndNavigate();
-        }
-        
-
-
       } catch (err) {
         console.error('Error restoring session:', err.message);
         setUser(null);
@@ -467,10 +444,8 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     };
-
+  
     restoreSession();
-
-    fetchCurrentUser();
   }, []);
 
   return (

@@ -151,16 +151,21 @@ const Home = () => {
           >
             V(l)inder
           </motion.h1>
+          
           {userName && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-base md:text-lg text-gray-700 mt-2"
+              className="mt-6 mb-8"
             >
-              Welkom terug, <span className="font-semibold text-rose-600">{userName}</span>!
-            </motion.p>
+              <p className="text-xl md:text-2xl font-semibold text-gray-800">
+                Welkom terug,{" "}
+                <span className="text-rose-600 font-bold">{userName}</span>!
+              </p>
+            </motion.div>
           )}
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -169,7 +174,7 @@ const Home = () => {
           >
             Ontdek verbindingen die je leven verrijken - of het nu gaat om liefde, vriendschap of avontuur!
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
