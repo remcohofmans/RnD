@@ -157,7 +157,7 @@ const FilterForm = () => {
   };
 
   return (
-    <div className="min-h-screen mt-12">
+    <div>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100"
