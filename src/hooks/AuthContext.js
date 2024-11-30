@@ -418,50 +418,48 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const restoreSession = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
+      const sessionUser = data.session?.user;
+      if (sessionUser) {
+        setUser(sessionUser);
+        await fetchUserRole(sessionUser.id);
+      }
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id',sessionUser.id);
+
+      if (userError) {
+
+        console.error("Error fetching user data:", userError.message);
+        throw new Error("Failed to verify account.");
+      }
+
+      console.log("Userdata: ", userData);
+
+      if (!userData || userData.length === 0) {
+        logoutAndNavigate();
+      }
+
+
+
+    } catch (err) {
+      console.error('Error restoring session:', err.message);
+      setUser(null);
+      setRole(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Restore session on app load
   useEffect(() => {
-    const restoreSession = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-
-
-
-        const sessionUser = data.session?.user;
-        if (sessionUser) {
-          setUser(sessionUser);
-          await fetchUserRole(sessionUser.id);
-        }
-
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('id',sessionUser.id);
-
-        if (userError) {
-
-          console.error("Error fetching user data:", userError.message);
-          throw new Error("Failed to verify account.");
-        }
-
-        console.log("Userdata: ", userData);
-
-        if (!userData || userData.length === 0) {
-          logoutAndNavigate();
-        }
-
-
-
-      } catch (err) {
-        console.error('Error restoring session:', err.message);
-        setUser(null);
-        setRole(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     restoreSession();
   }, []);
 
@@ -473,8 +471,7 @@ export function AuthProvider({ children }) {
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
-      fetchSubscriptionRequests ,updateSubscription,checkSubscription, restoreSession
-
+      fetchSubscriptionRequests, updateSubscription, checkSubscription, restoreSession
     }}>
       {children}
     </AuthContext.Provider>
