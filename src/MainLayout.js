@@ -5,13 +5,12 @@ import { useAuth } from './hooks/AuthContext'; // Use the hook to access auth co
 
 const MainLayout = ({ children }) => {
 
-  const { logout, user, error, loading } = useAuth();
+  const { user } = useAuth();
   const loggedIn = !!user;
 
   return (
     <div>
-      <TopNavigationBar />
-      
+      <TopNavigationBar />  
       <div>
         {children}
       </div>
