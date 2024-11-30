@@ -418,33 +418,34 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Restore session on app load
-  useEffect(() => {
-    const restoreSession = async () => {
-      console.log('Entered ...');
-      try {
-        setLoading(true);
-  
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-  
-        const sessionUser = data.session?.user;
-        if (sessionUser) {
-          setUser(sessionUser);
-          await fetchUserRole(sessionUser.id);
-        } else {
-          setUser(null);
-          setRole(null);
-        }
-      } catch (err) {
-        console.error('Error restoring session:', err.message);
+  const restoreSession = async () => {
+    console.log('Entered ...');
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
+      const sessionUser = data.session?.user;
+      if (sessionUser) {
+        setUser(sessionUser);
+        await fetchUserRole(sessionUser.id);
+      } else {
         setUser(null);
         setRole(null);
-      } finally {
-        setLoading(false);
       }
-    };
-  
+    } catch (err) {
+      console.error('Error restoring session:', err.message);
+      setUser(null);
+      setRole(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Restore session on app load
+  useEffect(() => {
+
     restoreSession();
   }, []);
 
@@ -456,7 +457,7 @@ export function AuthProvider({ children }) {
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
-      fetchSubscriptionRequests ,updateSubscription,checkSubscription
+      fetchSubscriptionRequests ,updateSubscription,checkSubscription, restoreSession
 
     }}>
       {children}

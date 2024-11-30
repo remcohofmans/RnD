@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import { Key, ShieldCheck } from 'lucide-react';
@@ -9,18 +9,9 @@ const PasswordUpdate = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [resetToken, setResetToken] = useState(null);
+  const [session, setSession] = useState('');
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const token = searchParams.get('access_token');
-    if (token) {
-      setResetToken(token);
-    } else {
-      setError('Ongeldige of ontbrekende reset token.');
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -45,25 +36,19 @@ const PasswordUpdate = () => {
     setMessage('');
 
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const resetToken = urlParams.get('token');
-
-      // Then use this token in your update request
-      const { data, error } = await supabase.auth.updateUser({
-        token: resetToken,
-        password: newPassword,
-      });
+      const { data, error } = await supabase.auth.updateUser({ password: newPassword });
 
       if (error) {
         console.error("Error updating password:", error.message);
-      } else {
-        console.log("Password updated successfully:", data);
+        setError('Paswoord wijziging mislukt. Probeer later opnieuw.');
       }
-
-      setMessage('Uw paswoord is succesvol gewijzigd.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      else {
+        console.log("Password updated successfully:", data);
+        setMessage('Uw paswoord is succesvol gewijzigd.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }
     } catch (err) {
       setError('Paswoord wijziging mislukt. Probeer later opnieuw.');
       console.error('Error wijzigen password:', err);
@@ -78,7 +63,6 @@ const PasswordUpdate = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 to-rose-100 p-4 relative overflow-hidden">
-      {/* Decorative Background Elements */}
       <div className="absolute -top-20 -left-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-rose-200/30 rounded-full blur-3xl"></div>
 

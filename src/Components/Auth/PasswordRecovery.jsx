@@ -25,7 +25,9 @@ const PasswordRecovery = () => {
 
     try {
       // Use Supabase to send a password reset email
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'http://localhost:3000/updatePassword'
+      });      
       if (error) {
         throw error;
       }
