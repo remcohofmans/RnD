@@ -49,16 +49,6 @@ const Home = () => {
     }
   }, [navigate, role, user]);
 
-  const handleButtonClick = useCallback(() => {
-
-    if (loggedIn) {
-      logout();
-      navigate('/login');
-    } else {
-      navigate('/login');
-    }
-  }, [loggedIn, logout, navigate]);
-
   const handleGoToFeed = useCallback(async () => {
     track('go to feed');
     try {
@@ -186,12 +176,6 @@ const Home = () => {
               className="bg-rose-600 text-white px-6 md:px-8 py-3 rounded-full text-sm md:text-lg font-semibold hover:bg-rose-700 transition-colors shadow-lg"
             >
               Ontdek Matches
-            </button>
-            <button
-              onClick={handleButtonClick}
-              className="bg-white text-rose-600 px-6 md:px-8 py-3 rounded-full text-sm md:text-lg font-semibold border border-rose-600 hover:bg-rose-50 transition-colors shadow-md"
-            >
-              {loggedIn ? 'Uitloggen' : 'Inloggen'}
             </button>
           </motion.div>
         </div>
