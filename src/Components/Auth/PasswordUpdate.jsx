@@ -9,7 +9,6 @@ const PasswordUpdate = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [session, setSession] = useState('');
   const navigate = useNavigate();
 
 
