@@ -232,17 +232,17 @@ const Subscription = () => {
                 <div className='flex justify-center items-center'>
                 <div
                     className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
-                        (currentSubscription === "BASIS" ? " border-4 border-rose-200 ring-4 ring-rose-500" : "")
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-600 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
+                        (currentSubscription === "BASIS" ? " border-4 border-neutral-50 ring-4 ring-amber-600" : "")
                     }
-                    style={{ backgroundColor: "#f43f5e" }}
+                    
                     >           
-                        <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Basis</h5>
-                        <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
+                        <h5 className="mb-4 text-xl font-bold text-neutral-50">Basis</h5>
+                        <div className="flex items-baseline text-neutral-50">
                             <span className="text-3xl font-semibold">€</span>
                             <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.BASIS : ''}</span>
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.BASIS : monthlyPrices.BASIS}</span>
-                            <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
+                            <span className="ms-1 text-xl font-normal text-neutral-50">{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
                         <ul role="list" className="space-y-5 my-7">
@@ -251,7 +251,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Onbeperkt aantal berichten</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Onbeperkt aantal berichten</span>
                             </li>
 
                             <li className="flex items-center">
@@ -259,7 +259,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Limiet van 10 berichten per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 berichten per dag</span>
                             </li>
 
                         </ul>
@@ -277,17 +277,17 @@ const Subscription = () => {
 
                     <div
                     className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
-                        (currentSubscription === "GEVORDERD" ? " border-4 border-rose-200 ring-4 ring-rose-600" : "")
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-gray-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
+                        (currentSubscription === "GEVORDERD" ? " border-4 border-neutral-50 ring-4 ring-gray-400" : "")
                     }
-                    style={{ backgroundColor: "#e11d48" }}
+                    
                     >                        
-                        <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Gevorderd</h5>
-                        <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
-                            <span className="text-3xl font-semibold">€</span>
-                            <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.GEVORDERD : ''}</span>
+                        <h5 className="mb-4 text-xl font-bold text-neutral-50">Gevorderd</h5>
+                        <div className="flex items-baseline text-neutral-50">
+                            <span className="text-3xl font-semibold text-neutral-50">€</span>
+                            <span className="text-3xl tracking-tight line-through text-neutral-50">{payAnnually ? annualPricesSaved.GEVORDERD : ''}</span>
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.GEVORDERD : monthlyPrices.GEVORDERD}</span>
-                            <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
+                            <span className="ms-1 text-xl font-normal text-neutral-50">{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
                         <ul role="list" className="space-y-5 my-7">
@@ -296,7 +296,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Alles van het basisabonnement</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Alles van het basisabonnement</span>
                             </li>
 
                             <li className="flex items-center">
@@ -304,7 +304,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Zie wie je likes heeft gegeven</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Zie wie je likes heeft gegeven</span>
                             </li>
 
                             <li className="flex items-center">
@@ -312,7 +312,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Limiet van 20 keer spinnen per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer spinnen per dag</span>
                             </li>
 
                         </ul>
@@ -322,7 +322,7 @@ const Subscription = () => {
                         disabled={currentSubscription === 'GEVORDERD'}
                         type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
                         style={{ color: '#881337', 
-                        backgroundColor: '#ffe4e6', 
+                        backgroundColor: '#fafafa', 
                         hover: { backgroundColor: '#fecdd3' },
                         cursor:  currentSubscription === 'GEVORDERD' ? 'not-allowed' : 'pointer'
                         }}>{currentSubscription === 'GEVORDERD' ? 'Huidig plan' : 'Kies plan'}</button>
@@ -330,16 +330,16 @@ const Subscription = () => {
 
                     <div
                         className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8" +
-                            (currentSubscription === "ELITE" ? " border-4 border-rose-200 ring-4 ring-rose-700" : "")}
-                        style={{ backgroundColor: "#b91c1c" }}
+                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
+                            (currentSubscription === "ELITE" ? " border-4 border-neutral-50 ring-4 ring-amber-400" : "")}
+                        
                     >           
-                        <h5 className="mb-4 text-xl font-bold" style={{ color: '#ffe4e6' }}>Elite</h5>
-                        <div className="flex items-baseline" style={{ color: '#ffe4e6' }}>
+                        <h5 className="mb-4 text-xl font-bold" style={{ color: '#fafafa' }}>Elite</h5>
+                        <div className="flex items-baseline" style={{ color: '#fafafa' }}>
                             <span className="text-3xl font-semibold">€</span>
                             <span className="text-3xl tracking-tight line-through">{payAnnually ? annualPricesSaved.ELITE : ''}</span>
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.ELITE : monthlyPrices.ELITE}</span>
-                            <span className="ms-1 text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
+                            <span className="ms-1 text-xl font-normal" style={{ color: '#fafafa' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
                         
                         <ul role="list" className="space-y-5 my-7">
@@ -348,7 +348,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Alles van het gevorderde abonnement</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Alles van het gevorderde abonnement</span>
                             </li>
 
                             <li className="flex items-center">
@@ -356,7 +356,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Onbeperkte hoeveelheid spinnen per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid spinnen per dag</span>
                             </li>
 
                             <li className="flex items-center">
@@ -364,7 +364,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Mensen komen je profiel sneller tegen</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Mensen komen je profiel sneller tegen</span>
                             </li>
 
                             <li className="flex items-center">
@@ -372,7 +372,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#ffe4e6' }}>Eén bericht naar een niet-match</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Eén bericht naar een niet-match</span>
                             </li>
                         </ul>
 
@@ -381,7 +381,7 @@ const Subscription = () => {
                         disabled={currentSubscription === 'ELITE'}
                         type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
                         style={{ color: '#881337', 
-                            backgroundColor: '#ffe4e6', 
+                            backgroundColor: '#fafafa', 
                             hover: { backgroundColor: '#fecdd3' },
                             cursor:  currentSubscription === 'ELITE' ? 'not-allowed' : 'pointer'
                             }}>{currentSubscription === 'ELITE' ? 'Huidig plan' : 'Kies plan'}</button>
