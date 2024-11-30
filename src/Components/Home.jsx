@@ -10,7 +10,8 @@ const Home = () => {
   const { track } = useAnalytics();
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
-  const { user, logout, role , checkSubscription} = useAuth();
+  const [userName, setUserName] = useState('');
+  const { user, logout, role, checkSubscription } = useAuth();
   const email = user?.email;
   const loggedIn = !!user;
 
@@ -21,10 +22,35 @@ const Home = () => {
     if (role === 'STAFF_MEMBER') {
       navigate('/settingsMentor');
     }
-  }, [navigate, role]);
+    else {
+      // Fetch user details if not already provided by the `useAuth` hook
+      const fetchUserName = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('name')
+            .eq('email', user?.email)
+            .single();
+
+          if (error) {
+            console.error('Error fetching user name:', error);
+            return;
+          }
+
+          setUserName(data.name || 'Gebruiker'); // Default to 'Gebruiker' if name is not set
+        } catch (err) {
+          console.error('Error fetching user name:', err);
+        }
+      };
+
+      if (user) {
+        fetchUserName();
+      }
+    }
+  }, [navigate, role, user]);
 
   const handleButtonClick = useCallback(() => {
-    
+
     if (loggedIn) {
       logout();
       navigate('/login');
@@ -125,7 +151,16 @@ const Home = () => {
           >
             V(l)inder
           </motion.h1>
-
+          {userName && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-base md:text-lg text-gray-700 mt-2"
+            >
+              Welkom terug, <span className="font-semibold text-rose-600">{userName}</span>!
+            </motion.p>
+          )}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -134,7 +169,7 @@ const Home = () => {
           >
             Ontdek verbindingen die je leven verrijken - of het nu gaat om liefde, vriendschap of avontuur!
           </motion.p>
-
+          
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
