@@ -103,14 +103,38 @@ const Feed = () => {
         throw new Error("Failed to fetch your facility details.");
       }
   
-      const currentUserCity = currentUserFacility.city;
-      const maxDistance = userPreferences.distance;
+            const currentUserCity = currentUserFacility.city;
+            const maxDistance = userPreferences.distance;
+
+                // Fetch liked and matched user IDs
+          const { data: likedUsers, error: likedUsersError } = await supabase
+          .from('likes')
+          .select('liked_user_id')
+          .eq('user_id', user.id);
+
+        if (likedUsersError) {
+          throw new Error("Failed to fetch liked users.");
+        }
+
+        const { data: matchedUsers, error: matchedUsersError } = await supabase
+          .from('matches')
+          .select('matched_user_id')
+          .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`);
+
+        if (matchedUsersError) {
+          throw new Error("Failed to fetch matched users.");
+        }
+
+        const likedUserIds = likedUsers.map(like => like.liked_user_id);
+        const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
+        const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds, user.id])];
   
       // Fetch users with access granted and not the current user
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
         .from('users')
         .select('id, birthday, name, facility_id, gender')
         .eq('access_granted', 'YES')
+        .not('id', 'in', `(${excludedUserIds.join(',')})`)
         .neq('id', user.id)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
