@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { act } from 'react'; // Make sure you use act from 'react'
-import LoginRegister from './Components/LoginRegister'; // Import your component correctly
+import LoginRegister from './Components/Auth/LoginRegister'; // Import your component correctly
 
 describe('Login Page', () => {
   beforeEach(() => {
