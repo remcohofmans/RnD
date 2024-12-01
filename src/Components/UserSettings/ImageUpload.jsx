@@ -22,11 +22,9 @@ const ImageUpload = ({ onUploadComplete }) => {
   );
   const [loadingImages, setLoadingImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: false }), {})
-  ); // To track loading state for each category
+  );
   const [errors, setErrors] = useState({});
   const fileInputRefs = useRef({});
-
-  console.log('AuthContext Value:', currentUser);
 
   const validateFile = (file) => {
     if (!file) return 'Please select a file';
@@ -50,9 +48,8 @@ const ImageUpload = ({ onUploadComplete }) => {
     }
 
     try {
-      setLoadingImages((prev) => ({ ...prev, [category]: true })); // Set loading state for category
+      setLoadingImages((prev) => ({ ...prev, [category]: true }));
 
-      // Upload the file to Supabase storage
       const { data, error: uploadError } = await supabase.storage
         .from('pictures')
         .upload(`${currentUser.id}/${category}/${file.name}`, file);
@@ -62,23 +59,21 @@ const ImageUpload = ({ onUploadComplete }) => {
           ...prev,
           [category]: 'Error uploading image. Please try again.',
         }));
-        setLoadingImages((prev) => ({ ...prev, [category]: false })); // Reset loading state
+        setLoadingImages((prev) => ({ ...prev, [category]: false }));
         return;
       }
 
-      // Fetch the public URL of the uploaded image
       const { data: publicUrlData } = supabase.storage
         .from('pictures')
         .getPublicUrl(`${currentUser.id}/${category}/${file.name}`);
 
       if (publicUrlData.publicUrl) {
-        // Store both the file object and the fileName
         setImages((prev) => ({
           ...prev,
           [category]: {
-            file, // Store the actual file object here
-            preview: publicUrlData.publicUrl, // Store the URL for display
-            fileName: file.name, // Store the file name explicitly
+            file,
+            preview: publicUrlData.publicUrl,
+            fileName: file.name,  // Store the fileName for deletion
           },
         }));
       }
@@ -88,35 +83,32 @@ const ImageUpload = ({ onUploadComplete }) => {
         [category]: 'Error processing image. Please try again.',
       }));
     } finally {
-      setLoadingImages((prev) => ({ ...prev, [category]: false })); // Reset loading state after operation
+      setLoadingImages((prev) => ({ ...prev, [category]: false }));
     }
   };
 
-
   const handleImageDelete = (category) => async () => {
-    if (!images[category]?.fileName) {
-      // If there is no fileName to delete, we can skip the deletion
+    const image = images[category];
+
+    if (!image || !image.fileName) {
       setErrors((prev) => ({ ...prev, [category]: 'No image to delete' }));
       return;
     }
 
     try {
-      // Remove the image from Supabase storage using the fileName
       const { error: deleteError } = await supabase.storage
         .from('pictures')
-        .remove([`${currentUser.id}/${category}/${images[category].fileName}`]);
+        .remove([`${currentUser.id}/${category}/${image.fileName}`]);
 
       if (deleteError) {
         setErrors((prev) => ({
           ...prev,
           [category]: 'Error deleting image. Please try again.',
         }));
-        console.error('Error deleting image:', deleteError);
       } else {
-        // Clear the state after successful deletion
         setImages((prev) => ({
           ...prev,
-          [category]: null, // Reset the image for this category
+          [category]: null,  // Update the image state to null
         }));
         setErrors((prev) => ({ ...prev, [category]: null }));
       }
@@ -125,10 +117,8 @@ const ImageUpload = ({ onUploadComplete }) => {
         ...prev,
         [category]: 'Error deleting image. Please try again.',
       }));
-      console.error('Error deleting image:', error);
     }
   };
-
 
   const fetchImages = async () => {
     if (!currentUser) return;
@@ -137,21 +127,17 @@ const ImageUpload = ({ onUploadComplete }) => {
 
     const fetchImagePromises = Object.keys(CATEGORIES).map(async (category) => {
       try {
-        // List files in the category folder
         const { data: files, error: listError } = await supabase.storage
           .from('pictures')
           .list(`${currentUser.id}/${category}`);
 
         if (listError) {
           console.error(`Error listing files for category ${category}:`, listError);
-          return; // Skip this category if there's an error
+          return;
         }
 
         if (files && files.length > 0) {
-          // Assuming the first file is the one we want to display
-          const file = files[0];
-
-          // Generate a public URL for this file
+          const file = files[0];  // Assume the first file is the one we want
           const { data: publicUrlData } = supabase.storage
             .from('pictures')
             .getPublicUrl(`${currentUser.id}/${category}/${file.name}`);
@@ -159,7 +145,7 @@ const ImageUpload = ({ onUploadComplete }) => {
           if (publicUrlData.publicUrl) {
             updatedImages[category] = {
               preview: publicUrlData.publicUrl,
-              file: null, // No need for the file object
+              fileName: file.name,  // Store the file name for deletion
             };
           }
         }
@@ -168,16 +154,15 @@ const ImageUpload = ({ onUploadComplete }) => {
       }
     });
 
-    // Wait for all image fetch promises to resolve
     await Promise.all(fetchImagePromises);
 
-    // Update state with fetched images
     setImages((prev) => ({ ...prev, ...updatedImages }));
   };
 
-
   useEffect(() => {
-    fetchImages();
+    if (currentUser) {
+      fetchImages();
+    }
   }, [currentUser]);
 
   const handleUpload = async () => {
@@ -191,13 +176,10 @@ const ImageUpload = ({ onUploadComplete }) => {
 
   return (
     <div className="items-center bg-rose-50">
-
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-            <h1 className="text-3xl font-bold text-center mb-8">
-              Upload je favoriete foto's 📸
-            </h1>
+            <h1 className="text-3xl font-bold text-center mb-8">Upload je favoriete foto's 📸</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {Object.entries(CATEGORIES).map(([category, { label, icon }]) => (
@@ -208,10 +190,7 @@ const ImageUpload = ({ onUploadComplete }) => {
 
                   <div className="w-full flex flex-col items-center">
                     <div
-                      className={`w-36 h-36 border-2 border-dashed rounded-xl cursor-pointer flex items-center justify-center transition-colors duration-200 ${errors[category]
-                          ? 'border-red-500'
-                          : 'border-gray-300 hover:border-gray-400'
-                        }`}
+                      className={`w-36 h-36 border-2 border-dashed rounded-xl cursor-pointer flex items-center justify-center transition-colors duration-200 ${errors[category] ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'}`}
                       onClick={() => fileInputRefs.current[category].click()}
                       role="button"
                       tabIndex={0}
@@ -219,7 +198,7 @@ const ImageUpload = ({ onUploadComplete }) => {
                       aria-label={`Upload ${label}`}
                     >
                       {loadingImages[category] ? (
-                        <LoadingSpinner /> // Show the spinner if the image is loading
+                        <LoadingSpinner />
                       ) : images[category] ? (
                         <div className="relative w-full h-full">
                           <img
@@ -261,8 +240,6 @@ const ImageUpload = ({ onUploadComplete }) => {
                 </div>
               ))}
             </div>
-
-
           </div>
         </div>
       </div>
