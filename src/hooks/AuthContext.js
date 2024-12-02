@@ -445,9 +445,6 @@ export function AuthProvider({ children }) {
       if (!userData || userData.length === 0) {
         logoutAndNavigate();
       }
-
-
-
     } catch (err) {
       console.error('Error restoring session:', err.message);
       setUser(null);
@@ -461,6 +458,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     restoreSession();
   }, []);
+  
 
   return (
     <AuthContext.Provider value={{

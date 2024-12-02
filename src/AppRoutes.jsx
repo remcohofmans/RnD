@@ -20,12 +20,12 @@ import TopNavigationBar from './Components/common/TopNavigationBar';
 
 function AppRoutes() {
 
-  const { user, role } = useAuth();
+  const { user, role, loginWithEmail, signUpWithEmail } = useAuth();
 
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/login" element={!user ? <LoginRegister /> : <Navigate to="/" />} />
+      <Route path="/login" element={!user ? <LoginRegister loginWithEmail={loginWithEmail} signUpWithEmail={signUpWithEmail}/> : <Navigate to="/" />} />
       <Route path="/forgotPassword" element={<PasswordRecovery />} />
       <Route path="/updatePassword" element={<PasswordUpdate />} />
       <Route path="/topbar" element={<TopNavigationBar />} />

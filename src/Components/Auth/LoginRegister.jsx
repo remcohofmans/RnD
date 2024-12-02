@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';  // Import the hook
 import { supabase } from '../../lib/helper/supabaseClient';
 
 
-const LoginRegister = () => {
+const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -35,7 +35,6 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { user, loginWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();  // Use navigate here, inside the component
 
   const handleLoginSubmit = (e) => {
