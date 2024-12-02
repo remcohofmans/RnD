@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+<<<<<<< Updated upstream
 import LoginRegister from './Components/Auth/LoginRegister';
 import '@testing-library/jest-dom/extend-expect';
 
