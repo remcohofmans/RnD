@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import LoginRegister from './Components/Auth/LoginRegister';
+import LoginRegister from '../Components/Auth/LoginRegister';
 
 // Mock supabase and react-router-dom
-jest.mock('./lib/helper/supabaseClient', () => ({
+jest.mock('../lib/helper/supabaseClient', () => ({
   supabase: {
     from: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
