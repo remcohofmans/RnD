@@ -135,7 +135,7 @@ const TopNavigationBar = () => {
               handleLogOut();
             }}
           >
-            Logout
+            Log out
           </div>
         </div>
       )}
