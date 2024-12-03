@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
-import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
 import { useNavigate } from 'react-router-dom';  // Import the hook
 
 import { supabase } from '../../lib/helper/supabaseClient';
 
 
-const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
+const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -35,7 +34,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const navigate = useNavigate();  // Use navigate here, inside the component
+  const navigate = useNavigate();
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -104,7 +103,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
       }
 
       if (signUpPassword !== confirmPassword) {
-        return "Paswoorden komen niet overeen.";
+        return "Wachtwoorden komen niet overeen.";
       }
 
       if (isMentor && !mentorCode) {
@@ -211,7 +210,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
 
     // Simple password validation feedback for registration
     if (password.length < 6) {
-      setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+      setPasswordFeedback('Wachtwoord moet minstens 6 tekens lang zijn.');
     } else {
       setPasswordFeedback(null);
     }
@@ -228,7 +227,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
 
     // Simple password validation feedback for registration
     if (password.length < 6) {
-      setConfirmPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+      setConfirmPasswordFeedback('Wachtwoord moet minstens 6 tekens lang zijn.');
     } else {
       setConfirmPasswordFeedback('');
     }
@@ -346,7 +345,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
                     className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                    placeholder="Paswoord"
+                    placeholder="Wachtwoord"
                     required
                   />
                 </div>
@@ -455,7 +454,7 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
                 {/* Password Match Success Message */}
                 {signUpPassword && confirmPassword && signUpPassword === confirmPassword && (
                   <p className="text-green-600 text-sm mt-2">
-                    De paswoorden zijn een match!
+                    De wachtwoorden zijn een match!
                   </p>
                 )}
 
@@ -553,18 +552,18 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label 
-                    htmlFor="terms-checkbox" 
+                  <label
+                    htmlFor="terms-checkbox"
                     className="ml-2 text-gray-600 text-sm cursor-pointer"
                   >
                     Ik ga akkoord met de{' '}
-                    <a 
-                      href="#" 
-                      className="text-[#e11d48]" 
-                      onClick={(e) => { 
-                        e.preventDefault(); 
-                        e.stopPropagation(); 
-                        setShowTermsModal(true); 
+                    <a
+                      href="#"
+                      className="text-[#e11d48]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowTermsModal(true);
                       }}
                     >
                       Terms and Conditions
@@ -582,18 +581,18 @@ const LoginRegister = ({loginWithEmail, signUpWithEmail}) => {
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label 
-                    htmlFor="privacy-checkbox" 
+                  <label
+                    htmlFor="privacy-checkbox"
                     className="ml-2 text-gray-600 text-sm cursor-pointer"
                   >
                     Ik ga akkoord met de{' '}
-                    <a 
-                      href="#" 
-                      className="text-[#e11d48]" 
-                      onClick={(e) => { 
-                        e.preventDefault(); 
-                        e.stopPropagation(); 
-                        setShowPrivacyModal(true); 
+                    <a
+                      href="#"
+                      className="text-[#e11d48]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPrivacyModal(true);
                       }}
                     >
                       Privacy Policy
