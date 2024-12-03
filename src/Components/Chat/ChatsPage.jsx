@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ChatsList } from './ChatsList/ChatsList.jsx';
 import { ChatWindow } from './ChatWindow/ChatWindow.jsx';
 import { useMatches } from '../../hooks/useMatches.jsx';
-import { LoadingSpinner } from '../common/LoadingSpinner.jsx';
 import ChatsPageSkeleton from './ChatPageSkeleton.jsx';
 import useCheckUserProfile from '../../hooks/useCheckUserProfile.jsx';
 import UserCardChats from './ChatWindow/UserCardChats.jsx';
@@ -30,8 +29,8 @@ const ChatsPage = () => {
   const selectedMatchDetails = matches.find(m => m.match_id === selectedMatch);
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-8 mt-16">
+    <div className="bg-gray-100 min-h-screen mt-16 max-md:mt-12 px-8 md:px-6">
+      <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Left Column: Chats List */}
           <div className="md:col-span-3">
