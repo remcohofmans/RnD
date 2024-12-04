@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
 import NavigationButton from './Feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
-import FeedSkeleton from './FeedSkeleton';
+import FeedSkeleton from '../Components/Feed/FeedSkeleton';
 import { shuffle } from 'lodash';
 
 const Feed = () => {

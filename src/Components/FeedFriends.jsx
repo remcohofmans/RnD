@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkle } from 'lucide-react';
 import { Heart, Sparkles } from 'lucide-react';
 import { Wheel } from 'react-custom-roulette';
-import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
 import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
 import { useNavigate } from 'react-router-dom';
-import FeedSkeleton from './FeedSkeleton';
-import FriendFeedSkeleton from './FriendFeedSkeleton';
+import FriendFeedSkeleton from '../Components/Feed/FriendFeedSkeleton';
 import { shuffle } from 'lodash';
 
 const FeedFriends = () => {
