@@ -25,36 +25,60 @@ const AgeRangeControl = ({
 
   const handleChangeMin = (newValue) => {
     setError('');
-    
-    if (newValue === '' || isNaN(newValue)) {
-      setError('Please enter a valid number');
-      return;
-    }
-
-    const newMin = Math.min(Math.max(18, parseInt(newValue)), maxAge);
-    setMinAge(newMin);
-    onChangeMin(newMin.toString());
+    // Allow empty input for free typing
+    const parsedValue = newValue === '' ? '' : parseInt(newValue);
+    setMinAge(parsedValue);
+    onChangeMin(newValue); // Update the parent with the raw value
   };
 
   const handleChangeMax = (newValue) => {
     setError('');
+    // Allow empty input for free typing
+    const parsedValue = newValue === '' ? '' : parseInt(newValue);
+    setMaxAge(parsedValue);
+    onChangeMax(newValue); // Update the parent with the raw value
+  };
 
-    if (newValue === '' || isNaN(newValue)) {
-      setError('Please enter a valid number');
-      return;
+  const handleBlur = () => {
+    let newMinAge = minAge;
+    let newMaxAge = maxAge;
+    let errorMessage = '';
+
+    // Clamp minAge to be at least 18
+    if (newMinAge < 18) {
+      newMinAge = 18;
+      errorMessage = 'Min Age cannot be less than 18';
     }
 
-    const newMax = Math.min(Math.max(minAge, parseInt(newValue)), 100);
-    setMaxAge(newMax);
-    onChangeMax(newMax.toString());
+    // Clamp maxAge to be at most 120
+    if (newMaxAge > 120) {
+      newMaxAge = 120;
+      errorMessage = 'Max Age cannot be greater than 120';
+    }
+
+    // Ensure minAge is always less than maxAge
+    if (newMinAge >= newMaxAge) {
+      errorMessage = 'Min Age cannot be greater than or equal to Max Age';
+      newMinAge = newMaxAge - 1; // Adjust minAge to be smaller than maxAge
+    }
+
+    // Update the state with the clamped values
+    setMinAge(newMinAge);
+    setMaxAge(newMaxAge);
+    setError(errorMessage);
+
+    // Update parent components with clamped values
+    onChangeMin(newMinAge.toString());
+    onChangeMax(newMaxAge.toString());
   };
 
   return (
     <div className="space-y-2">
       <div className="bg-white shadow-lg rounded-2xl p-6">
         <div className="flex flex-col items-center gap-6">
-        <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-md">
-        <div className="flex-1 space-y-2">
+          <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-md">
+            {/* Min Age control */}
+            <div className="flex-1 space-y-2">
               <span className="text-sm text-gray-500">Min Age</span>
               <div className="flex items-center gap-3">
                 <button
@@ -73,8 +97,9 @@ const AgeRangeControl = ({
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    value={minAge}
+                    value={minAge === '' ? '' : minAge} // Handle case where the value is empty
                     onChange={(e) => handleChangeMin(e.target.value)}
+                    onBlur={handleBlur} // Trigger validation on blur
                     className="w-full text-2xl font-semibold text-center bg-transparent border-b-2 border-rose-200 focus:border-rose-500 focus:ring-0 p-2 text-rose-900"
                     aria-label="Minimum age"
                   />
@@ -94,7 +119,7 @@ const AgeRangeControl = ({
 
             <div className="text-rose-300 text-2xl">-</div>
 
-            {/* Maximum age control */}
+            {/* Max Age control */}
             <div className="flex-1 space-y-2">
               <span className="text-sm text-gray-500">Max Age</span>
               <div className="flex items-center gap-3">
@@ -114,8 +139,9 @@ const AgeRangeControl = ({
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    value={maxAge}
+                    value={maxAge === '' ? '' : maxAge} // Handle case where the value is empty
                     onChange={(e) => handleChangeMax(e.target.value)}
+                    onBlur={handleBlur} // Trigger validation on blur
                     className="w-full text-2xl font-semibold text-center bg-transparent border-b-2 border-rose-200 focus:border-rose-500 focus:ring-0 p-2 text-rose-900"
                     aria-label="Maximum age"
                   />
@@ -126,7 +152,7 @@ const AgeRangeControl = ({
                   onClick={() => handleChangeMax((maxAge + 1).toString())}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-50 hover:bg-rose-100 active:bg-rose-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                   aria-label="Increase maximum age"
-                  disabled={maxAge >= 100}
+                  disabled={maxAge >= 120}
                 >
                   <Plus className="w-4 h-4 text-rose-600" />
                 </button>
@@ -135,7 +161,7 @@ const AgeRangeControl = ({
           </div>
         </div>
       </div>
-      
+
       {error && (
         <p 
           id={`${id}-error`} 
