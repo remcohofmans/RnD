@@ -75,7 +75,7 @@ const Feed = () => {
     try {
       // Fetch user preferences
       const { data: userPreferences, error: userPreferencesError } = await supabase
-        .from('userpreferences')
+        .from('preferences')
         .select('distance, min_age, max_age, interest')
         .eq('id', user.id)
         .single();
@@ -192,7 +192,7 @@ const Feed = () => {
         }
   
         const { data: preferencesData, error: preferencesDataError } = await supabase
-          .from('userpreferences')
+          .from('preferences')
           .select('hobbies')
           .eq('id', potentialUser.id)
           .single();
