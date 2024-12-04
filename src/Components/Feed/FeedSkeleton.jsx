@@ -23,27 +23,28 @@ const FeedSkeleton = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Wheel Column */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center"
           >
-            <div className="relative w-full max-w-md mb-8">
+            <div className="flex items-center justify-center w-full max-w-md mx-auto mb-8 relative">
+              {/* Wheel Placeholder */}
               <div className="w-64 h-64 bg-rose-300 rounded-full animate-pulse"></div>
+
               <motion.button
-                className="absolute inset-0 w-32 h-32 m-auto rounded-full 
-                  bg-gradient-to-br from-rose-500 to-rose-700 
-                  shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
-                  text-white font-bold z-10 
-                  flex items-center justify-center 
-                  pulse-animation
-                  active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
-                  hover:brightness-110 
-                  transition-all duration-300 
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  text-2xl tracking-wider"
+                className="absolute top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full 
+      bg-gradient-to-br from-rose-500 to-rose-700 
+      shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
+      text-white font-bold z-10 
+      flex items-center justify-center 
+      pulse-animation
+      active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
+      hover:brightness-110 
+      transition-all duration-300 
+      disabled:opacity-50 disabled:cursor-not-allowed
+      text-2xl tracking-wider"
                 disabled
               >
                 SPIN
