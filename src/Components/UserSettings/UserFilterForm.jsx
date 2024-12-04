@@ -42,7 +42,7 @@ const FilterForm = () => {
   
     try {
       const { data, error } = await supabase
-        .from('userpreferences')
+        .from('preferences')
         .select('*')
         .eq('id', userId)
         .single();
@@ -97,14 +97,14 @@ const FilterForm = () => {
 
       try {
         const { data, error } = await supabase
-          .from('userpreferences')
+          .from('preferences')
           .select('id')
           .eq('id', userId)
           .single();
 
         if (data) {
           const { data: updateData, error: updateError } = await supabase
-            .from('userpreferences')
+            .from('preferences')
             .update(dataToSubmit)
             .eq('id', userId);
 
@@ -116,7 +116,7 @@ const FilterForm = () => {
           }
         } else {
           const { data: insertData, error: insertError } = await supabase
-            .from('userpreferences')
+            .from('preferences')
             .insert([dataToSubmit]);
 
           if (insertError) {
