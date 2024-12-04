@@ -9,6 +9,7 @@ import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/
 import NavigationButton from './Feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
 import FeedSkeleton from './FeedSkeleton';
+import { shuffle } from 'lodash';
 
 const Feed = () => {
   const { user, checkSubscription } = useAuth();
@@ -21,7 +22,7 @@ const Feed = () => {
   const [checkingAccess, setCheckingAccess] = useState(true);
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
-  const USERS_TO_FETCH = 10;
+  const USERS_TO_FETCH = 9;
   const navigate = useNavigate();
 
   const calculateAge = (birthday) => {
@@ -54,6 +55,7 @@ const Feed = () => {
     }
   };
 
+ 
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -62,13 +64,13 @@ const Feed = () => {
   
     setLoading(true);
     setError(null);
-
+  
     // First check if user has access
-    const userHasAccess = await checkUserAccess()
-      if (!userHasAccess) {
-        setLoading(false);
-          return;
-      }
+    const userHasAccess = await checkUserAccess();
+    if (!userHasAccess) {
+      setLoading(false);
+      return;
+    }
   
     try {
       // Fetch user preferences
@@ -103,31 +105,31 @@ const Feed = () => {
         throw new Error("Failed to fetch your facility details.");
       }
   
-            const currentUserCity = currentUserFacility.city;
-            const maxDistance = userPreferences.distance;
-
-                // Fetch liked and matched user IDs
-          const { data: likedUsers, error: likedUsersError } = await supabase
-          .from('likes')
-          .select('liked_user_id')
-          .eq('user_id', user.id);
-
-        if (likedUsersError) {
-          throw new Error("Failed to fetch liked users.");
-        }
-
-        const { data: matchedUsers, error: matchedUsersError } = await supabase
-          .from('matches')
-          .select('matched_user_id')
-          .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`);
-
-        if (matchedUsersError) {
-          throw new Error("Failed to fetch matched users.");
-        }
-
-        const likedUserIds = likedUsers.map(like => like.liked_user_id);
-        const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
-        const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds, user.id])];
+      const currentUserCity = currentUserFacility.city;
+      const maxDistance = userPreferences.distance;
+  
+      // Fetch liked and matched user IDs
+      const { data: likedUsers, error: likedUsersError } = await supabase
+        .from('likes')
+        .select('liked_user_id')
+        .eq('user_id', user.id);
+  
+      if (likedUsersError) {
+        throw new Error("Failed to fetch liked users.");
+      }
+  
+      const { data: matchedUsers, error: matchedUsersError } = await supabase
+        .from('matches')
+        .select('matched_user_id')
+        .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`);
+  
+      if (matchedUsersError) {
+        throw new Error("Failed to fetch matched users.");
+      }
+  
+      const likedUserIds = likedUsers.map(like => like.liked_user_id);
+      const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
+      const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds, user.id])];
   
       // Fetch users with access granted and not the current user
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
@@ -138,8 +140,7 @@ const Feed = () => {
         .neq('id', user.id)
         .not('name', 'is', null)
         .not('birthday', 'is', null)
-        .not('facility_id', 'is', null)
-        .limit(USERS_TO_FETCH);
+        .not('facility_id', 'is', null);
   
       if (fetchedUsersError) {
         throw new Error("Failed to fetch users.");
@@ -166,54 +167,57 @@ const Feed = () => {
         return acc;
       }, {});
   
-      const usersWithDetails = await Promise.all(
-        fetchedUsers.map(async (potentialUser) => {
-          const age = calculateAge(potentialUser.birthday);
+      let usersWithDetails = [];
+      for (const potentialUser of fetchedUsers) {
+        const age = calculateAge(potentialUser.birthday);
   
-          if (
-            age < userPreferences.min_age ||
-            age > userPreferences.max_age ||
-            (userPreferences.interest !== 'geen-voorkeur' &&
-              potentialUser.gender !== userPreferences.interest)
-          ) {
-            return null;
-          }
+        if (
+          age < userPreferences.min_age ||
+          age > userPreferences.max_age ||
+          (userPreferences.interest !== 'geen-voorkeur' &&
+            potentialUser.gender !== userPreferences.interest)
+        ) {
+          continue;
+        }
   
-          const facility = facilityMap[potentialUser.facility_id];
-          if (!facility) {
-            return null;
-          }
+        const facility = facilityMap[potentialUser.facility_id];
+        if (!facility) {
+          continue;
+        }
   
-          const distance = await calculateDistance(currentUserCity, facility.city);
+        const distance = await calculateDistance(currentUserCity, facility.city);
   
-          if (parseFloat(distance) > maxDistance) {
-            return null;
-          }
+        if (parseFloat(distance) > maxDistance) {
+          continue;
+        }
   
-          const { data: preferencesData, error: preferencesDataError } = await supabase
-            .from('userpreferences')
-            .select('hobbies')
-            .eq('id', potentialUser.id)
-            .single();
+        const { data: preferencesData, error: preferencesDataError } = await supabase
+          .from('userpreferences')
+          .select('hobbies')
+          .eq('id', potentialUser.id)
+          .single();
   
-          if (preferencesDataError) {
-            return null;
-          }
+        if (preferencesDataError) {
+          continue;
+        }
   
-          return {
-            id: potentialUser.id,
-            name: potentialUser.name || 'Anonymous',
-            location: `${facility.city} (${distance})`,
-            facility: facility.name,
-            birthday: potentialUser.birthday,
-            age,
-            hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : [],
-            distance,
-          };
-        })
-      );
+        usersWithDetails.push({
+          id: potentialUser.id,
+          name: potentialUser.name || 'Anonymous',
+          location: `${facility.city} (${distance})`,
+          facility: facility.name,
+          birthday: potentialUser.birthday,
+          age,
+          hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : [],
+          distance,
+        });
+      }
   
-      setUsers(usersWithDetails.filter(Boolean).slice(0, USERS_TO_FETCH));
+      // Shuffle the array of usersWithDetails using lodash.shuffle
+      usersWithDetails = shuffle(usersWithDetails);
+  
+      // Select the first 10 users from the shuffled list
+      setUsers(usersWithDetails.slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
     } finally {
@@ -221,9 +225,6 @@ const Feed = () => {
     }
   };
   
-  
-  
-
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
