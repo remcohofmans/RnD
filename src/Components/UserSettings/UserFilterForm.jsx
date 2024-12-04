@@ -258,7 +258,7 @@ const FilterForm = () => {
 
       {submittedData && (
         <div className="mt-8 p-4 bg-green-100 text-green-700 rounded-lg">
-          Form data submitted successfully!
+          Je persoonlijke interesses zijn succevol opgeslagen!
         </div>
       )}
     </div>
