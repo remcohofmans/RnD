@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkle } from 'lucide-react';
-import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
@@ -10,6 +9,7 @@ import NavigationButton from './Feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
 import FeedSkeleton from '../Components/Feed/FeedSkeleton';
 import { shuffle } from 'lodash';
+import WheelComponent from '../Components/Feed/SpinWheel';
 
 const Feed = () => {
   const { user, checkSubscription } = useAuth();
@@ -55,7 +55,6 @@ const Feed = () => {
     }
   };
 
- 
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
@@ -223,7 +222,10 @@ const Feed = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
+
+
+
   
   useEffect(() => {
     if (isDistanceServiceInitialized) {
@@ -304,91 +306,50 @@ if (checkingAccess) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
-    <div className="container mx-auto px-4 max-w-6xl">
-      <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
-          Ontdek je Match
-        </h1>
-        <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
-          <Sparkle />
-          Spin het wiel en laat het toeval je naar de ware verbinding leiden
-          <Sparkle />
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Wheel Column */}
-        <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
-          <div className="relative w-full max-w-md mb-8">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={currentIndex}
-              data={wheelData}
-              onStopSpinning={handleWheelStop}
-              radiusLineWidth={3}
-              radiusLineColor="border-pink-500"
-              outerBorderWidth={6}
-              outerBorderColor="border-pink-400"
-              fontSize={18}
-              perpendicularText
-              textDistance={85}
-              backgroundColors={[
-                'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100',
-                'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
-                'bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200',
-                'bg-gradient-to-r from-green-200 via-green-300 to-blue-100',
-                'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
-                'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
-              ]}
-              textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
-              textColor="text-white"
-              animationDuration={3000}
-              spinEase="ease-out"
-              wheelSize={300}
-              onStartSpinning={() => console.log('Wheel started spinning!')}
-            />
-
-            <button
-              className="absolute inset-0 w-32 h-32 m-auto rounded-full 
-                bg-gradient-to-br from-rose-500 to-rose-700 
-                shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
-                text-white font-bold z-10 
-                flex items-center justify-center 
-                pulse-animation
-                active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
-                hover:brightness-110 
-                transition-all duration-300 
-                disabled:opacity-50 disabled:cursor-not-allowed
-                text-2xl tracking-wider"
-              onClick={handleSpinClick}
-              disabled={mustSpin}
-            >
-              {mustSpin ? 'Draaien...' : 'SPIN'}
-            </button>
-          </div>
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
+            Ontdek je Match
+          </h1>
+          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
+            <Sparkle />
+            Spin het wiel en laat het toeval je naar de ware verbinding leiden
+            <Sparkle />
+          </p>
         </div>
 
-        {/* User Card Column */}
-        <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
-          <AnimatePresence mode="wait">
-            {mustSpin ? (
-              <div className="text-center text-rose-100 p-8">
-                <div className="flex flex-col items-center space-y-6">
-                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale match...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} />
-              </div>
-            )}
-          </AnimatePresence>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Wheel Column */}
+          <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
+            <WheelComponent
+              users={users}
+              currentIndex={currentIndex}
+              mustSpin={mustSpin}
+              setMustSpin={setMustSpin}
+              handleWheelStop={handleWheelStop}
+              setCurrentIndex={setCurrentIndex}
+            />
+          </div>
+
+          {/* User Card Column */}
+          <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
+            <AnimatePresence mode="wait">
+              {mustSpin ? (
+                <div className="text-rose-900 text-2xl">Wacht, het wiel draait...</div>
+              ) : (
+                <motion.div key={users[currentIndex]?.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <UserCard
+                    user={users[currentIndex]}
+                    age={calculateAge(users[currentIndex]?.birthday)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Feed;
