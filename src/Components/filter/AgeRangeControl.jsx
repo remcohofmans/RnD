@@ -33,10 +33,11 @@ const AgeRangeControl = ({
 
   const handleChangeMax = (newValue) => {
     setError('');
-    // Allow empty input for free typing
+
     const parsedValue = newValue === '' ? '' : parseInt(newValue);
     setMaxAge(parsedValue);
-    onChangeMax(newValue); // Update the parent with the raw value
+    onChangeMax(newValue); 
+
   };
 
   const handleBlur = () => {
@@ -44,22 +45,23 @@ const AgeRangeControl = ({
     let newMaxAge = maxAge;
     let errorMessage = '';
 
-    // Clamp minAge to be at least 18
+    //  minAge to be at least 18
     if (newMinAge < 18) {
       newMinAge = 18;
-      errorMessage = 'Min Age cannot be less than 18';
+      errorMessage = 'Minimum leeftijd bedraagt 18 jaar.';
     }
 
-    // Clamp maxAge to be at most 120
+    //  maxAge to be at most 120
     if (newMaxAge > 120) {
       newMaxAge = 120;
-      errorMessage = 'Max Age cannot be greater than 120';
+      errorMessage = 'Maximum leeftijd bedraagt 120 jaar.';
     }
 
     // Ensure minAge is always less than maxAge
     if (newMinAge >= newMaxAge) {
-      errorMessage = 'Min Age cannot be greater than or equal to Max Age';
-      newMinAge = newMaxAge - 1; // Adjust minAge to be smaller than maxAge
+      errorMessage = 'Minimum leeftijd kan maximum leeftijd niet overschrijden.';
+      newMinAge = 18; // Adjust minAge to be smaller than maxAge
+      newMaxAge =35;
     }
 
     // Update the state with the clamped values
@@ -79,7 +81,7 @@ const AgeRangeControl = ({
           <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-md">
             {/* Min Age control */}
             <div className="flex-1 space-y-2">
-              <span className="text-sm text-gray-500">Min Age</span>
+              <span className="text-sm text-gray-500">Minimum leeftijd</span>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -121,7 +123,7 @@ const AgeRangeControl = ({
 
             {/* Max Age control */}
             <div className="flex-1 space-y-2">
-              <span className="text-sm text-gray-500">Max Age</span>
+              <span className="text-sm text-gray-500">Maximum leeftijd</span>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
