@@ -92,7 +92,7 @@ export function AuthProvider({ children }) {
   
       if (!userData || userData.length === 0) {
         setError("This account was deleted");
-        return { success: false, error: "This account was deleted" }; // Stop further execution
+        return { success: false, error: "Dit account was verwijderd" }; // Stop further execution
       }
       
 
