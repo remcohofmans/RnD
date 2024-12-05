@@ -52,7 +52,7 @@ describe('LoginRegister Component', () => {
 
     expect(screen.getByPlaceholderText('Wachtwoord')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Bevestig Wachtwoord')).toBeInTheDocument();
-    expect(screen.getByText('Selecteer uw faciliteit')).toBeInTheDocument();
+    expect(screen.getByText('Selecteer jouw faciliteit')).toBeInTheDocument();
   });
 
   test('validates email input', () => {

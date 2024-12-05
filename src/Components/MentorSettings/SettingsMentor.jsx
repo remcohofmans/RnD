@@ -154,7 +154,7 @@ const SettingsMentor = () => {
               <div className="p-6 bg-white rounded-lg shadow-lg w-80 border-4 border-[#fda4af]">
                 <h2 className="text-lg font-semibold text-gray-800">Bevestig Verwijdering</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                  Bent u zeker dat u dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
+                  Ben je zeker dat je dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
                 </p>
                 <div className="flex justify-end gap-4 mt-4">
                   <button

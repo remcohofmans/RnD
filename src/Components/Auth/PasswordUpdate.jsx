@@ -70,7 +70,7 @@ const PasswordUpdate = () => {
           <div className="p-8 relative">
             <div className="flex items-center justify-center mb-6">
               <Key size={48} className="text-rose-600 mr-4 drop-shadow-sm" />
-              <h2 className="text-3xl font-bold text-neutral-900">Update Uw Paswoord</h2>
+              <h2 className="text-3xl font-bold text-neutral-900">Update jouw Paswoord</h2>
             </div>
 
             {message && (
@@ -106,7 +106,7 @@ const PasswordUpdate = () => {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-neutral-700 font-medium mb-2">
-                  Bevestig uw nieuw paswoord
+                  Bevestig jouw nieuw paswoord
                 </label>
                 <input
                   type="password"

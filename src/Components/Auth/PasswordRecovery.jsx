@@ -15,7 +15,7 @@ const PasswordRecovery = () => {
     event.preventDefault();
 
     if (!email) {
-      setError('Gelieve uw e-mailadres in te vullen');
+      setError('Gelieve jouw e-mailadres in te vullen');
       return;
     }
 
@@ -72,7 +72,7 @@ const PasswordRecovery = () => {
             </div>
 
             <div className="text-center text-neutral-600 mb-6">
-              <p className="text-sm">Geen zorgen! Voer uw e-mailadres in en wij sturen u een herstellink.</p>
+              <p className="text-sm">Geen zorgen! Voer jouw e-mailadres in en wij sturen je een herstellink.</p>
             </div>
 
             {message && (
@@ -103,7 +103,7 @@ const PasswordRecovery = () => {
                       placeholder-neutral-500"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Voer uw e-mailadres in"
+                    placeholder="Voer jouw e-mailadres in"
                     required
                   />
                 </div>
@@ -154,7 +154,7 @@ const PasswordRecovery = () => {
 
             <div className="text-center mt-6">
               <p className="text-sm text-neutral-600">
-                Herinnert u zich uw wachtwoord? {' '}
+                Herinner je jouw wachtwoord? {' '}
                 <a
                   href="/login"
                   className="text-rose-600 hover:text-rose-700 font-medium transition-colors"

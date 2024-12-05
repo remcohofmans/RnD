@@ -41,7 +41,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
     console.log(supabase);
 
     if (!loginEmail || !loginPassword) {
-      setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
+      setLoginError("Gelieve zowel je e-mailadres als wachtwoord op te geven.");
       return;
     }
 
@@ -98,7 +98,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
 
     const validateFields = () => {
       if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor ? !mentorCode : !facilityCode) || !selectedFacility) {
-        return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
+        return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om je aan te melden.";
       }
 
       if (signUpPassword !== confirmPassword) {
@@ -474,7 +474,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 {!isMentor ? (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                      <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie. (*)</span>
                     </div>
                     <div className="relative">
                       <Building className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -492,7 +492,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 ) : (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Geef uw mentor ID in. (*)</span>
+                      <span>Geef je mentor ID in. (*)</span>
                     </div>
                     <div className="relative">
                       <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -511,7 +511,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 {/* Facility Dropdown */}
                 <div className="mb-6">
                   <label htmlFor="facility" className="text-sm text-[#be123c]">
-                    Duid aan in welke faciliteit u verblijft:
+                    Duid aan in welke faciliteit je verblijft:
                   </label>
                   <div className="relative mt-2">
                     <select
@@ -522,7 +522,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                       required
                     >
                       <option value="" disabled>
-                        Selecteer uw faciliteit
+                        Selecteer je faciliteit
                       </option>
                       <option value="Bloemetje">Bloemetje</option>
                       <option value="De Regenboog">De Regenboog</option>
@@ -625,7 +625,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
             <div className="text-center mt-8">
               {isLogin ? (
                 <p className="text-gray-600">
-                  Hebt u nog geen account?{' '}
+                  Heb je nog geen account?{' '}
                   <button
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
@@ -639,7 +639,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 </p>
               ) : (
                 <p className="text-gray-600">
-                  Hebt u al een account?{' '}
+                  Heb je al een account?{' '}
                   <button
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
@@ -659,17 +659,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Algemene Voorwaarden</h2>
                 <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
                   <p className="text-gray-600">
-                    Welkom op ons platform. Door onze diensten te gebruiken, stemt u ermee in zich te houden aan de volgende voorwaarden:
+                    Welkom op ons platform. Door onze diensten te gebruiken, stem je ermee in zich te houden aan de volgende voorwaarden:
                     <br /><br />
-                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, gaat u akkoord met deze voorwaarden en eventuele wijzigingen.
+                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, ga je akkoord met deze voorwaarden en eventuele wijzigingen.
                     <br /><br />
-                    2. <strong>Privacybeleid:</strong> Uw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
+                    2. <strong>Privacybeleid:</strong> Je persoonlijke gegevens worden beschermd volgens ons privacybeleid.
                     <br /><br />
-                    3. <strong>Accountverantwoordelijkheden:</strong> U zowel als de begeleider die u toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van uw account.
+                    3. <strong>Accountverantwoordelijkheden:</strong> Je zowel als de begeleider die je toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van jouw account.
                     <br /><br />
-                    4. <strong>Verboden Activiteiten:</strong> U mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
+                    4. <strong>Verboden Activiteiten:</strong> Je mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
                     <br /><br />
-                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om uw account op elk moment te schorsen of te beëindigen.
+                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om jouw account op elk moment te schorsen of te beëindigen.
                     <br /><br />
                     Enzovoort...
                   </p>
@@ -705,17 +705,17 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                 <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Privacy Policy</h2>
                 <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
                   <p className="text-gray-600">
-                    Welkom op ons platform. Door onze diensten te gebruiken, stemt u ermee in zich te houden aan de volgende voorwaarden:
+                    Welkom op ons platform. Door onze diensten te gebruiken, stem je ermee in zich te houden aan de volgende voorwaarden:
                     <br /><br />
-                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, gaat u akkoord met deze voorwaarden en eventuele wijzigingen.
+                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, ga je akkoord met deze voorwaarden en eventuele wijzigingen.
                     <br /><br />
-                    2. <strong>Privacybeleid:</strong> Uw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
+                    2. <strong>Privacybeleid:</strong> jouw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
                     <br /><br />
-                    3. <strong>Accountverantwoordelijkheden:</strong> U zowel als de begeleider die u toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van uw account.
+                    3. <strong>Accountverantwoordelijkheden:</strong> Je zowel als de begeleider die je toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van jouw account.
                     <br /><br />
-                    4. <strong>Verboden Activiteiten:</strong> U mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
+                    4. <strong>Verboden Activiteiten:</strong> Je mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
                     <br /><br />
-                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om uw account op elk moment te schorsen of te beëindigen.
+                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om jouw account op elk moment te schorsen of te beëindigen.
                     <br /><br />
                     Enzovoort...
                   </p>
