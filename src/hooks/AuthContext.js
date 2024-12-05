@@ -23,6 +23,15 @@ export function AuthProvider({ children }) {
     }
   };
 
+  async function pauseAccount(userId) {
+    const { data, error } = await supabase
+        .from('users')
+        .update({ status: "PAUSED" })
+        .eq('id', userId);
+
+    return { data, error };
+};
+
   const fetchUsersForMentor = async (mentorId) => {
     try {
       const { data: mentorData, error: mentorError } = await supabase
@@ -452,7 +461,10 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
+    
   };
+
+
 
   // Restore session on app load
   useEffect(() => {
@@ -468,7 +480,7 @@ export function AuthProvider({ children }) {
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
-      fetchSubscriptionRequests, updateSubscription, checkSubscription, restoreSession
+      fetchSubscriptionRequests, updateSubscription, checkSubscription, restoreSession, pauseAccount
     }}>
       {children}
     </AuthContext.Provider>

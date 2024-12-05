@@ -3,7 +3,8 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import { useAuth } from '../../hooks/AuthContext';
 
 const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
-  
+  const {pauseAccount } = useAuth();
+
   const [error, setError] = useState(null);
   const { user } = useAuth();
   const userId = user?.id
@@ -15,17 +16,14 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .update({ status: "PAUSED" })
-        .eq('id', userId);
+      const {error } = await pauseAccount(userId);
 
       if (error) {
         console.error("Error updating status:", error);
         setError("Error pausing your profile: " + error.message);
         if (onError) onError(error.message);
       } else {
-        onSuccess("Your profile has been paused.");
+        onSuccess("Je profiel werd gepauzeerd.");
       }
     } catch (err) {
       console.error("Error updating status:", err);
@@ -45,7 +43,7 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-        <p className="mb-4 text-lg">Are you sure you want to pause your profile?</p>
+        <p className="mb-4 text-lg">Ben je zeker dat je je profiel wilt pauzeren?</p>
         {error && (
           <div className="mb-4 p-2 text-sm text-red-600 bg-red-100 rounded">
             {error}
