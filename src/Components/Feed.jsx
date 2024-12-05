@@ -137,6 +137,7 @@ const Feed = () => {
         .eq('access_granted', 'YES')
         .not('id', 'in', `(${excludedUserIds.join(',')})`)
         .neq('id', user.id)
+        .neq('status','PAUSED')
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null);

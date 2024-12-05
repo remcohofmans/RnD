@@ -11,7 +11,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const { user, logout, role, checkSubscription } = useAuth();
+  const { user, logout, role, checkSubscription,logoutAndNavigate } = useAuth();
   const email = user?.email;
   const loggedIn = !!user;
 
@@ -26,15 +26,21 @@ const Home = () => {
       // Fetch user details if not already provided by the `useAuth` hook
       const fetchUserName = async () => {
         try {
-          const { data, error } = await supabase
+          const { data: data, error: error } = await supabase
             .from('users')
-            .select('name')
+            .select('*')
             .eq('email', user?.email)
             .single();
 
           if (error) {
             console.error('Error fetching user name:', error);
             return;
+          }
+
+          console.log("data status: ", data.status);
+
+          if (data.status === 'PAUSED') {
+            setIsPausedModalOpen(true);
           }
 
           setUserName(data.name || 'Gebruiker'); // Default to 'Gebruiker' if name is not set
@@ -46,6 +52,8 @@ const Home = () => {
       if (user) {
         fetchUserName();
       }
+
+
     }
   }, [navigate, role, user]);
 
@@ -63,11 +71,6 @@ const Home = () => {
         return;
       }
 
-      if (data.status === 'PAUSED') {
-        setIsPausedModalOpen(true);
-      } else {
-        navigate('/feed');
-      }
     } catch (err) {
       console.error('Error checking account status:', err);
     }
@@ -86,7 +89,6 @@ const Home = () => {
       }
 
       setIsPausedModalOpen(false);
-      navigate('/feed');
     } catch (err) {
       console.error('Error updating account status:', err);
     }
@@ -110,20 +112,20 @@ const Home = () => {
               Account Gepauzeerd
             </h2>
             <p className="text-sm md:text-base text-gray-600 mb-6">
-              Je account is momenteel gepauzeerd. Je kunt de feed niet openen totdat het wordt geactiveerd.
+              Je account is momenteel gepauzeerd. Je kunt de site niet openen totdat het wordt gereactiveerd.
             </p>
             <div className="flex space-x-4">
               <button
                 onClick={handleUnpauseAccount}
                 className="flex-1 bg-rose-600 text-white py-2 md:py-3 rounded-lg hover:bg-rose-700 transition-colors"
               >
-                Account Heractiveren
+                Account heractiveren
               </button>
               <button
-                onClick={() => setIsPausedModalOpen(false)}
+                onClick={logoutAndNavigate}
                 className="flex-1 bg-gray-200 text-gray-800 py-2 md:py-3 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                Sluiten
+                Terug naar login
               </button>
             </div>
           </motion.div>
