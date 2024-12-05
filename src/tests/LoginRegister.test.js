@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import LoginRegister from '../Components/Auth/LoginRegister';
 
+
 // Mock supabase and react-router-dom
 jest.mock('../lib/helper/supabaseClient', () => ({
   supabase: {
@@ -125,45 +126,126 @@ describe('LoginRegister Component', () => {
     expect(submitButton).toBeDisabled();
   });
 
-  test('handles signup submission', async () => {
-    renderComponent();
+  describe('LoginRegister sign up Functionality', () => {
+    beforeEach(() => {
+      mockLoginWithEmail.mockClear();
+      mockSignUpWithEmail.mockClear();
+    });
+  
+    // Switch to signup form before each test
+    const switchToSignup = (container) => {
+      const signupLink = screen.getByText(/Registreer hier/i);
+      fireEvent.click(signupLink);
+    };
+  
+    test('renders signup form when switching from login', () => {
+      renderComponent();
+      switchToSignup();
+      
+      expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Wachtwoord')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Bevestig Wachtwoord')).toBeInTheDocument();
+    });
+  
+    test('validates email format', () => {
+      renderComponent();
+      switchToSignup();
+  
+      const emailInput = screen.getByPlaceholderText('Email');
+      
+      fireEvent.change(emailInput, { target: { value: 'invalidemail' } });
+      expect(screen.getByText('Voer een geldig e-mailadres in.')).toBeInTheDocument();
+  
+      fireEvent.change(emailInput, { target: { value: 'valid@email.com' } });
+      expect(screen.queryByText('Voer een geldig e-mailadres in.')).toBeNull();
+    });
+  
+    test('password validation', () => {
+      renderComponent();
+      switchToSignup();
+  
+      const passwordInput = screen.getByPlaceholderText('Wachtwoord');
+      const confirmPasswordInput = screen.getByPlaceholderText('Bevestig Wachtwoord');
+  
+      fireEvent.change(passwordInput, { target: { value: 'short' } });
+      expect(screen.getByText('Wachtwoord moet minstens 6 tekens lang zijn.')).toBeInTheDocument();
+  
+      fireEvent.change(passwordInput, { target: { value: 'validpassword' } });
+      fireEvent.change(confirmPasswordInput, { target: { value: 'differentpassword' } });
+      
+      expect(screen.queryByText('De wachtwoorden zijn een match!')).toBeNull();
+    });
+  
+    test('requires facility selection and code', () => {
+      renderComponent();
+      switchToSignup();
+  
+      // Fill in basic signup info
+      fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Wachtwoord'), { target: { value: 'validpassword' } });
+      fireEvent.change(screen.getByPlaceholderText('Bevestig Wachtwoord'), { target: { value: 'validpassword' } });
+  
+      // Check signup button is disabled without facility selection
+      const signupButton = screen.getByRole('button', { name: 'Registreer' });
+      expect(signupButton).toBeDisabled();
+  
+      // Select a facility
+      fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Bloemetje' } });
+  
+      // Fill facility code
+      fireEvent.change(screen.getByPlaceholderText('Faciliteitscode'), { target: { value: '12345' } });
+  
+      // Check terms and privacy checkboxes
+      const termsCheckbox = screen.getByLabelText(/Ik ga akkoord met de Terms and Conditions/i);
+      const privacyCheckbox = screen.getByLabelText(/Ik ga akkoord met de Privacy Policy/i);
+      
+      fireEvent.click(termsCheckbox);
+      fireEvent.click(privacyCheckbox);
+  
+      // Signup button should now be enabled
+      expect(signupButton).toBeEnabled();
+    });
+  
+    test('mentor sign up flow', async () => {
 
-    // Switch to registration form
-    const registerLink = screen.getByText('Registreer hier');
-    fireEvent.click(registerLink);
+      mockSignUpWithEmail.mockResolvedValue({ success: true });
 
-    // Fill out registration form
-    fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'newuser@email.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Wachtwoord'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Bevestig Wachtwoord'), { target: { value: 'password123' } });
-
-    // Add facility code
-    fireEvent.change(screen.getByPlaceholderText('Faciliteitscode'), { target: { value: '12345' } });
-
-    // Select facility
-    fireEvent.change(screen.getByText('Selecteer uw faciliteit'), { target: { value: 'Bloemetje' } });
-
-    // Select the checkboxes for Terms & Conditions and Privacy Policy
-    const termsCheckbox = screen.getByLabelText(/Ik ga akkoord met de Terms and Conditions/i);
-    const privacyCheckbox = screen.getByLabelText(/Ik ga akkoord met de Privacy Policy/i);
-
-    // Initially both checkboxes should not be checked
-    expect(termsCheckbox).not.toBeChecked();
-    expect(privacyCheckbox).not.toBeChecked();
-
-    // Check the checkboxes
-    fireEvent.click(termsCheckbox);
-    fireEvent.click(privacyCheckbox);
-
-    // Assert that both checkboxes are checked
-    expect(termsCheckbox).toBeChecked();
-    expect(privacyCheckbox).toBeChecked();
-
-    const registerButton = screen.getByRole('button', { name: 'Registreer' });
-    fireEvent.click(registerButton);
-
-    await waitFor(() => {
-      expect(mockSignUpWithEmail).toHaveBeenCalled();
+      renderComponent();
+      switchToSignup();
+  
+      // Select mentor checkbox
+      const mentorCheckbox = screen.getByLabelText(/Ik ben een mentor/i);
+      fireEvent.click(mentorCheckbox);
+  
+      // Fill in signup details
+      fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'mentor@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Wachtwoord'), { target: { value: 'validpassword' } });
+      fireEvent.change(screen.getByPlaceholderText('Bevestig Wachtwoord'), { target: { value: 'validpassword' } });
+      fireEvent.change(screen.getByPlaceholderText('Mentorcode'), { target: { value: 'MENTOR01' } });
+  
+      // Select facility
+      fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Bloemetje' } });
+  
+      // Check terms and privacy checkboxes
+      const termsCheckbox = screen.getByLabelText(/Ik ga akkoord met de Terms and Conditions/i);
+      const privacyCheckbox = screen.getByLabelText(/Ik ga akkoord met de Privacy Policy/i);
+      
+      fireEvent.click(termsCheckbox);
+      fireEvent.click(privacyCheckbox);
+  
+      // Submit signup
+      const signupButton = screen.getByRole('button', { name: 'Registreer' });
+      fireEvent.click(signupButton);
+  
+      // Verify signup function was called
+      await waitFor(() => {
+        expect(mockSignUpWithEmail).toHaveBeenCalledWith(
+          'mentor@example.com', 
+          'validpassword', 
+          true, 
+          'Bloemetje'
+        );
+      });
     });
   });
 });

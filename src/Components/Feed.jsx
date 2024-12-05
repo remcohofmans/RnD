@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkle } from 'lucide-react';
-import { Wheel } from 'react-custom-roulette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
@@ -10,6 +9,7 @@ import NavigationButton from './Feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
 import FeedSkeleton from '../Components/Feed/FeedSkeleton';
 import { shuffle } from 'lodash';
+import WheelComponent from '../Components/Feed/SpinWheel';
 
 const Feed = () => {
   const { user, checkSubscription } = useAuth();
@@ -41,9 +41,9 @@ const Feed = () => {
         .select('access_granted')
         .eq('id', user.id)
         .single();
-  
+
       if (error) throw error;
-      
+
       setHasAccess(data.access_granted === 'YES');
       return data.access_granted === 'YES';
     } catch (error) {
@@ -55,23 +55,22 @@ const Feed = () => {
     }
   };
 
- 
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
       console.error("Distance Matrix Service not ready.");
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     // First check if user has access
     const userHasAccess = await checkUserAccess();
     if (!userHasAccess) {
       setLoading(false);
       return;
     }
-  
+
     try {
       // Fetch user preferences
       const { data: userPreferences, error: userPreferencesError } = await supabase
@@ -79,58 +78,58 @@ const Feed = () => {
         .select('distance, min_age, max_age, interest')
         .eq('id', user.id)
         .single();
-  
+
       if (userPreferencesError) {
         throw new Error("Failed to fetch user preferences.");
       }
-  
+
       // Fetch current user's facility ID and then facility details to get the city
       const { data: currentUser, error: currentUserError } = await supabase
         .from('users')
         .select('facility_id')
         .eq('id', user.id)
         .single();
-  
+
       if (currentUserError || !currentUser?.facility_id) {
         throw new Error("Your location is not set. Please update your profile.");
       }
-  
+
       const { data: currentUserFacility, error: currentUserFacilityError } = await supabase
         .from('facility_enum')
         .select('city')
         .eq('id', currentUser.facility_id)
         .single();
-  
+
       if (currentUserFacilityError || !currentUserFacility?.city) {
         throw new Error("Failed to fetch your facility details.");
       }
-  
+
       const currentUserCity = currentUserFacility.city;
       const maxDistance = userPreferences.distance;
-  
+
       // Fetch liked and matched user IDs
       const { data: likedUsers, error: likedUsersError } = await supabase
         .from('likes')
         .select('liked_user_id')
         .eq('user_id', user.id);
-  
+
       if (likedUsersError) {
         throw new Error("Failed to fetch liked users.");
       }
-  
+
       const { data: matchedUsers, error: matchedUsersError } = await supabase
         .from('matches')
         .select('matched_user_id')
         .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`);
-  
+
       if (matchedUsersError) {
         throw new Error("Failed to fetch matched users.");
       }
-  
+
       const likedUserIds = likedUsers.map(like => like.liked_user_id);
       const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
       const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds, user.id])];
-  
+
       // Fetch users with access granted and not the current user
       const { data: fetchedUsers, error: fetchedUsersError } = await supabase
         .from('users')
@@ -141,36 +140,36 @@ const Feed = () => {
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null);
-  
+
       if (fetchedUsersError) {
         throw new Error("Failed to fetch users.");
       }
-  
+
       if (!fetchedUsers || fetchedUsers.length === 0) {
         setUsers([]);
         return;
       }
-  
+
       // Fetch facility details for all users
       const facilityIds = fetchedUsers.map(user => user.facility_id);
       const { data: facilities, error: facilitiesError } = await supabase
         .from('facility_enum')
         .select('id, name, city')
         .in('id', facilityIds);
-  
+
       if (facilitiesError) {
         throw new Error("Failed to fetch facilities.");
       }
-  
+
       const facilityMap = (facilities || []).reduce((acc, facility) => {
         acc[facility.id] = facility;
         return acc;
       }, {});
-  
+
       let usersWithDetails = [];
       for (const potentialUser of fetchedUsers) {
         const age = calculateAge(potentialUser.birthday);
-  
+
         if (
           age < userPreferences.min_age ||
           age > userPreferences.max_age ||
@@ -179,28 +178,28 @@ const Feed = () => {
         ) {
           continue;
         }
-  
+
         const facility = facilityMap[potentialUser.facility_id];
         if (!facility) {
           continue;
         }
-  
+
         const distance = await calculateDistance(currentUserCity, facility.city);
-  
+
         if (parseFloat(distance) > maxDistance) {
           continue;
         }
-  
+
         const { data: preferencesData, error: preferencesDataError } = await supabase
           .from('preferences')
           .select('hobbies')
           .eq('id', potentialUser.id)
           .single();
-  
+
         if (preferencesDataError) {
           continue;
         }
-  
+
         usersWithDetails.push({
           id: potentialUser.id,
           name: potentialUser.name || 'Anonymous',
@@ -212,10 +211,10 @@ const Feed = () => {
           distance,
         });
       }
-  
+
       // Shuffle the array of usersWithDetails using lodash.shuffle
       usersWithDetails = shuffle(usersWithDetails);
-  
+
       // Select the first 10 users from the shuffled list
       setUsers(usersWithDetails.slice(0, USERS_TO_FETCH));
     } catch (error) {
@@ -224,7 +223,10 @@ const Feed = () => {
       setLoading(false);
     }
   };
-  
+
+
+
+
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
@@ -253,11 +255,11 @@ const Feed = () => {
   };
 
   // Show skeleton loader while checking access
-if (checkingAccess) {
-  return (
-    <FeedSkeleton />
-  );
-}
+  if (checkingAccess) {
+    return (
+      <FeedSkeleton />
+    );
+  }
 
   if (!hasAccess) {
     return (
@@ -304,91 +306,50 @@ if (checkingAccess) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
-    <div className="container mx-auto px-4 max-w-6xl">
-      <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
-          Ontdek je Match
-        </h1>
-        <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
-          <Sparkle />
-          Spin het wiel en laat het toeval je naar de ware verbinding leiden
-          <Sparkle />
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Wheel Column */}
-        <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
-          <div className="relative w-full max-w-md mb-8">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={currentIndex}
-              data={wheelData}
-              onStopSpinning={handleWheelStop}
-              radiusLineWidth={3}
-              radiusLineColor="border-pink-500"
-              outerBorderWidth={6}
-              outerBorderColor="border-pink-400"
-              fontSize={18}
-              perpendicularText
-              textDistance={85}
-              backgroundColors={[
-                'bg-gradient-to-r from-pink-200 via-rose-300 to-pink-100',
-                'bg-gradient-to-r from-purple-200 via-pink-200 to-rose-100',
-                'bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200',
-                'bg-gradient-to-r from-green-200 via-green-300 to-blue-100',
-                'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
-                'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
-              ]}
-              textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
-              textColor="text-white"
-              animationDuration={3000}
-              spinEase="ease-out"
-              wheelSize={300}
-              onStartSpinning={() => console.log('Wheel started spinning!')}
-            />
-
-            <button
-              className="absolute inset-0 w-32 h-32 m-auto rounded-full 
-                bg-gradient-to-br from-rose-500 to-rose-700 
-                shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
-                text-white font-bold z-10 
-                flex items-center justify-center 
-                pulse-animation
-                active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
-                hover:brightness-110 
-                transition-all duration-300 
-                disabled:opacity-50 disabled:cursor-not-allowed
-                text-2xl tracking-wider"
-              onClick={handleSpinClick}
-              disabled={mustSpin}
-            >
-              {mustSpin ? 'Draaien...' : 'SPIN'}
-            </button>
-          </div>
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
+            Ontdek je Match
+          </h1>
+          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
+            <Sparkle />
+            Spin het wiel en laat het toeval je naar de ware verbinding leiden
+            <Sparkle />
+          </p>
         </div>
 
-        {/* User Card Column */}
-        <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
-          <AnimatePresence mode="wait">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Wheel Column */}
+          <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
+            <WheelComponent
+              users={users}
+              currentIndex={currentIndex}
+              mustSpin={mustSpin}
+              setMustSpin={setMustSpin}
+              handleWheelStop={handleWheelStop}
+              setCurrentIndex={setCurrentIndex}
+            />
+          </div>
+
+          {/* User Card Column */}
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex items-center justify-center h-full">
             {mustSpin ? (
-              <div className="text-center text-rose-100 p-8">
+              <div className="text-center text-rose-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale match...</p>
+                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
                 </div>
               </div>
             ) : (
-              <div className="w-full">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} />
+              <div className="w-full flex items-center justify-center">
+                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={true} />
               </div>
             )}
-          </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Feed;

@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
 const CustomAlert = ({ message }) => {
-  const [countdown, setCountdown] = useState(3); // Start countdown from 3 seconds
+  const [countdown, setCountdown] = useState(3); 
 
   useEffect(() => {
     if (countdown === 0) {
-      // Trigger page reload when countdown reaches 0
+    //hierdoor kan nu pagina wel herladen worden
       window.location.reload();
     } else {
       const timer = setTimeout(() => {
-        setCountdown(prevCountdown => prevCountdown - 1); // Decrease countdown by 1 every second
+        setCountdown(prevCountdown => prevCountdown - 1); 
       }, 1000);
+    // verniewen
+      return () => clearTimeout(timer);
 
-      return () => clearTimeout(timer); // Cleanup the timeout when component unmounts
     }
   }, [countdown]);
 
@@ -21,7 +22,7 @@ const CustomAlert = ({ message }) => {
       <div className="bg-rose-100 text-rose-800 p-6 rounded-lg shadow-xl max-w-xs w-full text-center">
         <p className="text-lg font-semibold">{message}</p>
         <p className="mt-2 text-sm text-rose-600">
-          Page will refresh in {countdown}...
+          Pagina zal opniew laden in {countdown}...
         </p>
       </div>
     </div>
