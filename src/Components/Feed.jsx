@@ -332,19 +332,20 @@ if (checkingAccess) {
           </div>
 
           {/* User Card Column */}
-          <div className="bg-rose-700 rounded-2xl p-8 flex flex-col items-center">
-            <AnimatePresence mode="wait">
-              {mustSpin ? (
-                <div className="text-rose-900 text-2xl">Wacht, het wiel draait...</div>
-              ) : (
-                <motion.div key={users[currentIndex]?.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <UserCard
-                    user={users[currentIndex]}
-                    age={calculateAge(users[currentIndex]?.birthday)}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* User Card Column */}
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex flex-col items-center">
+            {mustSpin ? (
+              <div className="text-center text-rose-800 p-8">
+                <div className="flex flex-col items-center space-y-6">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
+                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full">
+                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={true} />
+              </div>
+            )}
           </div>
         </div>
       </div>
