@@ -201,11 +201,11 @@ const PasswordChangeForm = () => {
 
         {/* Password Requirements */}
         <div className="mt-6 text-xs text-gray-500 text-center">
-          Password must:
+          Wachtwoord moet:
           <ul className="mt-2 space-y-1">
-            <li>• Be at least 8 characters long</li>
-            <li>• Contain an uppercase letter</li>
-            <li>• Contain a number</li>
+            <li>• minstens uit 6 characters bestaan</li>
+            <li>• een hoofdletter bevatten</li>
+            <li>• een cijfer bevatten</li>
           </ul>
         </div>
       </div>
