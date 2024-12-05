@@ -19,8 +19,8 @@ const WheelComponent = ({ users, currentIndex, mustSpin, setMustSpin, handleWhee
   };
 
   return (
-    <div className="relative w-full max-w-md mb-8">
-  <Wheel
+<div class="relative mb-8 flex items-center justify-center">
+<Wheel
     mustStartSpinning={mustSpin}
     prizeNumber={currentIndex}
     data={wheelData}
