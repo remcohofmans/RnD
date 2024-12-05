@@ -86,7 +86,7 @@ const Subscription = () => {
 
         const subscriptonFields = {
                     user_id: userId,
-                    subscription: selectedSubscription,
+                    subscription_request: selectedSubscription,
                     end_date: endDate,
                     annual_payment: payAnnually,
                     active:true
@@ -128,7 +128,7 @@ const Subscription = () => {
             subscription: selectedSubscription
         });
         openFeedbackModal();
-        setCurrentSubscription(selectedSubscription);
+        //setCurrentSubscription(selectedSubscription);
         closeSubscriptionModal();
 
     };
@@ -269,7 +269,7 @@ const Subscription = () => {
                         disabled={currentSubscription === 'BASIS'}
                         type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
                         style={{ color: '#881337', 
-                            backgroundColor: '#ffe4e6', 
+                            backgroundColor: '#fafafa', 
                             hover: { backgroundColor: '#fecdd3' },
                             cursor:  currentSubscription === 'BASIS' ? 'not-allowed' : 'pointer'
                             }}>{currentSubscription === 'BASIS' ? 'Huidig plan' : 'Kies plan'}</button>
