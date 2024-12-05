@@ -22,10 +22,31 @@ const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
 }, {});
 const defaultHobbyIcon = faStar;
 
-const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
+const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }) => {
   const [alertMessage, setAlertMessage] = useState('');
   const { track } = useAnalytics();
-  
+
+  const themeStyles = {
+    pink: {
+      cardBg: 'bg-rose-200',
+      textColor: 'text-rose-900',
+      buttonBg: 'bg-rose-500',
+      buttonHoverBg: 'hover:bg-rose-700',
+      chatButtonBg: 'bg-rose-200',
+      chatButtonHoverBg: 'hover:bg-rose-300',
+    },
+    green: {
+      cardBg: 'bg-green-200',
+      textColor: 'text-green-900',
+      buttonBg: 'bg-green-500',
+      buttonHoverBg: 'hover:bg-green-700',
+      chatButtonBg: 'bg-green-200',
+      chatButtonHoverBg: 'hover:bg-green-300',
+    },
+  };
+
+  const currentTheme = themeStyles[theme] || themeStyles.pink;
+
   const hobbies = Array.isArray(user?.hobbies) ? user.hobbies : [];
 
   const handleLoveClick = async (isLove) => {
@@ -104,13 +125,11 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
       if (mutualLikeData && mutualLikeData.love_like === likeValue) {
         const { error: matchError } = await supabase
           .from('matches')
-          .insert([
-            {
+          .insert([{
               id: currentUserId,
               matched_user_id: user.id,
               love_like: likeValue,
-            },
-          ]);
+            }]);
 
         if (matchError) {
           console.error('Error creating match:', matchError);
@@ -118,8 +137,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
           return;
         }
 
-        const deleteLikes = await Promise.all([
-          supabase
+        const deleteLikes = await Promise.all([supabase
             .from('likes')
             .delete()
             .eq('user_id', currentUserId)
@@ -149,43 +167,43 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
   };
 
   return (
-    <div className="relative user-card bg-rose-200 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
+    <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
       {alertMessage && <CustomAlert message={alertMessage} />}
       <CarouselCard userId={user.id} />
-      <h2 className="name text-2xl font-semibold text-rose-900 text-center">{user.name}</h2>
-      <div className="info text-left mt-4 text-rose-800">
-        <p className="age text-rose-900">
+      <h2 className={`name text-2xl font-semibold ${currentTheme.textColor} text-center`}>{user.name}</h2>
+      <div className={`info text-left mt-4 ${currentTheme.textColor}`}>
+        <p className="age">
           <FontAwesomeIcon icon={faUser} className="mr-2" title="Leeftijd" />
           {user.age} jaar
         </p>
-        <p className="location text-rose-900">
+        <p className="location">
           <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" title="Locatie" />
           {user.location}
         </p>
-        <p className="facility text-rose-900">
+        <p className="facility">
           <FontAwesomeIcon icon={faBuilding} className="mr-2" title="Faciliteit" />
           {user.facility}
         </p>
       </div>
-      <div className="hobbies mt-4 text-left text-rose-900">
-        <span className="hobbies-label text-rose-500 font-bold">Hobby's:</span>
+      <div className={`hobbies mt-4 text-left ${currentTheme.textColor}`}>
+        <span className="hobbies-label font-bold">Hobby's:</span>
         <div className="hobby-icons flex flex-wrap gap-3 mt-2">
           {hobbies.length > 0 ? (
             hobbies.map((hobby, index) => (
-              <span key={index} className="hobby-item flex items-center text-rose-900 text-sm">
+              <span key={index} className="hobby-item flex items-center text-sm">
                 <span className="mr-2 text-xl">{hobbyIcons[hobby] || defaultHobbyIcon}</span>
                 {hobby}
               </span>
             ))
           ) : (
-            <p className="text-rose-900">Geen hobby's vermeld</p>
+            <p>Geen hobby's vermeld</p>
           )}
         </div>
       </div>
       <div className="actions flex justify-between mt-6">
         {showLoveButton ? (
           <button
-            className="love-button flex items-center bg-rose-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-rose-700"
+            className={`love-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
             onClick={() => handleLoveClick(true)}
           >
             <FontAwesomeIcon icon={faHeart} className="mr-2" title="Liefde" />
@@ -193,14 +211,16 @@ const UserCard = ({ user, currentUserId, showLoveButton = true }) => {
           </button>
         ) : (
           <button
-            className="like-button flex items-center bg-rose-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-rose-700"
+            className={`like-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
             onClick={() => handleLoveClick(false)}
           >
             <FontAwesomeIcon icon={faThumbsUp} className="mr-2" title="Like" />
             Like
           </button>
         )}
-        <button className="chat-button flex items-center bg-rose-200 text-rose-900 px-4 py-2 rounded-full shadow-lg hover:bg-rose-300">
+        <button
+          className={`chat-button flex items-center ${currentTheme.chatButtonBg} ${currentTheme.textColor} px-4 py-2 rounded-full shadow-lg ${currentTheme.chatButtonHoverBg}`}
+        >
           <FontAwesomeIcon icon={faComment} className="mr-2" title="Chat" />
           Chat
         </button>
