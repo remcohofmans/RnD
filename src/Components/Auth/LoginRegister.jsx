@@ -144,33 +144,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           setSignupError(response.toString);
           return;
         }
-
-        // Query the facility_enum table
-        // const { data: facilityData, error: facilityError } = await supabase
-        //   .from('facility_enum')
-        //   .select('id')
-        //   .eq('name', selectedFacility)
-        //   .single();
-
-        // if (facilityError) {
-        //   setSignupError('Error finding facility: ' + facilityError.message);
-        //   return;
-        // }
-
-        // const facilityId = facilityData.id;
-
-        // Update the users table with the facility ID
-        const { error: updateError } = await supabase
-          .from('users')
-          .update({ facility_id: 'Test' })
-          .eq('email', signUpEmail);
-
-        if (updateError) {
-          setSignupError('Error updating user facility: ' + updateError.message);
-          return;
-        }
-      }
-      )
+      })
       .catch((error) => {
         console.error("Error during sign-up:", error);
         setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
