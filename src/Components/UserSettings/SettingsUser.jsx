@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Ellipsis , Settings, Filter, Key, Image, PauseCircle } from 'lucide-react';
+import { Ellipsis , Settings, Filter, Key, Image, PauseCircle, Gem } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import { supabase } from '../../lib/helper/supabaseClient';
 import UserFilterForm from './UserFilterForm';
 import PasswordChangeForm from './PasswordChangeForm';
 import ProfielPauzeren from './ProfielPauzeren';
+import SubscriptionPlans from '../SubscriptionPlans';
 import { useSearchParams } from 'react-router-dom';
 
 const SettingsUser = () => {
@@ -45,7 +46,8 @@ const SettingsUser = () => {
     { id: "Filtervoorkeuren", icon: Filter, component: "UserFilterForm", description: "Pas je matchingvoorkeuren aan" },
     { id: "Wachtwoord Bewerken", icon: Key, component: "PasswordChangeForm", description: "Verander je wachtwoord" },
     { id: "Foto's Aanpassen", icon: Image, component: "ImageUpload", description: "Beheer je profielfoto's" },
-    { id: "Profiel Pauzeren", icon: PauseCircle, component: null, description: "Zet je profiel tijdelijk op pauze" }
+    { id: "Profiel Pauzeren", icon: PauseCircle, component: null, description: "Zet je profiel tijdelijk op pauze" },
+    { id: "Abonnement Wijzigen", icon: Gem, component: "SubscriptionPlans", description: "Verander hier je abonnement"}
   ];
 
   const handleOptionClick = (option) => {
@@ -55,6 +57,8 @@ const SettingsUser = () => {
       setActiveComponent("PasswordChangeForm");
     } else if (option === "Foto's Aanpassen") {
       setActiveComponent("ImageUpload");
+    }  else if (option === "Abonnement Wijzigen") {
+      setActiveComponent("SubscriptionPlans");
     } else if (option === "Profiel Pauzeren") {
       setIsConfirming(true);
     }
@@ -135,6 +139,7 @@ const SettingsUser = () => {
       <div className="flex-1 justify-center items-center bg-rose-50 overflow-y-auto">
         <div className="w-full rounded-xl p-6 mt-12 md:mt-16">
           {/* Dynamic Content */}
+          {activeComponent === "SubscriptionPlans" && <SubscriptionPlans />}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
           {activeComponent === "ImageUpload" && (
