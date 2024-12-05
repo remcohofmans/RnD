@@ -23,13 +23,16 @@ export function AuthProvider({ children }) {
     }
   };
 
-  async function pauseAccount(userId) {
-    const { data, error } = await supabase
+  const pauseAccount = async(userId) => {
+    const {error } = await supabase
         .from('users')
         .update({ status: "PAUSED" })
         .eq('id', userId);
 
-    return { data, error };
+      if(error) throw error;
+      else{
+        logoutAndNavigate();
+      }
 };
 
   const fetchUsersForMentor = async (mentorId) => {

@@ -16,7 +16,7 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
     }
 
     try {
-      const {error } = await pauseAccount(userId);
+      await pauseAccount(userId);
 
       if (error) {
         console.error("Error updating status:", error);
