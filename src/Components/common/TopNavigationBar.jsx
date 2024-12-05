@@ -15,6 +15,14 @@ const TopNavigationBar = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Determine if friends route is active
+  const isFriendsRoute = location.pathname === '/feedFriends';
+
+  // Dynamic background color based on route
+  const bgColor = isFriendsRoute ? 'bg-green-600' : 'bg-rose-600';
+  const activeBgColor = isFriendsRoute ? 'bg-green-700' : 'bg-rose-700';
+  const hoverBgColor = isFriendsRoute ? 'hover:bg-green-700' : 'hover:bg-rose-700';
+
   const handleNavigate = (path) => {
     if (path === '/logout') {
       setShowLogoutConfirm(true);
@@ -43,7 +51,7 @@ const TopNavigationBar = () => {
   const NavItem = ({ item, isActive }) => (
     <div
       className={`group flex flex-col items-center justify-center cursor-pointer relative py-2 h-full ${
-        isActive && typeof item.icon !== 'string' ? 'bg-rose-700' : 'hover:bg-rose-700'
+        isActive && typeof item.icon !== 'string' ? activeBgColor : hoverBgColor
       }`}
       onClick={() => handleNavigate(item.path)}
     >
@@ -69,7 +77,7 @@ const TopNavigationBar = () => {
   );
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-rose-600 z-50">
+    <div className={`fixed top-0 left-0 right-0 ${bgColor} z-50`}>
       <div className="container mx-auto flex items-center justify-between h-12 md:h-16">
         {/* Left Section (Home with custom image) */}
         <div className="flex items-center h-full">
@@ -111,14 +119,14 @@ const TopNavigationBar = () => {
 
       {/* Dropdown Menu for Small Screens */}
       {isMenuOpen && (
-        <div className="fixed top-12 left-0 right-0 bg-rose-600 text-white z-40 flex flex-col items-center py-4">
+        <div className={`fixed top-12 left-0 right-0 ${bgColor} text-white z-40 flex flex-col items-center py-4`}>
           {centerItems.map((item, index) => (
             <div
               key={index}
               className={`py-2 w-full text-center cursor-pointer ${
                 location.pathname === item.path
-                  ? 'bg-rose-700 font-medium'
-                  : 'hover:bg-rose-700'
+                  ? `${activeBgColor} font-medium`
+                  : hoverBgColor
               }`}
               onClick={() => {
                 setIsMenuOpen(false);
@@ -129,7 +137,7 @@ const TopNavigationBar = () => {
             </div>
           ))}
           <div
-            className="py-2 w-full text-center cursor-pointer hover:bg-rose-700"
+            className={`py-2 w-full text-center cursor-pointer ${hoverBgColor}`}
             onClick={() => {
               setIsMenuOpen(false);
               handleLogOut();
