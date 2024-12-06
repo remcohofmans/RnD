@@ -110,9 +110,9 @@ const goToCheckout = (selectedSubscription) => {
     setSubscriptionRequests([]);
   };
 
-  const handleSubscriptionChange = async (userId, sub) => {
+  const handleSubscriptionChange = async (userId, sub,pay) => {
     try {
-      await updateSubscription(userId, sub);
+      await updateSubscription(userId, sub,pay);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
       setSelectedUser(null);
@@ -189,13 +189,13 @@ const goToCheckout = (selectedSubscription) => {
 
               <div className="mt-4">
                 <button
-                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription_request)}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription_request,selectedUser.annual_payment_request)}
                   className="px-4 py-2 bg-green-500 text-white rounded mr-2"
                 >
                   Goedkeuren
                 </button>
                 <button
-                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription)}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription,selectedUser.annual_payment)}
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
                   Afwijzen

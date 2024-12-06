@@ -407,7 +407,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const updateSubscription = async (userId, sub) => {
+  const updateSubscription = async (userId, sub,pay) => {
     try {
 
       console.log("UserID: ",userId," with request for ",sub);
@@ -417,6 +417,9 @@ export function AuthProvider({ children }) {
         .update({
           subscription: sub,          // Correct field name for subscription
           subscription_request: sub,  // Correct field name for subscription request
+          annual_payment: pay,
+          annual_payment_request:pay
+          
         })
         .eq('user_id', userId);
   
