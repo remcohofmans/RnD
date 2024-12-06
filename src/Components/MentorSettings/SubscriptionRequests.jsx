@@ -58,7 +58,7 @@ const checkoutElite = () => {
 
 };
 
-const goToCheckout = (selectedSubscription) => {
+const goToCheckout = async (selectedSubscription) => {
     if (selectedSubscription === 'BASIS') {
         checkoutBasis();
     } 
@@ -112,7 +112,9 @@ const goToCheckout = (selectedSubscription) => {
 
   const handleSubscriptionChange = async (userId, sub,pay) => {
     try {
-      goToCheckout(sub);
+      setLoading(true);
+      setPayAnnually(pay);
+      await goToCheckout(sub);
       await updateSubscription(userId, sub,pay);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
