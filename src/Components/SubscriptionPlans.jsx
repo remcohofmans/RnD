@@ -88,7 +88,7 @@ const Subscription = () => {
                     user_id: userId,
                     subscription_request: selectedSubscription,
                     end_date: endDate,
-                    annual_payment: payAnnually,
+                    annual_payment_request: payAnnually,
                     active:true
                 }
         const {data: existingSubscription, error: fetchFailed} = await supabase
@@ -155,7 +155,7 @@ const Subscription = () => {
                             <div className="flex items-baseline space-x-1">
                                 <span className="text-3xl font-semibold">€</span>
                                 <span className="text-3xl font-extrabold tracking-tight">{payAnnually ? annualPrices[selectedSubscription] : monthlyPrices[selectedSubscription]}</span>
-                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span>
+                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                             </div>
 
                             <p className="text-sm">
@@ -211,7 +211,7 @@ const Subscription = () => {
                         <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
                             Bedankt voor je aankoop!
                         </h5>
-                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. Geniet van je nieuwe abonnement!</span>
+                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. We wachten nog op de bevestiging van je mentor. Daarna kan je genieten van je nieuwe abonnement!</span>
                         <button 
                             onClick={closeFeedbackModal}
                             type="button"
@@ -246,20 +246,13 @@ const Subscription = () => {
                         </div>
                         
                         <ul role="list" className="space-y-5 my-7">
-                            <li className="flex items-center">
-                                <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Onbeperkt aantal berichten</span>
-                            </li>
 
                             <li className="flex items-center">
                                 <FontAwesomeIcon 
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 berichten per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 keer draaien aan het rad per dag</span>
                             </li>
 
                         </ul>
@@ -304,15 +297,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Zie wie je likes heeft gegeven</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer spinnen per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer draaien aan het rad per dag</span>
                             </li>
 
                         </ul>
@@ -356,23 +341,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid spinnen per dag</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Mensen komen je profiel sneller tegen</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Eén bericht naar een niet-match</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid draaien aan het rad per dag</span>
                             </li>
                         </ul>
 

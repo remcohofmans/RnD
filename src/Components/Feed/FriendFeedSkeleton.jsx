@@ -4,14 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const FriendFeedSkeleton = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12 relative overflow-hidden">
-      {/* Decorative hearts (optional, for a similar look) */}
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-12 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
         <div className="absolute top-10 left-10">
-          <div className="bg-rose-200 rounded-full w-24 h-24"></div>
+          <div className="bg-green-200 rounded-full w-24 h-24"></div>
         </div>
         <div className="absolute bottom-20 right-20">
-          <div className="bg-rose-200 rounded-full w-32 h-32"></div>
+          <div className="bg-green-200 rounded-full w-32 h-32"></div>
         </div>
       </div>
 
@@ -22,13 +21,13 @@ const FriendFeedSkeleton = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
+          <h1 className="text-5xl font-bold text-green-900 mb-4 mt-10 tracking-tight">
             Ontdek je Match
           </h1>
-          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-center gap-2">
-            <Sparkle className="text-rose-500" />
+          <p className="text-xl text-green-700 max-w-2xl mx-auto flex items-center justify-center gap-2">
+            <Sparkle className="text-green-500" />
             Spin het wiel en laat het toeval je naar de ware verbinding leiden
-            <Sparkle className="text-rose-500" />
+            <Sparkle className="text-green-500" />
           </p>
         </motion.div>
 
@@ -37,24 +36,24 @@ const FriendFeedSkeleton = () => {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl border border-rose-200 p-8 flex flex-col items-center"
+            className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl border border-green-200 p-8 flex flex-col items-center"
           >
             <div className="flex items-center justify-center w-full max-w-md mx-auto mb-8 relative">
               {/* Wheel Placeholder */}
-              <div className="w-64 h-64 bg-rose-300 rounded-full animate-pulse"></div>
+              <div className="w-64 h-64 bg-green-300 rounded-full animate-pulse"></div>
 
               <motion.button
                 className="absolute top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full 
-      bg-gradient-to-br from-rose-500 to-rose-700 
-      shadow-[0_12px_0_#9f1239] border-4 border-rose-300 
-      text-white font-bold z-10 
-      flex items-center justify-center 
-      pulse-animation
-      active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
-      hover:brightness-110 
-      transition-all duration-300 
-      disabled:opacity-50 disabled:cursor-not-allowed
-      text-2xl tracking-wider"
+                bg-gradient-to-br from-green-500 to-green-700 
+                shadow-[0_12px_0_#3CB371] border-4 border-green-300 
+                text-white font-bold z-10 
+                flex items-center justify-center 
+                pulse-animation
+                active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
+                hover:brightness-110 
+                transition-all duration-300 
+                disabled:opacity-50 disabled:cursor-not-allowed
+                text-2xl tracking-wider"
                 disabled
               >
                 SPIN
@@ -67,11 +66,11 @@ const FriendFeedSkeleton = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl border border-rose-200 p-8 flex flex-col items-center"
+            className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl border border-green-200 p-8 flex flex-col items-center"
           >
             <AnimatePresence mode="wait">
               <motion.div
-                className="text-center text-rose-900 p-8"
+                className="text-center text-green-900 p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -79,9 +78,9 @@ const FriendFeedSkeleton = () => {
               >
                 <div className="w-full max-w-xs mx-auto">
                   <div className="animate-pulse flex flex-col items-center">
-                    <div className="h-24 w-24 bg-rose-100 rounded-full"></div>
-                    <div className="w-3/4 bg-rose-100 h-6 mt-6 rounded"></div>
-                    <div className="w-1/2 bg-rose-100 h-6 mt-2 rounded"></div>
+                    <div className="h-24 w-24 bg-green-100 rounded-full"></div>
+                    <div className="w-3/4 bg-green-100 h-6 mt-6 rounded"></div>
+                    <div className="w-1/2 bg-green-100 h-6 mt-2 rounded"></div>
                   </div>
                 </div>
               </motion.div>
