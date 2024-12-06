@@ -211,7 +211,7 @@ const Subscription = () => {
                         <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
                             Bedankt voor je aankoop!
                         </h5>
-                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. Geniet van je nieuwe abonnement!</span>
+                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. We wachten nog op de bevestiging van je mentor. Daarna kan je genieten van je nieuwe abonnement!</span>
                         <button 
                             onClick={closeFeedbackModal}
                             type="button"
