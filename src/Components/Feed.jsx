@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from '../Components/Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
@@ -137,7 +136,7 @@ const Feed = () => {
         .eq('access_granted', 'YES')
         .not('id', 'in', `(${excludedUserIds.join(',')})`)
         .neq('id', user.id)
-        .neq('status','PAUSED')
+        .neq('status', 'PAUSED')
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null);
@@ -225,9 +224,6 @@ const Feed = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
@@ -309,13 +305,23 @@ const Feed = () => {
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-rose-900 mb-4 mt-10 tracking-tight">
-            Ontdek je Match
+          <h1
+            className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
+    flex items-center justify-center gap-4 
+    text-center 
+    bg-gradient-to-r from-rose-400 via-rose-600 to-rose-400 
+    bg-clip-text text-transparent 
+    animate-gradient-x"
+          >
+            <Sparkles className="text-rose-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+            <span className="text-black-300">
+              Ontdek Je Ideale Match
+            </span>
+            <Sparkles className="text-rose-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
           </h1>
-          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-between">
-            <Sparkle />
+
+          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
             Spin het wiel en laat het toeval je naar de ware verbinding leiden
-            <Sparkle />
           </p>
         </div>
 

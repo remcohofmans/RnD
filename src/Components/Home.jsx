@@ -71,6 +71,8 @@ const Home = () => {
         return;
       }
 
+      navigate('/feed');
+
     } catch (err) {
       console.error('Error checking account status:', err);
     }
