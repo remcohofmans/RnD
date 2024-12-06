@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faUserFriends, faComment, faCog, faSignOutAlt, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
+import { useMatches } from '../../hooks/useMatches';
+import { supabase } from '../../lib/helper/supabaseClient';
 
 // Import your custom image
 import logo from '../../Assets/Butterfly.png';
@@ -14,6 +16,56 @@ const TopNavigationBar = () => {
   const loggedIn = !!user;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { matches, loading: matchesLoading } = useMatches(user?.id);
+  const [unreadChatsCount, setUnreadChatsCount] = useState(0);
+  const [isCalculating, setIsCalculating] = useState(true);
+
+  useEffect(() => {
+    if (!user || matchesLoading) return;
+    
+    calculateUnreadChats();
+  }, [user, matches, matchesLoading]);
+
+  const calculateUnreadChats = async () => {
+    if (!matches || matchesLoading) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user;
+
+      if (!currentUser) return;
+
+      let count = 0;
+
+      // Check each match
+      for (const match of matches) {
+        const { data: messages, error } = await supabase
+          .from('chats')
+          .select('sender_id')
+          .eq('match_id', match.match_id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error('Error fetching messages:', error);
+          continue; // Skip this match if there's an error
+        }
+
+        if (!messages || messages.length === 0) {
+          // New match with no messages
+          count++;
+        } else if (messages[0].sender_id !== currentUser.id) {
+          // Last message was from the other person
+          count++;
+        }
+      }
+
+      setUnreadChatsCount(count);
+      setIsCalculating(false);
+    } catch (error) {
+      console.error('Error calculating unread chats:', error);
+    }
+  };
 
   // Determine if friends route is active
   const isFriendsRoute = location.pathname === '/feedFriends';
@@ -43,7 +95,7 @@ const TopNavigationBar = () => {
   const centerItems = [
     { icon: faHeart, label: 'Liefde', path: '/feed' },
     { icon: faUserFriends, label: 'Vriendschap', path: '/feedFriends' },
-    { icon: faComment, label: 'Berichten', path: '/chats' },
+    { icon: faComment, label: 'Berichten', path: '/chats', badge: unreadChatsCount },
     { icon: faCog, label: 'Instellingen', path: '/settingsUser' }
   ];
   const rightItem = { icon: faSignOutAlt, label: 'Log uit', path: '/logout' };
@@ -55,26 +107,42 @@ const TopNavigationBar = () => {
       }`}
       onClick={() => handleNavigate(item.path)}
     >
-      <div className={`flex flex-col items-center px-4 ${(isActive && typeof item.icon !== 'string') ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white' : ''}`}>
-        {/* Render either FontAwesomeIcon or custom (logo) image */}
+      <div
+        className={`flex flex-col items-center px-4 ${
+          isActive && typeof item.icon !== 'string'
+            ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white'
+            : ''
+        }`}
+      >
         {typeof item.icon === 'string' ? (
           <img src={item.icon} alt={item.label} className="h-12 w-12 rounded-full" />
         ) : (
-          <FontAwesomeIcon
-            icon={item.icon}
-            className={`text-sm md:text-lg transition duration-300 ${
-              isActive ? 'text-white scale-110' : 'text-white'
-            }`}
-          />
+          <div className="relative">
+            <FontAwesomeIcon
+              icon={item.icon}
+              className={`text-sm md:text-lg transition duration-300 ${
+                isActive ? 'text-white scale-110' : 'text-white'
+              }`}
+            />
+            {/* Only show badge when not calculating and count > 0 */}
+            {item.badge !== undefined && !isCalculating && item.badge > 0 && (
+              <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
+                {item.badge}
+              </span>
+            )}
+          </div>
         )}
         <span
-          className={`text-xs mt-1 transition-all duration-300 ${isActive ? 'text-white font-medium' : 'text-white'} absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}
+          className={`text-xs mt-1 transition-all duration-300 ${
+            isActive ? 'text-white font-medium' : 'text-white'
+          } absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}
         >
           {item.label}
         </span>
       </div>
     </div>
   );
+  
 
   return (
     <div className={`fixed top-0 left-0 right-0 ${bgColor} z-50`}>
