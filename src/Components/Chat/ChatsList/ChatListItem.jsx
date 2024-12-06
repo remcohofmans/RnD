@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/helper/supabaseClient';
-import { UserPicture } from '../../UserSettings/UserPicture';
+import { UserPicture } from '../../userSettings/UserPicture';
+
 
 export const ChatListItem = ({ match, isSelected, onSelect }) => {
   const [hasSentMessage, setHasSentMessage] = useState(false);

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import data from '@emoji-mart/data' //bevat alle emojis, altijd ingeladen
 import Picker from '@emoji-mart/react'
 
+
 export const MessageInput = ({ onSendMessage }) => {
     const [newMessage, setNewMessage] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);

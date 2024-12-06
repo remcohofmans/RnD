@@ -6,9 +6,10 @@ import {
   faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../../lib/helper/supabaseClient';
-import CarouselCard from '../../Feed/CarouselCard';
+import CarouselCard from '../../feed/CarouselCard';
 import { LoadingSpinner } from '../../common/LoadingSpinner';
 import { availableHobbies } from '../../filter/AvailableHobbiesPage';
+
 
 const UserCardChats = ({ user: userId }) => {
   const [userData, setUserData] = useState(null);

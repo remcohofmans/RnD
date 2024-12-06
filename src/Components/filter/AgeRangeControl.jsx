@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Minus, Plus } from 'lucide-react';
 
+
 const AgeRangeControl = ({ 
   minValue = '18', 
   maxValue = '35', 

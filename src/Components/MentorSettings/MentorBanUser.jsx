@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
 
+
 const MentorBanUser = () => {
   const { deleteUser, fetchUsersByFacility, fetchMentorFacility, error } = useAuth();
 

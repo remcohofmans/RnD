@@ -4,6 +4,7 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import { useAuth } from '../../hooks/AuthContext';
 import { User, Calendar, Camera } from 'lucide-react';
 
+
 const CompleteProfile = () => {
   const [name, setName] = useState('');
   const [birthdate, setBirthdate] = useState('');

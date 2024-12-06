@@ -8,6 +8,7 @@ import UserCardChats from './ChatWindow/UserCardChats.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
 
+
 const ChatsPage = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const { user: currentUser, loading: authLoading, error: authError } = useAuth();

@@ -15,8 +15,9 @@ const CATEGORIES = {
   favorieteHobby: { label: 'Favoriete Hobby', icon: '🎨' },
 };
 
+
 const ImageUpload = ({ onUploadComplete }) => {
-  const { user: currentUser, loading, error } = useAuth();
+  const { user: currentUser } = useAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
   );

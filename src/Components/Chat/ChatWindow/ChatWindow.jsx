@@ -6,6 +6,7 @@ import { ChatHeader } from './ChatHeader';
 import { RefreshCw } from 'lucide-react';
 import { LoadingSpinner } from '../../common/LoadingSpinner'; 
 
+
 export const ChatWindow = ({ matchId, otherUserName }) => {
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);

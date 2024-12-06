@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/helper/supabaseClient';
-import UserCard from '../Components/Feed/UserCard';
+import UserCard from '../components/feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
-import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
-import NavigationButton from './Feed/NavigationButton';
+import { calculateDistance, useDistanceMatrixService } from '../components/feed/GoogleMapsMatrixAPI';
+import NavigationButton from './feed/NavigationButton';
 import { useNavigate } from 'react-router-dom';
-import FeedSkeleton from '../Components/Feed/FeedSkeleton';
+import FeedSkeleton from '../components/feed/FeedSkeleton';
 import { shuffle } from 'lodash';
-import WheelComponent from '../Components/Feed/SpinWheel';
+import WheelComponent from '../components/feed/SpinWheel';
+
 
 const Feed = () => {
   const { user, checkSubscription } = useAuth();

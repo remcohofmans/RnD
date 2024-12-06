@@ -3,17 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Users, Shield, Star } from 'lucide-react';
 import { supabase } from '../lib/helper/supabaseClient';
-import { useAuth } from '../hooks/AuthContext';
-import { useAnalytics } from '../hooks/analyticsContext';
 
-const Home = () => {
-  const { track } = useAnalytics();
+
+const Home = ( {track, user, role, checkSubscription, logoutAndNavigate} ) => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const { user, logout, role, checkSubscription,logoutAndNavigate } = useAuth();
   const email = user?.email;
-  const loggedIn = !!user;
+
 
   useEffect(() => {
     track('go to feed');

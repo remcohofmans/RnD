@@ -1,7 +1,7 @@
 // MainLayout.js
 import React from 'react';
-import TopNavigationBar from './Components/common/TopNavigationBar';
-import { useAuth } from './hooks/AuthContext'; // Use the hook to access auth context
+import TopNavigationBar from './components/common/TopNavigationBar';
+
 
 const MainLayout = ({ children }) => {
   return (

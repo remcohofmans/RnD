@@ -1,6 +1,7 @@
 import React from 'react';
 import { availableHobbies } from '../../filter/AvailableHobbiesPage';
 
+
 const HobbiesDisplay = ({ hobbies }) => {
   // Parse hobbies if they're in string format
   const parseHobbies = (hobbiesInput) => {

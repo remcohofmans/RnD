@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import happyPeople from '../../Assets/happyPeople.png';
-import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
+import happyPeople from '../../assets/happyPeople.png';
+import butterflyIcon from '../../assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';  // Import the hook
 import { supabase } from '../../lib/helper/supabaseClient';

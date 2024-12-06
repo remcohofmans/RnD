@@ -5,7 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
 
 // Import your custom image
-import logo from '../../Assets/Butterfly.png';
+import logo from '../../assets/Butterfly.png';
+
 
 const TopNavigationBar = () => {
   const navigate = useNavigate();

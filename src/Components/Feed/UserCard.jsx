@@ -10,11 +10,11 @@ import {
   faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { useAnalytics } from '../../hooks/analyticsContext.js';
+import { useAnalytics } from '../../hooks/AnalyticsContext.js';
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
 import { supabase } from '../../lib/helper/supabaseClient';
-import CarouselCard from '../Feed/CarouselCard';
-import CustomAlert from '../Feed/CustomAlert'; // Import the custom alert component
+import CarouselCard from '../feed/CarouselCard';
+import CustomAlert from '../feed/CustomAlert'; // Import the custom alert component
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;

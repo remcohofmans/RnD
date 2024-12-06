@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import { Key, ShieldCheck } from 'lucide-react';
+
 
 const PasswordUpdate = () => {
   const [newPassword, setNewPassword] = useState('');

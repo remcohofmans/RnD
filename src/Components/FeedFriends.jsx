@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Sparkles } from 'lucide-react';
-import { Wheel } from 'react-custom-roulette';
 import { supabase } from '../lib/helper/supabaseClient';
-import UserCard from './Feed/UserCard';
+import UserCard from './feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
-import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
+import { calculateDistance, useDistanceMatrixService } from './feed/GoogleMapsMatrixAPI';
 import { useNavigate } from 'react-router-dom';
-import FriendFeedSkeleton from '../Components/Feed/FriendFeedSkeleton';
-import WheelComponent from '../Components/Feed/SpinWheel';
+import FriendFeedSkeleton from '../components/feed/FriendFeedSkeleton';
+import WheelComponent from '../components/feed/SpinWheel';
 import { shuffle } from 'lodash';
+
 
 const FeedFriends = () => {
   const { user, checkSubscription } = useAuth();

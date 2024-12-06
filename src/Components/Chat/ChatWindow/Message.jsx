@@ -1,15 +1,14 @@
 import React from 'react';
 
+
 export const Message = ({ message, isOwnMessage }) => {
+  
   const formattedTimestamp = new Date(message.created_at).toLocaleString([], {
     hour: '2-digit',
     minute: '2-digit',
     month: 'short',
     day: 'numeric',
   });
-
-
-  
 
   return (
     <div className={`flex items-center my-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>

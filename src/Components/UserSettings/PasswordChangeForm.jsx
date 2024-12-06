@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../../lib/helper/supabaseClient';
 
+
 const PasswordChangeForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

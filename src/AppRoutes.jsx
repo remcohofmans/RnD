@@ -2,25 +2,27 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/AuthContext';
 
-import LoginRegister from './Components/Auth/LoginRegister';
-import PasswordRecovery from './Components/Auth/PasswordRecovery';
-import PasswordUpdate from './Components/Auth/PasswordUpdate';
-import Home from './Components/Home';
-import ChatsPage from './Components/Chat/ChatsPage';
-import Feed from './Components/Feed';
-import FeedFriends from './Components/FeedFriends';
-import SettingsUser from './Components/UserSettings/SettingsUser';
-import SettingsMentor from './Components/MentorSettings/SettingsMentor';
-import CompleteRegistration from './Components/Auth/CompleteRegistration';
-import SubscriptionPlans from './Components/SubscriptionPlans'
+import LoginRegister from './components/auth/LoginRegister';
+import PasswordRecovery from './components/auth/PasswordRecovery';
+import PasswordUpdate from './components/auth/PasswordUpdate';
+import Home from './components/Home';
+import ChatsPage from './components/chat/ChatsPage';
+import Feed from './components/Feed';
+import FeedFriends from './components/FeedFriends';
+import SettingsUser from './components/userSettings/SettingsUser';
+import SettingsMentor from './components/mentorSettings/SettingsMentor';
+import CompleteRegistration from './components/auth/CompleteRegistration';
+import SubscriptionPlans from './components/SubscriptionPlans'
 
 import MainLayout from './MainLayout';
 import ProtectedRoute from './ProtectedRoute';
-import TopNavigationBar from './Components/common/TopNavigationBar';
+import TopNavigationBar from './components/common/TopNavigationBar';
+import { useAnalytics } from './hooks/AnalyticsContext';
 
 function AppRoutes() {
 
-  const { user, role, loginWithEmail, signUpWithEmail } = useAuth();
+  const { user, role, loginWithEmail, signUpWithEmail, checkSubscription, logoutAndNavigate } = useAuth();
+  const { track } = useAnalytics();
 
   return (
     <Routes>
@@ -39,7 +41,7 @@ function AppRoutes() {
               <Navigate to="/settingsMentor" />
             ) : (
               <MainLayout >
-                <Home />
+                <Home track={track} user={user} role={role} checkSubscription={checkSubscription} logoutAndNavigate={logoutAndNavigate}/>
               </MainLayout>
             )
           ) : (

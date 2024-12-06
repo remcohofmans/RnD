@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Settings, ScrollText, Ban, Trash,CreditCard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import AccessRequests from '../../Components/AccessRequests';
-import MentorBanUser from '../../Components/MentorSettings/MentorBanUser';
-import SubscriptionRequests from '../../Components/MentorSettings/SubscriptionRequests'; // Import your new component
+import AccessRequests from '../AccessRequests';
+import MentorBanUser from './MentorBanUser';
+import SubscriptionRequests from './SubscriptionRequests'; // Import your new component
 import { useAuth } from '../../hooks/AuthContext';
+
 
 const SettingsMentor = () => {
   const [activeComponent, setActiveComponent] = useState(null);

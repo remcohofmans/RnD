@@ -9,6 +9,7 @@ const CATEGORIES = {
   favorieteHobby: { label: 'Favoriete Hobby'},
 };
 
+
 export const UserPicture = ({ 
   userId, 
   category = 'profielAfbeelding',

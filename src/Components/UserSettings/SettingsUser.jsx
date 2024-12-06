@@ -8,6 +8,7 @@ import ProfielPauzeren from './ProfielPauzeren';
 import SubscriptionPlans from '../SubscriptionPlans';
 import { useSearchParams } from 'react-router-dom';
 
+
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
   const [status, setStatus] = useState("ACTIVE");

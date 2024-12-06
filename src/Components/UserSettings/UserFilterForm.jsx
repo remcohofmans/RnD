@@ -4,6 +4,7 @@ import AgeRangeControl from '../filter/AgeRangeControl';
 import { supabase } from '../../lib/helper/supabaseClient';
 import { availableHobbies, ButtonGroup, HobbiesModal } from '../filter/AvailableHobbiesPage';
 
+
 const FilterForm = () => {
   const [formState, setFormState] = useState({
     interest: '',

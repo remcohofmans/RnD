@@ -5,7 +5,7 @@ import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect} from 'react';
 import { ToggleSlider }  from "react-toggle-slider";
 import { supabase } from '../lib/helper/supabaseClient'; 
-import { useAnalytics } from '../hooks/analyticsContext';
+import { useAnalytics } from '../hooks/AnalyticsContext';
 
 const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
@@ -135,8 +135,6 @@ const Subscription = () => {
 
     return (
         <div>
-           
-
             {/*Subscription Modal window*/}
             {isSubscriptionModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xl" style={{ zIndex: 100 }}>

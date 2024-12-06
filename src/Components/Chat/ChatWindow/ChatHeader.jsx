@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPicture } from '../../UserSettings/UserPicture';
+import { UserPicture } from '../../userSettings/UserPicture';
 import { UnmatchButton } from './UnmatchButton';
 
 
