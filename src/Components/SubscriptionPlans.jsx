@@ -155,7 +155,7 @@ const Subscription = () => {
                             <div className="flex items-baseline space-x-1">
                                 <span className="text-3xl font-semibold">€</span>
                                 <span className="text-3xl font-extrabold tracking-tight">{payAnnually ? annualPrices[selectedSubscription] : monthlyPrices[selectedSubscription]}</span>
-                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span>
+                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                             </div>
 
                             <p className="text-sm">
