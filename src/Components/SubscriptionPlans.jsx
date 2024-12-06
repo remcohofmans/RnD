@@ -88,7 +88,7 @@ const Subscription = () => {
                     user_id: userId,
                     subscription_request: selectedSubscription,
                     end_date: endDate,
-                    annual_payment: payAnnually,
+                    annual_payment_request: payAnnually,
                     active:true
                 }
         const {data: existingSubscription, error: fetchFailed} = await supabase
@@ -155,7 +155,7 @@ const Subscription = () => {
                             <div className="flex items-baseline space-x-1">
                                 <span className="text-3xl font-semibold">€</span>
                                 <span className="text-3xl font-extrabold tracking-tight">{payAnnually ? annualPrices[selectedSubscription] : monthlyPrices[selectedSubscription]}</span>
-                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>/maand</span>
+                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                             </div>
 
                             <p className="text-sm">
@@ -211,7 +211,7 @@ const Subscription = () => {
                         <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
                             Bedankt voor je aankoop!
                         </h5>
-                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. Geniet van je nieuwe abonnement!</span>
+                        <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. We wachten nog op de bevestiging van je mentor. Daarna kan je genieten van je nieuwe abonnement!</span>
                         <button 
                             onClick={closeFeedbackModal}
                             type="button"
