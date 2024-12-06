@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
-import { Mail, Lock, Heart } from 'lucide-react';
-import { useAuth } from '../../hooks/AuthContext'; // Use the hook to access auth context
+import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';  // Import the hook
-
 import { supabase } from '../../lib/helper/supabaseClient';
 
 
-const LoginRegister = () => {
+const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -35,14 +33,15 @@ const LoginRegister = () => {
   const [emailFeedback, setEmailFeedback] = useState('');
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
-  const { user, loginWithEmail, signUpWithEmail } = useAuth();
-  const navigate = useNavigate();  // Use navigate here, inside the component
+  const navigate = useNavigate();
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
+    console.log(supabase);
+
     if (!loginEmail || !loginPassword) {
-      setLoginError("Gelieve zowel uw e-mailadres als wachtwoord op te geven.");
+      setLoginError("Gelieve zowel je e-mailadres als wachtwoord op te geven.");
       return;
     }
 
@@ -99,11 +98,11 @@ const LoginRegister = () => {
 
     const validateFields = () => {
       if (!signUpEmail || !signUpPassword || !confirmPassword || !isTermsAgreed || !isPrivacyPolicyAgreed || (isMentor ? !mentorCode : !facilityCode) || !selectedFacility) {
-        return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om u aan te melden.";
+        return "Gelieve alle velden in te vullen en akkoord te gaan met de voorwaarden om je aan te melden.";
       }
 
       if (signUpPassword !== confirmPassword) {
-        return "Paswoorden komen niet overeen.";
+        return "Wachtwoorden komen niet overeen.";
       }
 
       if (isMentor && !mentorCode) {
@@ -145,33 +144,7 @@ const LoginRegister = () => {
           setSignupError(response.toString);
           return;
         }
-
-        // Query the facility_enum table
-        // const { data: facilityData, error: facilityError } = await supabase
-        //   .from('facility_enum')
-        //   .select('id')
-        //   .eq('name', selectedFacility)
-        //   .single();
-
-        // if (facilityError) {
-        //   setSignupError('Error finding facility: ' + facilityError.message);
-        //   return;
-        // }
-
-        // const facilityId = facilityData.id;
-
-        // Update the users table with the facility ID
-        const { error: updateError } = await supabase
-          .from('users')
-          .update({ facility_id: 'Test' })
-          .eq('email', signUpEmail);
-
-        if (updateError) {
-          setSignupError('Error updating user facility: ' + updateError.message);
-          return;
-        }
-      }
-      )
+      })
       .catch((error) => {
         console.error("Error during sign-up:", error);
         setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
@@ -210,7 +183,7 @@ const LoginRegister = () => {
 
     // Simple password validation feedback for registration
     if (password.length < 6) {
-      setPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+      setPasswordFeedback('Wachtwoord moet minstens 6 tekens lang zijn.');
     } else {
       setPasswordFeedback(null);
     }
@@ -227,7 +200,7 @@ const LoginRegister = () => {
 
     // Simple password validation feedback for registration
     if (password.length < 6) {
-      setConfirmPasswordFeedback('Paswoord moet minstens 6 tekens lang zijn.');
+      setConfirmPasswordFeedback('Wachtwoord moet minstens 6 tekens lang zijn.');
     } else {
       setConfirmPasswordFeedback('');
     }
@@ -312,9 +285,9 @@ const LoginRegister = () => {
         </div>
 
         {/* Right Half */}
-        <div className="w-full flex flex- items-center justify-center p-12 bg-rose-50" >
+        <div className="w-full flex min-h-screen items-center justify-center p-12 bg-rose-50" >
           <div className="w-full max-w-md mx-auto">
-            <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!!' : 'Registreer'}</h2>
+            <h2 className="text-3xl font-bold text-[#be123c] text-center mb-8">{isLogin ? 'Welkom!' : 'Registreer'}</h2>
 
             {isLogin ? (
               <form onSubmit={handleLoginSubmit} className="space-y-6">
@@ -345,7 +318,7 @@ const LoginRegister = () => {
                     onFocus={() => setFocusPassword(true)}
                     onBlur={() => setFocusPassword(false)}
                     className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                    placeholder="Paswoord"
+                    placeholder="Wachtwoord"
                     required
                   />
                 </div>
@@ -454,7 +427,7 @@ const LoginRegister = () => {
                 {/* Password Match Success Message */}
                 {signUpPassword && confirmPassword && signUpPassword === confirmPassword && (
                   <p className="text-green-600 text-sm mt-2">
-                    De paswoorden zijn een match!
+                    De wachtwoorden zijn een match!
                   </p>
                 )}
 
@@ -475,9 +448,10 @@ const LoginRegister = () => {
                 {!isMentor ? (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Vul de faciliteitscode in die je hebt ontvangen van uw begeleider of organisatie. (*)</span>
+                      <span>Vul de faciliteitscode in die je hebt ontvangen van je begeleider of organisatie. (*)</span>
                     </div>
                     <div className="relative">
+                      <Building className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={facilityCode}
@@ -492,9 +466,10 @@ const LoginRegister = () => {
                 ) : (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Geef uw mentor ID in. (*)</span>
+                      <span>Geef je mentor ID in. (*)</span>
                     </div>
                     <div className="relative">
+                      <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
                       <input
                         type="text"
                         value={mentorCode}
@@ -510,7 +485,7 @@ const LoginRegister = () => {
                 {/* Facility Dropdown */}
                 <div className="mb-6">
                   <label htmlFor="facility" className="text-sm text-[#be123c]">
-                    Duid aan in welke faciliteit u verblijft:
+                    Duid aan in welke faciliteit je verblijft:
                   </label>
                   <div className="relative mt-2">
                     <select
@@ -521,7 +496,7 @@ const LoginRegister = () => {
                       required
                     >
                       <option value="" disabled>
-                        Selecteer uw faciliteit
+                        Selecteer je faciliteit
                       </option>
                       <option value="Bloemetje">Bloemetje</option>
                       <option value="De Regenboog">De Regenboog</option>
@@ -543,15 +518,27 @@ const LoginRegister = () => {
                 {/* Terms & Conditions Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="terms-checkbox"
                     type="checkbox"
                     checked={isTermsAgreed}
                     onChange={(e) => setIsTermsAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label
+                    htmlFor="terms-checkbox"
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowTermsModal(true); }}>
+                    <a
+                      href="#"
+                      className="text-[#e11d48]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowTermsModal(true);
+                      }}
+                    >
                       Terms and Conditions
                     </a>.
                   </label>
@@ -560,15 +547,27 @@ const LoginRegister = () => {
                 {/* Privacy Policy Agreement */}
                 <div className="flex items-center mb-4">
                   <input
+                    id="privacy-checkbox"
                     type="checkbox"
                     checked={isPrivacyPolicyAgreed}
                     onChange={(e) => setIsPrivacyPolicyAgreed(e.target.checked)}
                     className="h-4 w-4 text-[#e11d48] focus:ring-[#fda4af]"
                     required
                   />
-                  <label className="ml-2 text-gray-600 text-sm">
+                  <label
+                    htmlFor="privacy-checkbox"
+                    className="ml-2 text-gray-600 text-sm cursor-pointer"
+                  >
                     Ik ga akkoord met de{' '}
-                    <a href="#" className="text-[#e11d48]" onClick={(e) => { e.preventDefault(); setShowPrivacyModal(true); }}>
+                    <a
+                      href="#"
+                      className="text-[#e11d48]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPrivacyModal(true);
+                      }}
+                    >
                       Privacy Policy
                     </a>.
                   </label>
@@ -600,7 +599,7 @@ const LoginRegister = () => {
             <div className="text-center mt-8">
               {isLogin ? (
                 <p className="text-gray-600">
-                  Hebt u nog geen account?{' '}
+                  Heb je nog geen account?{' '}
                   <button
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(false); setShowRegisterInfo(true); }}
@@ -614,7 +613,7 @@ const LoginRegister = () => {
                 </p>
               ) : (
                 <p className="text-gray-600">
-                  Hebt u al een account?{' '}
+                  Heb je al een account?{' '}
                   <button
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
@@ -634,17 +633,17 @@ const LoginRegister = () => {
                 <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Algemene Voorwaarden</h2>
                 <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
                   <p className="text-gray-600">
-                    Welkom op ons platform. Door onze diensten te gebruiken, stemt u ermee in zich te houden aan de volgende voorwaarden:
+                    Welkom op ons platform. Door onze diensten te gebruiken, stem je ermee in zich te houden aan de volgende voorwaarden:
                     <br /><br />
-                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, gaat u akkoord met deze voorwaarden en eventuele wijzigingen.
+                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, ga je akkoord met deze voorwaarden en eventuele wijzigingen.
                     <br /><br />
-                    2. <strong>Privacybeleid:</strong> Uw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
+                    2. <strong>Privacybeleid:</strong> Je persoonlijke gegevens worden beschermd volgens ons privacybeleid.
                     <br /><br />
-                    3. <strong>Accountverantwoordelijkheden:</strong> U zowel als de begeleider die u toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van uw account.
+                    3. <strong>Accountverantwoordelijkheden:</strong> Je zowel als de begeleider die je toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van jouw account.
                     <br /><br />
-                    4. <strong>Verboden Activiteiten:</strong> U mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
+                    4. <strong>Verboden Activiteiten:</strong> Je mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
                     <br /><br />
-                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om uw account op elk moment te schorsen of te beëindigen.
+                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om jouw account op elk moment te schorsen of te beëindigen.
                     <br /><br />
                     Enzovoort...
                   </p>
@@ -666,7 +665,7 @@ const LoginRegister = () => {
                   className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                   disabled={!isTermsAgreed}
                 >
-                  Weiger
+                  Accepteer
                 </button>
               </div>
             </div>
@@ -680,17 +679,17 @@ const LoginRegister = () => {
                 <h2 className="text-2xl font-bold mb-4 text-[#be123c]">Privacy Policy</h2>
                 <div className="mb-6 overflow-y-scroll h-64 p-4 border rounded-lg">
                   <p className="text-gray-600">
-                    Welkom op ons platform. Door onze diensten te gebruiken, stemt u ermee in zich te houden aan de volgende voorwaarden:
+                    Welkom op ons platform. Door onze diensten te gebruiken, stem je ermee in zich te houden aan de volgende voorwaarden:
                     <br /><br />
-                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, gaat u akkoord met deze voorwaarden en eventuele wijzigingen.
+                    1. <strong>Aanvaarding van de Voorwaarden:</strong> Door een account aan te maken, ga je akkoord met deze voorwaarden en eventuele wijzigingen.
                     <br /><br />
-                    2. <strong>Privacybeleid:</strong> Uw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
+                    2. <strong>Privacybeleid:</strong> jouw persoonlijke gegevens worden beschermd volgens ons privacybeleid.
                     <br /><br />
-                    3. <strong>Accountverantwoordelijkheden:</strong> U zowel als de begeleider die u toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van uw account.
+                    3. <strong>Accountverantwoordelijkheden:</strong> Je zowel als de begeleider die je toegewezen werd, zijn verantwoordelijk voor het bewaren van de vertrouwelijkheid van jouw account.
                     <br /><br />
-                    4. <strong>Verboden Activiteiten:</strong> U mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
+                    4. <strong>Verboden Activiteiten:</strong> Je mag zich niet bezighouden met illegale of schadelijke activiteiten op dit platform.
                     <br /><br />
-                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om uw account op elk moment te schorsen of te beëindigen.
+                    5. <strong>Beëindiging:</strong> Wij behouden ons het recht voor om jouw account op elk moment te schorsen of te beëindigen.
                     <br /><br />
                     Enzovoort...
                   </p>
@@ -712,7 +711,7 @@ const LoginRegister = () => {
                   className={`w-full py-3 text-white ${isPrivacyPolicyAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                   disabled={!isPrivacyPolicyAgreed}
                 >
-                  Weiger
+                  Accepteer
                 </button>
               </div>
             </div>

@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faHeart, faUserFriends, faComment, faCog, faSignOutAlt, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faUserFriends, faComment, faCog, faSignOutAlt, faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
+import { useMatches } from '../../hooks/useMatches';
+import { supabase } from '../../lib/helper/supabaseClient';
+
+// Import your custom image
+import logo from '../../Assets/Butterfly.png';
 
 const TopNavigationBar = () => {
   const navigate = useNavigate();
@@ -11,6 +16,64 @@ const TopNavigationBar = () => {
   const loggedIn = !!user;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { matches, loading: matchesLoading } = useMatches(user?.id);
+  const [unreadChatsCount, setUnreadChatsCount] = useState(0);
+  const [isCalculating, setIsCalculating] = useState(true);
+
+  useEffect(() => {
+    if (!user || matchesLoading) return;
+    
+    calculateUnreadChats();
+  }, [user, matches, matchesLoading]);
+
+  const calculateUnreadChats = async () => {
+    if (!matches || matchesLoading) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user;
+
+      if (!currentUser) return;
+
+      let count = 0;
+
+      // Check each match
+      for (const match of matches) {
+        const { data: messages, error } = await supabase
+          .from('chats')
+          .select('sender_id')
+          .eq('match_id', match.match_id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error('Error fetching messages:', error);
+          continue; // Skip this match if there's an error
+        }
+
+        if (!messages || messages.length === 0) {
+          // New match with no messages
+          count++;
+        } else if (messages[0].sender_id !== currentUser.id) {
+          // Last message was from the other person
+          count++;
+        }
+      }
+
+      setUnreadChatsCount(count);
+      setIsCalculating(false);
+    } catch (error) {
+      console.error('Error calculating unread chats:', error);
+    }
+  };
+
+  // Determine if friends route is active
+  const isFriendsRoute = location.pathname === '/feedFriends';
+
+  // Dynamic background color based on route
+  const bgColor = isFriendsRoute ? 'bg-green-600' : 'bg-rose-600';
+  const activeBgColor = isFriendsRoute ? 'bg-green-700' : 'bg-rose-700';
+  const hoverBgColor = isFriendsRoute ? 'hover:bg-green-700' : 'hover:bg-rose-700';
 
   const handleNavigate = (path) => {
     if (path === '/logout') {
@@ -28,11 +91,11 @@ const TopNavigationBar = () => {
     }
   };
 
-  const leftItem = { icon: faHome, label: 'Home', path: '/' };
+  const leftItem = { icon: logo, path: '/' }; // Using image for home
   const centerItems = [
     { icon: faHeart, label: 'Liefde', path: '/feed' },
-    { icon: faUserFriends, label: 'Vriendschap', path: '/feed' },
-    { icon: faComment, label: 'Berichten', path: '/chats' },
+    { icon: faUserFriends, label: 'Vriendschap', path: '/feedFriends' },
+    { icon: faComment, label: 'Berichten', path: '/chats', badge: unreadChatsCount },
     { icon: faCog, label: 'Instellingen', path: '/settingsUser' }
   ];
   const rightItem = { icon: faSignOutAlt, label: 'Log uit', path: '/logout' };
@@ -40,31 +103,51 @@ const TopNavigationBar = () => {
   const NavItem = ({ item, isActive }) => (
     <div
       className={`group flex flex-col items-center justify-center cursor-pointer relative py-2 h-full ${
-        isActive ? 'bg-rose-700' : 'hover:bg-rose-700'
+        isActive && typeof item.icon !== 'string' ? activeBgColor : hoverBgColor
       }`}
       onClick={() => handleNavigate(item.path)}
     >
-      <div className={`flex flex-col items-center px-4 ${isActive ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white' : ''}`}>
-        <FontAwesomeIcon
-          icon={item.icon}
-          className={`text-sm md:text-lg transition duration-300 ${
-            isActive ? 'text-white scale-110' : 'text-white'
-          }`}
-        />
-        <span className={`text-xs mt-1 transition-all duration-300
-          ${isActive ? 'text-white font-medium' : 'text-white'}
-          absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100
-          md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}>
+      <div
+        className={`flex flex-col items-center px-4 ${
+          isActive && typeof item.icon !== 'string'
+            ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white'
+            : ''
+        }`}
+      >
+        {typeof item.icon === 'string' ? (
+          <img src={item.icon} alt={item.label} className="h-12 w-12 rounded-full" />
+        ) : (
+          <div className="relative">
+            <FontAwesomeIcon
+              icon={item.icon}
+              className={`text-sm md:text-lg transition duration-300 ${
+                isActive ? 'text-white scale-110' : 'text-white'
+              }`}
+            />
+            {/* Only show badge when not calculating and count > 0 */}
+            {item.badge !== undefined && !isCalculating && item.badge > 0 && (
+              <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
+                {item.badge}
+              </span>
+            )}
+          </div>
+        )}
+        <span
+          className={`text-xs mt-1 transition-all duration-300 ${
+            isActive ? 'text-white font-medium' : 'text-white'
+          } absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}
+        >
           {item.label}
         </span>
       </div>
     </div>
   );
+  
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-rose-600 z-50">
+    <div className={`fixed top-0 left-0 right-0 ${bgColor} z-50`}>
       <div className="container mx-auto flex items-center justify-between h-12 md:h-16">
-        {/* Left Section (Home) */}
+        {/* Left Section (Home with custom image) */}
         <div className="flex items-center h-full">
           <NavItem item={leftItem} isActive={location.pathname === '/'} />
         </div>
@@ -104,14 +187,14 @@ const TopNavigationBar = () => {
 
       {/* Dropdown Menu for Small Screens */}
       {isMenuOpen && (
-        <div className="fixed top-12 left-0 right-0 bg-rose-600 text-white z-40 flex flex-col items-center py-4">
+        <div className={`fixed top-12 left-0 right-0 ${bgColor} text-white z-40 flex flex-col items-center py-4`}>
           {centerItems.map((item, index) => (
             <div
               key={index}
               className={`py-2 w-full text-center cursor-pointer ${
                 location.pathname === item.path
-                  ? 'bg-rose-700 font-medium'
-                  : 'hover:bg-rose-700'
+                  ? `${activeBgColor} font-medium`
+                  : hoverBgColor
               }`}
               onClick={() => {
                 setIsMenuOpen(false);
@@ -122,13 +205,13 @@ const TopNavigationBar = () => {
             </div>
           ))}
           <div
-            className="py-2 w-full text-center cursor-pointer hover:bg-rose-700"
+            className={`py-2 w-full text-center cursor-pointer ${hoverBgColor}`}
             onClick={() => {
               setIsMenuOpen(false);
               handleLogOut();
             }}
           >
-            Logout
+            Log out
           </div>
         </div>
       )}

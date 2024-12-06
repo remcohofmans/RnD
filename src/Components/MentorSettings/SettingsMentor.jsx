@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Settings, ScrollText, Ban, Trash, LogOut } from 'lucide-react';
+import { Settings, ScrollText, Ban, Trash,CreditCard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AccessRequests from '../../Components/AccessRequests';
 import MentorBanUser from '../../Components/MentorSettings/MentorBanUser';
+import SubscriptionRequests from '../../Components/MentorSettings/SubscriptionRequests'; // Import your new component
 import { useAuth } from '../../hooks/AuthContext';
 
 const SettingsMentor = () => {
@@ -36,20 +37,27 @@ const SettingsMentor = () => {
       id: 'Toegangsverzoeken',
       icon: ScrollText,
       component: 'AccessRequests',
-      description: 'Bekijk en beheer toegang verzoeken'
+      description: 'Bekijk en beheer toegang verzoeken',
+    },
+    {
+      id: 'Abonnement verzoeken',
+      icon: CreditCard, // Replace with a relevant icon if available
+      component: 'SubscriptionRequests',
+      description: 'Bekijk en beheer abonnement verzoeken',
     },
     {
       id: 'Ban gebruiker',
       icon: Ban,
       component: 'MentorBanUser',
-      description: 'Beheer verboden gebruikers'
+      description: 'Beheer verboden gebruikers',
     },
     {
       id: 'Verwijder profiel',
       icon: Trash,
       component: null,
-      description: 'Verwijder je profiel permanent'
-    }
+      description: 'Verwijder je profiel permanent',
+    },
+    
   ];
 
   const handleOptionClick = (option) => {
@@ -59,7 +67,11 @@ const SettingsMentor = () => {
       setActiveComponent('MentorBanUser');
     } else if (option === 'Verwijder profiel') {
       setShowConfirmation(true);
+    } else if (option === 'Abonnement verzoeken') {
+      setActiveComponent('SubscriptionRequests');
     }
+
+    console.log('Active component: ',option)
   };
 
   return (
@@ -134,6 +146,7 @@ const SettingsMentor = () => {
           {/* Dynamic Content */}
           {activeComponent === 'AccessRequests' && <AccessRequests />}
           {activeComponent === 'MentorBanUser' && <MentorBanUser />}
+          {activeComponent === 'SubscriptionRequests' && <SubscriptionRequests />}
 
           {/* Confirmation Modal */}
           {showConfirmation && (
@@ -141,7 +154,7 @@ const SettingsMentor = () => {
               <div className="p-6 bg-white rounded-lg shadow-lg w-80 border-4 border-[#fda4af]">
                 <h2 className="text-lg font-semibold text-gray-800">Bevestig Verwijdering</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                  Bent u zeker dat u dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
+                  Ben je zeker dat je dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
                 </p>
                 <div className="flex justify-end gap-4 mt-4">
                   <button

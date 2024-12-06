@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
-import butterflyImage from '../../Assets/Butterfly.png'; // Reuse the butterfly image for consistency
 import { useAuth } from '../../hooks/AuthContext';
-
+import { User, Calendar, Camera } from 'lucide-react';
 
 const CompleteProfile = () => {
   const [name, setName] = useState('');
   const [birthdate, setBirthdate] = useState('');
+  const [gender, setGender] = useState('');
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Handle image input change  
+  console.log(user);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -22,16 +23,13 @@ const CompleteProfile = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // If an image is selected, upload it to Supabase storage
       if (image) {
-        console.log(user.id)
         const { error: uploadError } = await supabase.storage
           .from('pictures')
           .upload(`${user.id}/profielAfbeelding/${image.name}`, image);
@@ -39,13 +37,12 @@ const CompleteProfile = () => {
         if (uploadError) throw uploadError;
       }
 
-
-      // Insert the user's profile data into the 'users' table
       const { error } = await supabase
         .from('users')
         .update({
           name: name,
           birthday: birthdate,
+          gender: gender
         })
         .eq('id', user.id);
 
@@ -54,24 +51,19 @@ const CompleteProfile = () => {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-
-
-      // Insert the user's profile data into the 'subscriptions' table and start free trial
       const { error: subscriptionError } = await supabase
         .from('subscriptions')
         .insert({
           user_id: user.id,
           subscription: 'BASIS',
           end_date: endDate,
-          active: true
+          active: false
         })
       if (subscriptionError){
         console.log("starting free trial failed", subscriptionError);
       } 
 
-
-
-      navigate('/');  // Navigate to the home page after successful profile creation
+      navigate('/');
     } catch (err) {
       setError('Er ging iets mis. Probeer het opnieuw.');
       console.error(err.message);
@@ -81,78 +73,104 @@ const CompleteProfile = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-tr from-[#fff1f2] to-[#ffe4e6]">
-      {/* Background with butterfly image */}
-      <div
-        className="flex items-center justify-center flex-1 relative bg-cover bg-center"
-        style={{
-          backgroundColor: 'bg-rose-100',
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        {/* Profile Completion Form */}
-        <div className="bg-white p-10 rounded-lg shadow-lg max-w-md w-full z-10 mt-18">
-          <h1 className="text-3xl font-bold text-center text-[#f43f5e] mb-6">Voltooi je profiel</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+    <div className="min-h-screen flex flex-col bg-rose-50">
+      <div className="min-h-screencontainer mx-auto px-4 flex items-center justify-center flex-grow mt-16 mb-4 md:mt-0 md:mb-0 ">
+        <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
+          <div className="bg-rose-700 text-white text-center py-6">
+            <h1 className="text-3xl font-bold">Voltooi je profiel</h1>
+            <p className="text-sm mt-2 opacity-80">U bent er bijna! Nog enkele stappen.</p>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Name Input */}
+            <div className="relative">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Naam
               </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                placeholder="Voer je naam in"
-                required
-              />
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                  placeholder="Voer je naam in"
+                  required
+                />
+              </div>
             </div>
-            <div>
-              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700">
+
+            {/* Birthdate Input */}
+            <div className="relative">
+              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700 mb-2">
                 Geboortedatum
               </label>
-              <input
-                type="date"
-                id="birthday"
-                value={birthdate}
-                onChange={(e) => setBirthdate(e.target.value)}
-                className="w-full py-3 px-12 bg-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
-                required
-              />
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="date"
+                  id="birthday"
+                  value={birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                  required
+                />
+              </div>
             </div>
+
+            {/* Gender Input */}
             <div>
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
+              <select
+                id="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full py-3 px-4 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#fda4af]"
+                required
+              >
+                <option value="">Selecteer je gender</option>
+                <option value="man">Man</option>
+                <option value="vrouw">Vrouw</option>
+                <option value="anders">Anders</option>
+              </select>
+            </div>
+
+            {/* Profile Picture Input */}
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
                 Profielfoto (optioneel)
               </label>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={handleImageChange} // Use the handler
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 hover:file:bg-gray-100"
-              />
+              <div className="relative">
+                <Camera className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full py-3 px-12 bg-gray-50 rounded-lg border border-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[#f43f5e]/10 file:text-[#f43f5e] hover:file:bg-[#f43f5e]/20"
+                />
+              </div>
             </div>
-            {error && <p className="text-red-600 text-sm">{error}</p>}
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full py-3 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-[#f43f5e] text-white rounded-lg hover:bg-[#be123c] transition-transform transform hover:scale-[1.02] disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg"
               disabled={loading}
             >
-              {loading ? 'Bezig met opslaan...' : 'Voltooien'}
+              {loading ? 'Bezig met opslaan...' : 'Profiel Voltooien'}
             </button>
           </form>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <p>© 2024 V(l)inder. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };

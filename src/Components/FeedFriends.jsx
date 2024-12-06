@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
+import { Wheel } from 'react-custom-roulette';
 import { supabase } from '../lib/helper/supabaseClient';
-import UserCard from '../Components/Feed/UserCard';
+import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
-import { calculateDistance, useDistanceMatrixService } from '../Components/Feed/GoogleMapsMatrixAPI';
-import NavigationButton from './Feed/NavigationButton';
+import { calculateDistance, useDistanceMatrixService } from './Feed/GoogleMapsMatrixAPI';
 import { useNavigate } from 'react-router-dom';
-import FeedSkeleton from '../Components/Feed/FeedSkeleton';
-import { shuffle } from 'lodash';
+import FriendFeedSkeleton from '../Components/Feed/FriendFeedSkeleton';
 import WheelComponent from '../Components/Feed/SpinWheel';
+import { shuffle } from 'lodash';
 
-const Feed = () => {
+const FeedFriends = () => {
   const { user, checkSubscription } = useAuth();
   const [users, setUsers] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,7 +21,7 @@ const Feed = () => {
   const [checkingAccess, setCheckingAccess] = useState(true);
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
-  const USERS_TO_FETCH = 9;
+  const USERS_TO_FETCH = 10;
   const navigate = useNavigate();
 
   const calculateAge = (birthday) => {
@@ -53,6 +53,7 @@ const Feed = () => {
       setCheckingAccess(false);  // New line
     }
   };
+
 
   const fetchUserData = async (distanceServiceReady) => {
     if (!distanceServiceReady) {
@@ -136,7 +137,6 @@ const Feed = () => {
         .eq('access_granted', 'YES')
         .not('id', 'in', `(${excludedUserIds.join(',')})`)
         .neq('id', user.id)
-        .neq('status', 'PAUSED')
         .not('name', 'is', null)
         .not('birthday', 'is', null)
         .not('facility_id', 'is', null);
@@ -224,6 +224,8 @@ const Feed = () => {
     }
   };
 
+
+
   useEffect(() => {
     if (isDistanceServiceInitialized) {
       fetchUserData(isDistanceServiceInitialized);
@@ -254,13 +256,13 @@ const Feed = () => {
   // Show skeleton loader while checking access
   if (checkingAccess) {
     return (
-      <FeedSkeleton />
+      <FriendFeedSkeleton />
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <h2 className="text-2xl font-bold text-rose-900 mb-4">Toegang Vereist</h2>
           <p className="text-gray-800 mb-4">
@@ -272,18 +274,16 @@ const Feed = () => {
   }
 
   if (loading) {
-    return (
-      <FeedSkeleton />
-    );
+    return <FriendFeedSkeleton />;
   }
 
   if (error || users.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-16 w-16 mx-auto text-rose-400 mb-4"
+            className="h-16 w-16 mx-auto text-green-400 mb-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -295,39 +295,57 @@ const Feed = () => {
               ? `Oeps! Er ging iets mis: ${error}`
               : 'Geen matches gevonden. Pas je voorkeuren aan.'}
           </p>
-          <NavigationButton />
+          <button
+            onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
+            className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+          >
+            {error ? 'Opnieuw proberen' : 'Filter aanpassen'}
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-12 relative overflow-hidden">
+      {/* Decorative heart background elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+        <div className="absolute top-10 left-10">
+          <Heart className="text-green-200 w-24 h-24" />
+        </div>
+        <div className="absolute bottom-20 right-20">
+          <Heart className="text-green-200 w-32 h-32" />
+        </div>
+        <div className="absolute top-1/3 left-1/4">
+          <Heart className="text-green-200 w-16 h-16" />
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-6xl relative z-10">
         <div className="text-center mb-16">
-          <h1
-            className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
+        <h1
+  className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
     flex items-center justify-center gap-4 
     text-center 
-    bg-gradient-to-r from-rose-400 via-rose-600 to-rose-400 
+    bg-gradient-to-r from-green-400 via-green-600 to-green-400 
     bg-clip-text text-transparent 
     animate-gradient-x"
-          >
-            <Sparkles className="text-rose-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
-            <span className="text-black-300">
-              Ontdek Je Ideale Match
-            </span>
-            <Sparkles className="text-rose-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
-          </h1>
+>
+  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+  <span className="text-black-300">
+    Vind Je Perfecte Vriend
+  </span>
+  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+</h1>
 
-          <p className="text-xl text-rose-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
-            Spin het wiel en laat het toeval je naar de ware verbinding leiden
+          <p className="text-xl text-green-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
+            Ontdek verbindingen door het lot te laten beslissen
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Wheel Column */}
-          <div className="bg-rose-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
+          <div className="bg-green-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
             <WheelComponent
               users={users}
               currentIndex={currentIndex}
@@ -335,21 +353,27 @@ const Feed = () => {
               setMustSpin={setMustSpin}
               handleWheelStop={handleWheelStop}
               setCurrentIndex={setCurrentIndex}
+              theme = 'green'
             />
           </div>
 
           {/* User Card Column */}
-          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-rose-100 p-8 flex items-center justify-center h-full">
+          <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-green-100 p-8 flex items-center justify-center h-full">
             {mustSpin ? (
-              <div className="text-center text-rose-800 p-8">
+              <div className="text-center text-green-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
-                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-green-500 border-green-200"></div>
                   <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
                 </div>
               </div>
             ) : (
               <div className="w-full flex items-center justify-center">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={true} />
+                <UserCard 
+                user={users[currentIndex]} 
+                currentUserId={user.id} 
+                showLoveButton={false} 
+                theme = 'green'
+                />
               </div>
             )}
           </div>
@@ -359,4 +383,5 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+
+export default FeedFriends;

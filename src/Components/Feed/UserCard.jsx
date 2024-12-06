@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,
   faMapMarkerAlt,
   faBuilding,
-  faTimes,
   faHeart,
   faStar,
-  faComment 
+  faComment,
+  faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons';
 
+import { useAnalytics } from '../../hooks/analyticsContext.js';
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
 import { supabase } from '../../lib/helper/supabaseClient';
 import CarouselCard from '../Feed/CarouselCard';
+import CustomAlert from '../Feed/CustomAlert'; // Import the custom alert component
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
@@ -20,169 +22,207 @@ const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
 }, {});
 const defaultHobbyIcon = faStar;
 
+const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }) => {
+  const [alertMessage, setAlertMessage] = useState('');
+  const { track } = useAnalytics();
 
-const UserCard = ({ user, currentUserId }) => {
+  const themeStyles = {
+    pink: {
+      cardBg: 'bg-rose-200',
+      textColor: 'text-rose-900',
+      buttonBg: 'bg-rose-500',
+      buttonHoverBg: 'hover:bg-rose-700',
+      chatButtonBg: 'bg-rose-200',
+      chatButtonHoverBg: 'hover:bg-rose-300',
+    },
+    green: {
+      cardBg: 'bg-green-200',
+      textColor: 'text-green-900',
+      buttonBg: 'bg-green-500',
+      buttonHoverBg: 'hover:bg-green-700',
+      chatButtonBg: 'bg-green-200',
+      chatButtonHoverBg: 'hover:bg-green-300',
+    },
+  };
+
+  const currentTheme = themeStyles[theme] || themeStyles.pink;
 
   const hobbies = Array.isArray(user?.hobbies) ? user.hobbies : [];
 
-
-  const handleLoveClick = async () => {
+  const handleLoveClick = async (isLove) => {
     try {
-      console.log("Logged-in user ID: ", currentUserId, "liked_user_id: ", user.id);
-      
-      // Check if like already exists
+      const likeValue = isLove ? 'true' : 'false';
+
       const { data: existingLike, error: checkError } = await supabase
         .from('likes')
         .select('*')
         .eq('user_id', currentUserId)
         .eq('liked_user_id', user.id)
         .single();
-  
-      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is the "no rows returned" error
-        console.error('Error checking existing like:', checkError);
+
+      if (existingLike && !isLove) {
+        setAlertMessage('Je hebt deze gebruiker al geliket!');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
         return;
       }
-  
-      if (existingLike) {
-        alert('You have already liked this user!');
-        return;
-      }
-  
-      // Insert new like
-      const { data: likeData, error: likeError } = await supabase
-        .from('likes')
-        .insert([{ user_id: currentUserId, liked_user_id: user.id }]);
-  
+
+      const likeOperation = existingLike
+        ? supabase
+            .from('likes')
+            .update({ love_like: likeValue })
+            .eq('user_id', currentUserId)
+            .eq('liked_user_id', user.id)
+        : supabase
+            .from('likes')
+            .insert([{
+                user_id: currentUserId,
+                liked_user_id: user.id,
+                love_like: likeValue,
+            }]);
+
+      const { error: likeError } = await likeOperation;
+
       if (likeError) {
         console.error('Supabase error:', likeError);
-        alert('Error liking user, please try again.');
+        setAlertMessage('Fout bij liken, probeer het opnieuw.');
         return;
       }
-  
-      // Check if the other user has already liked the current user
+
+      track('User Liked', {
+        userOne: currentUserId,
+        userTwo: user.id,
+      });
+
+      const { data: existingMatch, error: matchCheckError } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('id', currentUserId)
+        .eq('matched_user_id', user.id)
+        .single();
+
+      if (existingMatch) {
+        setAlertMessage('Jullie zijn al gematcht!');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+        return;
+      }
+
       const { data: mutualLikeData, error: mutualLikeError } = await supabase
         .from('likes')
         .select('*')
         .eq('user_id', user.id)
         .eq('liked_user_id', currentUserId)
         .single();
-  
+
       if (mutualLikeError && mutualLikeError.code !== 'PGRST116') {
         console.error('Error checking mutual like:', mutualLikeError);
         return;
       }
-  
-      // If there's a mutual like, create a match and remove the likes
-      if (mutualLikeData) {
-        // Insert into matches table with both user IDs
+
+      if (mutualLikeData && mutualLikeData.love_like === likeValue) {
         const { error: matchError } = await supabase
           .from('matches')
-          .insert([{ 
-            id: currentUserId,
-            matched_user_id: user.id
-          }]);
-  
+          .insert([{
+              id: currentUserId,
+              matched_user_id: user.id,
+              love_like: likeValue,
+            }]);
+
         if (matchError) {
           console.error('Error creating match:', matchError);
-          alert('Error creating match, please try again.');
+          setAlertMessage('Er is een fout opgetreden bij het maken van de match, probeer het opnieuw.');
           return;
         }
-  
-      // Delete first like (current user's like)
-      const { error: deleteFirstLikeError } = await supabase
-      .from('likes')
-      .delete()
-      .eq('user_id', currentUserId)
-      .eq('liked_user_id', user.id);
 
-      if (deleteFirstLikeError) {
-      console.error('Error removing first like:', deleteFirstLikeError);
-      alert('Error updating match status, please try again.');
-      return;
-      }
+        const deleteLikes = await Promise.all([supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', currentUserId)
+            .eq('liked_user_id', user.id),
+          supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('liked_user_id', currentUserId),
+        ]);
 
-      // Delete second like (other user's like)
-      const { error: deleteSecondLikeError } = await supabase
-      .from('likes')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('liked_user_id', currentUserId);
+        if (deleteLikes.some(({ error }) => error)) {
+          console.error('Error removing likes:', deleteLikes);
+          setAlertMessage('Er is een fout opgetreden bij het verwijderen van de likes, probeer het opnieuw.');
+          return;
+        }
 
-      if (deleteSecondLikeError) {
-      console.error('Error removing second like:', deleteSecondLikeError);
-      alert('Error updating match status, please try again.');
-      return;
-      }
-        
-        alert('It\'s a match! 🎉');
+        setAlertMessage(`Het is een ${likeValue === 'true' ? 'love' : 'friend'} match! 🎉`);
       } else {
-        alert('User liked successfully!');
+        setAlertMessage('Gebruiker succesvol geliket!');
       }
-  
+      
     } catch (error) {
       console.error('Error in handleLoveClick:', error.message || error);
-      alert('An error occurred, please try again.');
+      setAlertMessage('Er is een fout opgetreden, probeer het opnieuw.');
     }
   };
 
   return (
-    <div className="user-card bg-rose-200 rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto">
-      {/* Profile Picture */}
-      {/* <img
-        className="profile-picture w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-[#fb7185]"
-        src={`data:image/jpeg;base64,${user.profilePicture}`}
-        alt={`${user.name} profile`}
-      /> */}
+    <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
+      {alertMessage && <CustomAlert message={alertMessage} />}
       <CarouselCard userId={user.id} />
-
-
-      {/* User Info */}
-      <h2 className="name text-2xl font-semibold text-[#360009] text-center">{user.name}</h2>
-      <div className="info text-left mt-4">
-        <p className="age text-[#360009]">
-          <FontAwesomeIcon icon={faUser} className="mr-2" />
+      <h2 className={`name text-2xl font-semibold ${currentTheme.textColor} text-center`}>{user.name}</h2>
+      <div className={`info text-left mt-4 ${currentTheme.textColor}`}>
+        <p className="age">
+          <FontAwesomeIcon icon={faUser} className="mr-2" title="Leeftijd" />
           {user.age} jaar
         </p>
-        <p className="location text-[#360009]">
-          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+        <p className="location">
+          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" title="Locatie" />
           {user.location}
         </p>
-        <p className="facility text-[#360009]">
-          <FontAwesomeIcon icon={faBuilding} className="mr-2" />
+        <p className="facility">
+          <FontAwesomeIcon icon={faBuilding} className="mr-2" title="Faciliteit" />
           {user.facility}
         </p>
       </div>
-
-
-      {/* Hobbies Section */}
-      <div className="hobbies mt-4 text-left">
-        <span className="hobbies-label text-[#fb7185] font-bold">Hobbies:</span>
+      <div className={`hobbies mt-4 text-left ${currentTheme.textColor}`}>
+        <span className="hobbies-label font-bold">Hobby's:</span>
         <div className="hobby-icons flex flex-wrap gap-3 mt-2">
           {hobbies.length > 0 ? (
             hobbies.map((hobby, index) => (
-              <span key={index} className="hobby-item flex items-center text-[#360009] text-sm">
+              <span key={index} className="hobby-item flex items-center text-sm">
                 <span className="mr-2 text-xl">{hobbyIcons[hobby] || defaultHobbyIcon}</span>
                 {hobby}
               </span>
             ))
           ) : (
-            <p className="text-[#360009]">No hobbies listed</p>
+            <p>Geen hobby's vermeld</p>
           )}
         </div>
       </div>
-
-
-
-      {/* Action Buttons */}
       <div className="actions flex justify-between mt-6">
+        {showLoveButton ? (
+          <button
+            className={`love-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
+            onClick={() => handleLoveClick(true)}
+          >
+            <FontAwesomeIcon icon={faHeart} className="mr-2" title="Liefde" />
+            Love
+          </button>
+        ) : (
+          <button
+            className={`like-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
+            onClick={() => handleLoveClick(false)}
+          >
+            <FontAwesomeIcon icon={faThumbsUp} className="mr-2" title="Like" />
+            Like
+          </button>
+        )}
         <button
-          className="love-button flex items-center bg-[#fb7185] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] "
-          onClick={handleLoveClick}
+          className={`chat-button flex items-center ${currentTheme.chatButtonBg} ${currentTheme.textColor} px-4 py-2 rounded-full shadow-lg ${currentTheme.chatButtonHoverBg}`}
         >
-          <FontAwesomeIcon icon={faHeart} className="mr-2" /> Love
-        </button>
-        <button className="chat-button flex items-center bg-[#ffccd3] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#f43f5e] ">
-          <FontAwesomeIcon icon={faComment} className="mr-2" /> Chat
+          <FontAwesomeIcon icon={faComment} className="mr-2" title="Chat" />
+          Chat
         </button>
       </div>
     </div>

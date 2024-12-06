@@ -11,17 +11,17 @@ const FilterForm = () => {
     minAge: '18',
     maxAge: '35',
   });
-  
+
   const [showModal, setShowModal] = useState(false);
-  const [selectedHobbies, setSelectedHobbies] = useState([]); 
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const interestOptions = [
-    { value: 'man', label: 'Man 🤷‍♂️' },
-    { value: 'vrouw', label: 'Vrouw 🤷‍♀️' },
-    { value: 'geen-voorkeur', label: 'x 🤷‍♂️/🤷‍♀️' },
+    { value: 'man', label: 'Man 👨' },
+    { value: 'vrouw', label: 'Vrouw 👩' },
+    { value: 'geen-voorkeur', label: 'Geen Voorkeur 🌈' },
   ];
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const FilterForm = () => {
   
     try {
       const { data, error } = await supabase
-        .from('userpreferences')
+        .from('preferences')
         .select('*')
         .eq('id', userId)
         .single();
@@ -97,14 +97,14 @@ const FilterForm = () => {
 
       try {
         const { data, error } = await supabase
-          .from('userpreferences')
+          .from('preferences')
           .select('id')
           .eq('id', userId)
           .single();
 
         if (data) {
           const { data: updateData, error: updateError } = await supabase
-            .from('userpreferences')
+            .from('preferences')
             .update(dataToSubmit)
             .eq('id', userId);
 
@@ -116,7 +116,7 @@ const FilterForm = () => {
           }
         } else {
           const { data: insertData, error: insertError } = await supabase
-            .from('userpreferences')
+            .from('preferences')
             .insert([dataToSubmit]);
 
           if (insertError) {
@@ -157,13 +157,14 @@ const FilterForm = () => {
   };
 
   return (
-    <div className="min-h-screen mt-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
+    <div>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-white p-8 shadow-lg rounded-2xl border border-gray-100"
       >
         <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Persoonlijke Interesses</h1>
+
           <label className="block text-sm font-medium text-gray-700">
             Waar heb je interesse in?
           </label>
@@ -257,7 +258,7 @@ const FilterForm = () => {
 
       {submittedData && (
         <div className="mt-8 p-4 bg-green-100 text-green-700 rounded-lg">
-          Form data submitted successfully!
+          Je persoonlijke interesses zijn succevol opgeslagen!
         </div>
       )}
     </div>

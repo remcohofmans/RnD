@@ -23,6 +23,18 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const pauseAccount = async(userId) => {
+    const {error } = await supabase
+        .from('users')
+        .update({ status: "PAUSED" })
+        .eq('id', userId);
+
+      if(error) throw error;
+      else{
+        logoutAndNavigate();
+      }
+};
+
   const fetchUsersForMentor = async (mentorId) => {
     try {
       const { data: mentorData, error: mentorError } = await supabase
@@ -61,6 +73,29 @@ export function AuthProvider({ children }) {
   const loginWithEmail = async (email, password) => {
     setLoading(true);
     try {
+
+      console.log('email',email);
+      
+      
+      const {data: userData, error: userError} = await supabase
+        .from('users')
+        .select('*')
+        .eq('email',email);
+      
+      if (userError) {
+        
+        console.error("Error fetching user data:", userError.message);
+        throw new Error("Failed to verify account.");
+      }
+  
+      console.log("Userdata: ", userData);
+  
+      if (!userData || userData.length === 0) {
+        setError("This account was deleted");
+        return { success: false, error: "Dit account was verwijderd" }; // Stop further execution
+      }
+      
+
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
@@ -161,11 +196,7 @@ export function AuthProvider({ children }) {
       const { error } = await supabase.from('users').delete().eq('id', userId);
       if (error) throw new Error('Failed to delete user');
       
-      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(userId);
-      if (authDeleteError) {
-        console.error('Auth delete error details:', authDeleteError);
-        throw new Error('Failed to delete user data from authentication.');
-      }
+      
     } catch (err) {
       console.error('Error deleting user:', err.message);
       throw err;
@@ -288,12 +319,6 @@ export function AuthProvider({ children }) {
         throw new Error('Failed to delete user data.');
       }
   
-      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
-      if (authDeleteError) {
-        console.error('Auth delete error details:', authDeleteError);
-        throw new Error('Failed to delete user data from authentication.');
-      }
-  
       return true; // Deletion successful
     } catch (err) {
       console.error('Error deleting account:', err.message);
@@ -310,33 +335,148 @@ export function AuthProvider({ children }) {
       console.error('Error during logout and navigation:', err.message);
     }
   };
+  // Function to check if user has an active subscription
+  const checkSubscription = async (navigate) => {
+    try {
+      const { data: subscriptionCheck, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('active, end_date')
+      .eq('user_id', user.id);
+
+      if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
+      else {
+        const today = new Date();
+        const endDate = new Date(subscriptionCheck[0].end_date);
+        if (subscriptionCheck[0].active === false && endDate < today) {
+          navigate('/subscription');
+          console.log("Subscription ended");
+        }
+      }
+
+    } catch (err) {
+      console.error('Error during the fetching of the subscription: ', err.message);
+    }
+
+  };
+
+  const fetchSubscriptionRequests = async (mf) => {
+    try {
+      console.log(mf);
+      console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
+
+      const mentorFacility = parseInt(mf, 8);  // Convert to integer
+      console.log('mentorFacility type after conversion:', typeof mentorFacility); // Should be INT, UUID, etc.
+
+
+      // Fetch subscription requests using the 'subs' function
+      const { data: subscriptions, error: subscriptionsError } = await supabase
+        .rpc('fetch_subscription_requests', { mentorfacility : mentorFacility });
+      if (subscriptionsError) {
+        console.error('Error fetching subscription requests:', subscriptionsError.message);
+        throw subscriptionsError;
+      }
+  
+      console.log('Subscriptions:', subscriptions);
+      
+
+      const userIds = subscriptions.map(sub => sub.user_id);
+
+      const { data: users, error: usersError } = await supabase
+      .from('users')
+      .select('id, name, email')  // Assuming there's a 'name' column
+      .in('id', userIds);  // Filter users by the extracted user_ids
+
+    if (usersError) {
+      console.error('Error fetching user names:', usersError.message);
+      throw usersError;
+    }
+
+    console.log('Users:', users);
+
+    const subscriptionsWithNames = subscriptions.map(sub => {
+      const user = users.find(user => user.id === sub.user_id);
+      return { ...sub, name: user ? user.name : 'Unknown',email: user.email };
+    });
+
+    console.log('Subscriptions with User Names:', subscriptionsWithNames);
+      return subscriptionsWithNames;
+  
+    } catch (err) {
+      console.error('Error fetching subscription requests:', err.message);
+      throw err;
+    }
+  };
+
+  const updateSubscription = async (userId, sub,pay) => {
+    try {
+
+      console.log("UserID: ",userId," with request for ",sub);
+
+      const { error } = await supabase
+        .from('subscriptions')
+        .update({
+          subscription: sub,          // Correct field name for subscription
+          subscription_request: sub,  // Correct field name for subscription request
+          annual_payment: pay,
+          annual_payment_request:pay
+          
+        })
+        .eq('user_id', userId);
+  
+      if (error) throw error;
+  
+      return true; // Success
+    } catch (error) {
+      console.error('Error updating subscription status:', error.message);
+      throw error;
+    }
+  };
+
+  const restoreSession = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
+      const sessionUser = data.session?.user;
+      if (sessionUser) {
+        setUser(sessionUser);
+        await fetchUserRole(sessionUser.id);
+      }
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id',sessionUser.id);
+
+      if (userError) {
+
+        console.error("Error fetching user data:", userError.message);
+        throw new Error("Failed to verify account.");
+      }
+
+      console.log("Userdata: ", userData);
+
+      if (!userData || userData.length === 0) {
+        logoutAndNavigate();
+      }
+    } catch (err) {
+      console.error('Error restoring session:', err.message);
+      setUser(null);
+      setRole(null);
+    } finally {
+      setLoading(false);
+    }
+    
+  };
+
+
 
   // Restore session on app load
   useEffect(() => {
-    const restoreSession = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-
-        const sessionUser = data.session?.user;
-        if (sessionUser) {
-          setUser(sessionUser);
-          await fetchUserRole(sessionUser.id);
-        }
-      } catch (err) {
-        console.error('Error restoring session:', err.message);
-        setUser(null);
-        setRole(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     restoreSession();
-
-    fetchCurrentUser();
   }, []);
+  
 
   return (
     <AuthContext.Provider value={{
@@ -345,7 +485,8 @@ export function AuthProvider({ children }) {
       updateFacilityEnum, fetchUsersForMentor,
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
-      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate
+      fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
+      fetchSubscriptionRequests, updateSubscription, checkSubscription, restoreSession, pauseAccount
     }}>
       {children}
     </AuthContext.Provider>

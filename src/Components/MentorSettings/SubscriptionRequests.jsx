@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/AuthContext';
+import { useAuth } from '../../hooks/AuthContext';
 
-const AccessRequests = () => {
-  const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
+const SubscriptionRequests = () => {
+  const { user, fetchSubscriptionRequests, updateAccessStatus, fetchProfilePictureUrl,updateSubscription,fetchMentorFacility } = useAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [subscriptionRequests, setSubscriptionRequests] = useState([]); 
+  const [payAnnually, setPayAnnually] = useState(false);
   const usersPerPage = 10;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const fetchedUsers = await fetchUsersForMentor(user.id);
+        const mentorFacility = await fetchMentorFacility();
+        setMentorFacility(mentorFacility);
+        console.log("mf: ",mentorFacility);
+        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); // Assuming this returns a list of users with their subscriptions
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
       } catch (err) {
@@ -29,7 +35,58 @@ const AccessRequests = () => {
     if (user) {
       fetchUsers();
     }
-  }, [user, fetchUsersForMentor]);
+  }, [user, fetchSubscriptionRequests]);
+
+  const checkoutBasis = (payAnnually) => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutGevorderd = (payAnnually) => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutElite = (payAnnually) => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const goToCheckout = async (selectedSubscription,payAnnually) => {
+    if (selectedSubscription === 'BASIS') {
+        checkoutBasis(payAnnually);
+    } 
+    if (selectedSubscription === 'GEVORDERD') {
+        checkoutGevorderd(payAnnually);
+    }
+    if (selectedSubscription ==='ELITE') {
+        checkoutElite(payAnnually);
+    }
+}
+
+
+  const handleViewDetails = async (userId) => {
+    try {
+      setLoading(true);
+      const selected = users.find((user) => user.id === userId);
+      if (selected) {
+        setSelectedUser({ ...selected });
+        
+        // Ensure subscriptionRequests is set correctly; default to empty array if not present
+        setSubscriptionRequests(selected.subscriptionRequests || []);
+      }
+    } catch (err) {
+      setError('Failed to fetch subscription details');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -48,26 +105,31 @@ const AccessRequests = () => {
     }
   };
 
-  const handleViewDetails = async (userId) => {
-    const selected = users.find((user) => user.id === userId);
-    if (selected) {
-      const profilePictureUrl = await fetchProfilePictureUrl(userId);
-      setSelectedUser({ ...selected, profilePictureUrl });
-    }
-  };
-
   const handleGoBack = () => {
     setSelectedUser(null);
+    setSubscriptionRequests([]);
   };
 
-  const handleAccessChange = async (userId, status) => {
+  const handleSubscriptionChange = async (userId, sub,pay,accept) => {
     try {
-      await updateAccessStatus(userId, status);
+
+      const isAnnual = pay;
+      console.log("Setting payAnnually to:", isAnnual);
+      console.log("Setting pay to:", pay);
+
+      if(accept === 'YES') await goToCheckout(sub,isAnnual);
+      await updateSubscription(userId, sub,pay);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
       setSelectedUser(null);
+
+
+      const fetchedUsers = await fetchSubscriptionRequests(); // Assuming this returns a list of users with their subscriptions
+        setUsers(fetchedUsers);
+        setFilteredUsers(fetchedUsers);
+
     } catch {
-      setError('Failed to update access status');
+      setError('Failed to update subscription');
     }
   };
 
@@ -87,7 +149,7 @@ const AccessRequests = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-rose-50">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Abonnement verzoeken</h2>
 
         {loading && <p>Laden ...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -130,23 +192,18 @@ const AccessRequests = () => {
               <h3 className="text-xl font-semibold mb-4">Gebruiker Details</h3>
               <p><strong>Naam:</strong> {selectedUser.name || 'Geen naam'}</p>
               <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Geboortedatum:</strong> {selectedUser.birthday || 'Niet beschikbaar'}</p>
-              {selectedUser.profilePictureUrl && (
-                <img
-                  src={selectedUser.profilePictureUrl}
-                  alt="Profile"
-                  className="w-32 h-32 object-cover rounded-full"
-                />
-              )}
+              <p><strong>Huidig abonnement:</strong> {selectedUser.subscription}</p>
+              <p><strong>Gevraagd abonnement:</strong> {selectedUser.subscription_request}</p>
+
               <div className="mt-4">
                 <button
-                  onClick={() => handleAccessChange(selectedUser.id, 'YES')}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription_request,selectedUser.annual_payment_request,'YES')}
                   className="px-4 py-2 bg-green-500 text-white rounded mr-2"
                 >
                   Goedkeuren
                 </button>
                 <button
-                  onClick={() => handleAccessChange(selectedUser.id, 'NO')}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription,selectedUser.annual_payment,'NO')}
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
                   Afwijzen
@@ -189,4 +246,4 @@ const AccessRequests = () => {
   );
 };
 
-export default AccessRequests;
+export default SubscriptionRequests;

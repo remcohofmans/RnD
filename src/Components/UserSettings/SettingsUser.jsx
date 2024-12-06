@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Filter, Key, Image, PauseCircle } from 'lucide-react';
+import { Ellipsis , Settings, Filter, Key, Image, PauseCircle, Gem } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import { supabase } from '../../lib/helper/supabaseClient';
 import UserFilterForm from './UserFilterForm';
 import PasswordChangeForm from './PasswordChangeForm';
 import ProfielPauzeren from './ProfielPauzeren';
+import SubscriptionPlans from '../SubscriptionPlans';
+import { useSearchParams } from 'react-router-dom';
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
@@ -13,6 +15,8 @@ const SettingsUser = () => {
   const [success, setSuccess] = useState(null);
   const [activeComponent, setActiveComponent] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Manage sidebar visibility
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,6 +29,13 @@ const SettingsUser = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section === 'filters') {
+      setActiveComponent('UserFilterForm');
+    }
+  }, [searchParams]);
+
   const buttonStyles = {
     primary: "bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition-colors duration-200",
     secondary: "bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200",
@@ -32,30 +43,11 @@ const SettingsUser = () => {
   };
 
   const settingsOptions = [
-    {
-      id: "Filtervoorkeuren",
-      icon: Filter,
-      component: "UserFilterForm",
-      description: "Pas je matchingvoorkeuren aan"
-    },
-    {
-      id: "Wachtwoord Bewerken",
-      icon: Key,
-      component: "PasswordChangeForm",
-      description: "Verander je wachtwoord"
-    },
-    {
-      id: "Foto's Aanpassen",
-      icon: Image,
-      component: "ImageUpload",
-      description: "Beheer je profielfoto's"
-    },
-    {
-      id: "Profiel Pauzeren",
-      icon: PauseCircle,
-      component: null,
-      description: "Zet je profiel tijdelijk op pauze"
-    }
+    { id: "Filtervoorkeuren", icon: Filter, component: "UserFilterForm", description: "Pas je matchingvoorkeuren aan" },
+    { id: "Wachtwoord Bewerken", icon: Key, component: "PasswordChangeForm", description: "Verander je wachtwoord" },
+    { id: "Foto's Aanpassen", icon: Image, component: "ImageUpload", description: "Beheer je profielfoto's" },
+    { id: "Profiel Pauzeren", icon: PauseCircle, component: null, description: "Zet je profiel tijdelijk op pauze" },
+    { id: "Abonnement Wijzigen", icon: Gem, component: "SubscriptionPlans", description: "Verander hier je abonnement"}
   ];
 
   const handleOptionClick = (option) => {
@@ -65,9 +57,12 @@ const SettingsUser = () => {
       setActiveComponent("PasswordChangeForm");
     } else if (option === "Foto's Aanpassen") {
       setActiveComponent("ImageUpload");
+    }  else if (option === "Abonnement Wijzigen") {
+      setActiveComponent("SubscriptionPlans");
     } else if (option === "Profiel Pauzeren") {
       setIsConfirming(true);
     }
+    if (sidebarOpen) setSidebarOpen(false); // Close sidebar after selecting an option
   };
 
   const handleSuccess = (message) => {
@@ -83,16 +78,15 @@ const SettingsUser = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
-      <div className="flex flex-col h-full w-40 md:w-80 sm:w-56 bg-white shadow-lg">
+      <div className={`flex flex-col h-full ${sidebarOpen ? 'w-80' : 'w-0'} md:w-80 bg-white shadow-lg transition-all duration-300`}>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3 bg-white mt-12 md:mt-16">
           <Settings className="w-6 h-6 text-rose-500" />
           <h1 className="text-xl font-semibold text-gray-900">Instellingen</h1>
         </div>
 
         {/* Sidebar Content */}
         <div className="p-4 flex flex-col gap-3 flex-grow overflow-y-auto">
-          {/* Notifications */}
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
               {error}
@@ -132,14 +126,24 @@ const SettingsUser = () => {
         </div>
       </div>
 
+      {/* Hamburger button for small screens */}
+      <div className="lg:hidden md:hidden fixed top-14 left-4 z-10">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-rose-500 bg-white p-2 rounded-full shadow-lg">
+          <Ellipsis  className="w-6 h-6" />
+        </button>
+      </div>
+
       {/* Main Content */}
-      <div className="flex-1 justify-center items-center pt-16 bg-rose-50 overflow-y-auto">
-        <div className="w-full rounded-xl p-6">
+      <div className="flex-1 justify-center items-center bg-rose-50 overflow-y-auto">
+        <div className="w-full rounded-xl p-6 mt-12 md:mt-16">
           {/* Dynamic Content */}
+          {activeComponent === "SubscriptionPlans" && <SubscriptionPlans />}
           {activeComponent === "UserFilterForm" && <UserFilterForm />}
           {activeComponent === "PasswordChangeForm" && <PasswordChangeForm />}
           {activeComponent === "ImageUpload" && (
-            <div className="overflow-y-auto h-full">
+            <div className="overflow-y-auto h-full items-center">
               <ImageUpload />
             </div>
           )}
