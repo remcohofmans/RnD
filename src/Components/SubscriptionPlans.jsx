@@ -246,20 +246,13 @@ const Subscription = () => {
                         </div>
                         
                         <ul role="list" className="space-y-5 my-7">
-                            <li className="flex items-center">
-                                <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Onbeperkt aantal berichten</span>
-                            </li>
 
                             <li className="flex items-center">
                                 <FontAwesomeIcon 
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 berichten per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 keer draaien aan het rad per dag</span>
                             </li>
 
                         </ul>
@@ -304,15 +297,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Zie wie je likes heeft gegeven</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer spinnen per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer draaien aan het rad per dag</span>
                             </li>
 
                         </ul>
@@ -356,23 +341,7 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid spinnen per dag</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Mensen komen je profiel sneller tegen</span>
-                            </li>
-
-                            <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
-                                />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Eén bericht naar een niet-match</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid draaien aan het rad per dag</span>
                             </li>
                         </ul>
 
