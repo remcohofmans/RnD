@@ -665,7 +665,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   className={`w-full py-3 text-white ${isTermsAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                   disabled={!isTermsAgreed}
                 >
-                  Weiger
+                  Accepteer
                 </button>
               </div>
             </div>
@@ -711,7 +711,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
                   className={`w-full py-3 text-white ${isPrivacyPolicyAgreed ? 'bg-[#e11d48]' : 'bg-gray-400 cursor-not-allowed'} rounded-lg transition-transform duration-300`}
                   disabled={!isPrivacyPolicyAgreed}
                 >
-                  Weiger
+                  Accepteer
                 </button>
               </div>
             </div>
