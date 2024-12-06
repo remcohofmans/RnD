@@ -126,7 +126,7 @@ const TopNavigationBar = () => {
             />
             {/* Only show badge when not calculating and count > 0 */}
             {item.badge !== undefined && !isCalculating && item.badge > 0 && (
-              <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-stone-600 py-1 px-1 text-xs font-bold text-white">
+              <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
                 {item.badge}
               </span>
             )}
