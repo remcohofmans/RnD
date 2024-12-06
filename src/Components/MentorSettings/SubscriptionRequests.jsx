@@ -12,6 +12,7 @@ const SubscriptionRequests = () => {
   const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [subscriptionRequests, setSubscriptionRequests] = useState([]); // Default to an empty array
+  const [payAnnually,setPayAnnually] = useState(false);
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -35,6 +36,39 @@ const SubscriptionRequests = () => {
       fetchUsers();
     }
   }, [user, fetchSubscriptionRequests]);
+
+  const checkoutBasis = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutGevorderd = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutElite = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const goToCheckout = (selectedSubscription) => {
+    if (selectedSubscription === 'BASIS') {
+        checkoutBasis();
+    } 
+    if (selectedSubscription === 'GEVORDERD') {
+        checkoutGevorderd();
+    }
+    if (selectedSubscription ==='ELITE') {
+        checkoutElite();
+    }
+}
 
   const handleViewDetails = async (userId) => {
     try {
@@ -77,14 +111,18 @@ const SubscriptionRequests = () => {
 
   const handleSubscriptionChange = async (userId, sub,pay) => {
     try {
+      goToCheckout(sub);
       await updateSubscription(userId, sub,pay);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
       setSelectedUser(null);
+      setPayAnnually(pay);
+
 
       const fetchedUsers = await fetchSubscriptionRequests(); // Assuming this returns a list of users with their subscriptions
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
+
     } catch {
       setError('Failed to update subscription');
     }
