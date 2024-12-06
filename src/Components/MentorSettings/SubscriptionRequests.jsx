@@ -11,7 +11,7 @@ const SubscriptionRequests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [subscriptionRequests, setSubscriptionRequests] = useState([]); // Default to an empty array
+  const [subscriptionRequests, setSubscriptionRequests] = useState([]); 
   const [payAnnually, setPayAnnually] = useState(false);
   const usersPerPage = 10;
 
@@ -37,36 +37,36 @@ const SubscriptionRequests = () => {
     }
   }, [user, fetchSubscriptionRequests]);
 
-  const checkoutBasis = () => {
+  const checkoutBasis = (payAnnually) => {
 
     payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
     window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
-const checkoutGevorderd = () => {
+const checkoutGevorderd = (payAnnually) => {
 
     payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
     window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
-const checkoutElite = () => {
+const checkoutElite = (payAnnually) => {
 
     payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
     window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
-const goToCheckout = async (selectedSubscription) => {
+const goToCheckout = async (selectedSubscription,payAnnually) => {
     if (selectedSubscription === 'BASIS') {
-        checkoutBasis();
+        checkoutBasis(payAnnually);
     } 
     if (selectedSubscription === 'GEVORDERD') {
-        checkoutGevorderd();
+        checkoutGevorderd(payAnnually);
     }
     if (selectedSubscription ==='ELITE') {
-        checkoutElite();
+        checkoutElite(payAnnually);
     }
 }
 
@@ -110,16 +110,18 @@ const goToCheckout = async (selectedSubscription) => {
     setSubscriptionRequests([]);
   };
 
-  const handleSubscriptionChange = async (userId, sub,pay) => {
+  const handleSubscriptionChange = async (userId, sub,pay,accept) => {
     try {
-      setLoading(true);
-      setPayAnnually(pay);
-      await goToCheckout(sub);
+
+      const isAnnual = pay;
+      console.log("Setting payAnnually to:", isAnnual);
+      console.log("Setting pay to:", pay);
+
+      if(accept === 'YES') await goToCheckout(sub,isAnnual);
       await updateSubscription(userId, sub,pay);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
       setFilteredUsers((prev) => prev.filter((user) => user.id !== userId));
       setSelectedUser(null);
-      setPayAnnually(pay);
 
 
       const fetchedUsers = await fetchSubscriptionRequests(); // Assuming this returns a list of users with their subscriptions
@@ -195,13 +197,13 @@ const goToCheckout = async (selectedSubscription) => {
 
               <div className="mt-4">
                 <button
-                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription_request,selectedUser.annual_payment_request)}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription_request,selectedUser.annual_payment_request,'YES')}
                   className="px-4 py-2 bg-green-500 text-white rounded mr-2"
                 >
                   Goedkeuren
                 </button>
                 <button
-                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription,selectedUser.annual_payment)}
+                  onClick={() => handleSubscriptionChange(selectedUser.user_id, selectedUser.subscription,selectedUser.annual_payment,'NO')}
                   className="px-4 py-2 bg-red-500 text-white rounded"
                 >
                   Afwijzen
