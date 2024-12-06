@@ -14,18 +14,20 @@ const WheelComponent = ({
     pink: {
       segmentColors: ['#fff1f2', '#fb7185', '#881337'],
       buttonGradient: 'from-rose-500 to-rose-700',
-      buttonShadow: '0_12px_0_#9f1239',
+      buttonShadow: 'shadow-[0_12px_0_#9f1239]',
       buttonBorder: 'border-rose-300',
+      activeShadow: 'shadow-[0_6px_0_#9f1239]',
     },
     green: {
       segmentColors: ['#e6f4ea', '#34d399', '#064e3b'],
       buttonGradient: 'from-green-500 to-green-700',
-      buttonShadow: '0_12px_0_#065f46',
+      buttonShadow: 'shadow-[0_12px_0_#065f46]',
       buttonBorder: 'border-green-300',
+      activeShadow: 'shadow-[0_6px_0_#065f46]',
     },
   };
 
-  const currentTheme = themeStyles[theme] || themeStyles.pink;
+  const currentTheme = themeStyles[theme];
 
   const wheelData = users.map((user, index) => ({
     option: user.name,
@@ -65,7 +67,7 @@ const WheelComponent = ({
           'bg-gradient-to-r from-yellow-100 via-orange-200 to-amber-200',
           'bg-gradient-to-r from-indigo-200 via-blue-100 to-green-200',
         ]}
-        textShadow="1px 1px 5px rgba(0, 0, 0, 0.6)"
+        textShadow="1px 1px 5px bg-black bg-opacity-60"
         textColor="text-white"
         animationDuration={3000}
         spinEase="ease-out"
@@ -76,11 +78,12 @@ const WheelComponent = ({
       <button
         className={`absolute top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full 
           bg-gradient-to-br ${currentTheme.buttonGradient} 
-          shadow-[${currentTheme.buttonShadow}] ${currentTheme.buttonBorder} 
+          ${currentTheme.buttonShadow} 
+          ${currentTheme.buttonBorder} 
           text-white font-bold z-10 
           flex items-center justify-center 
           pulse-animation
-          active:translate-y-[6px] active:shadow-[0_6px_0_#9f1239]
+          active:translate-y-[6px] active:${currentTheme.activeShadow}
           hover:brightness-110 
           transition-all duration-300 
           disabled:opacity-50 disabled:cursor-not-allowed
