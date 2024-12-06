@@ -88,7 +88,7 @@ const Subscription = () => {
                     user_id: userId,
                     subscription_request: selectedSubscription,
                     end_date: endDate,
-                    annual_payment: payAnnually,
+                    annual_payment_request: payAnnually,
                     active:true
                 }
         const {data: existingSubscription, error: fetchFailed} = await supabase

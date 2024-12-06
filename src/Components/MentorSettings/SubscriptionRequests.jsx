@@ -12,6 +12,7 @@ const SubscriptionRequests = () => {
   const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [subscriptionRequests, setSubscriptionRequests] = useState([]); // Default to an empty array
+  const [payAnnually, setPayAnnually] = useState(false);
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -35,6 +36,40 @@ const SubscriptionRequests = () => {
       fetchUsers();
     }
   }, [user, fetchSubscriptionRequests]);
+
+  const checkoutBasis = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutGevorderd = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const checkoutElite = () => {
+
+    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+
+};
+
+const goToCheckout = (selectedSubscription) => {
+    if (selectedSubscription === 'BASIS') {
+        checkoutBasis();
+    } 
+    if (selectedSubscription === 'GEVORDERD') {
+        checkoutGevorderd();
+    }
+    if (selectedSubscription ==='ELITE') {
+        checkoutElite();
+    }
+}
+
 
   const handleViewDetails = async (userId) => {
     try {
