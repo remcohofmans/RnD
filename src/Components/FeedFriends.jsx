@@ -341,7 +341,7 @@ const FeedFriends = () => {
                 <UserCard 
                 user={users[currentIndex]} 
                 currentUserId={user.id} 
-                showLoveButton={true} 
+                showLoveButton={false} 
                 theme = 'green'
                 />
               </div>
