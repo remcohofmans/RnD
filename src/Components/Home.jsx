@@ -284,7 +284,7 @@ const Home = () => {
             <a href="#" className="text-gray-300 hover:text-rose-500 transition-colors">
               Gebruiksvoorwaarden
             </a>
-            <a href="#" className="text-gray-300 hover:text-rose-500 transition-colors">
+            <a href="mailto:michiel.vervalle@student.kuleuven.be" className="text-gray-300 hover:text-rose-500 transition-colors">
               Contact
             </a>
           </div>
