@@ -323,11 +323,21 @@ const FeedFriends = () => {
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-green-900 mb-4 mt-10 tracking-tight flex items-center justify-center gap-4">
-            <Sparkles className="text-green-500 animate-pulse" />
-            Vind Je Perfecte Vriend
-            <Sparkles className="text-green-500 animate-pulse" />
-          </h1>
+        <h1
+  className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
+    flex items-center justify-center gap-4 
+    text-center 
+    bg-gradient-to-r from-green-400 via-green-600 to-green-400 
+    bg-clip-text text-transparent 
+    animate-gradient-x"
+>
+  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+  <span className="text-black-300">
+    Vind Je Perfecte Vriend
+  </span>
+  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+</h1>
+
           <p className="text-xl text-green-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
             Ontdek verbindingen door het lot te laten beslissen
           </p>
