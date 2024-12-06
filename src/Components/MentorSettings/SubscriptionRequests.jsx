@@ -12,7 +12,7 @@ const SubscriptionRequests = () => {
   const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [subscriptionRequests, setSubscriptionRequests] = useState([]); // Default to an empty array
-  const [payAnnually,setPayAnnually] = useState(false);
+  const [payAnnually, setPayAnnually] = useState(false);
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -69,6 +69,7 @@ const goToCheckout = (selectedSubscription) => {
         checkoutElite();
     }
 }
+
 
   const handleViewDetails = async (userId) => {
     try {
