@@ -117,8 +117,8 @@ const MentorBanUser = () => {
           </div>
         )}
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Users</h2>
-        <p className="text-sm text-gray-600 mb-4">You can only ban users from your own facility.</p>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Gebruikers</h2>
+        <p className="text-sm text-gray-600 mb-4">Je kan enkel mensen bannen van je eigen faciliteit.</p>
 
         <input
           type="text"
@@ -175,7 +175,7 @@ const MentorBanUser = () => {
           <div className="p-6 bg-white rounded-lg shadow-lg w-80">
             <h2 className="text-lg font-semibold text-gray-800">Confirm Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to ban this user? This action cannot be undone.
+              Weet je zeker dat je deze gebruiker wilt verbannen? Deze actie kan niet ongedaan worden gemaakt.
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
