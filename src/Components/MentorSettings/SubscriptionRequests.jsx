@@ -11,9 +11,9 @@ const SubscriptionRequests = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [setMentorFacility] = useState(null);
+  const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [setSubscriptionRequests] = useState([]); 
+  const [SubscriptionRequests, setSubscriptionRequests] = useState([]); 
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -22,12 +22,13 @@ const SubscriptionRequests = () => {
         setLoading(true);
         const mentorFacility = await fetchMentorFacility();
         setMentorFacility(mentorFacility);
-        console.log("mf: ",mentorFacility);
-        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); // Assuming this returns a list of users with their subscriptions
+        console.log('Calling fetchSubscriptionRequests...');
+        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); 
+        console.log("fetchedUsers: ",fetchedUsers);
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
       } catch (err) {
-        setError('Failed to fetch users');
+        setError('Problem');
       } finally {
         setLoading(false);
       }

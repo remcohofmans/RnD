@@ -214,6 +214,7 @@ export function AuthProvider({ children }) {
   const fetchMentorFacility = async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
 
       if (userError) throw new Error('Failed to fetch user information');
 
@@ -223,6 +224,8 @@ export function AuthProvider({ children }) {
         .select('facility_id')
         .eq('id', mentorId)
         .single();
+
+        console.log('mentorData: ',mentorData.facility_id);
 
       if (mentorError) throw new Error('Failed to fetch mentor facility');
       return mentorData.facility_id;
@@ -324,6 +327,7 @@ export function AuthProvider({ children }) {
     }
   };
   // Function to check if user has an active subscription
+
   const checkSubscription = async (navigate) => {
     try {
       const { data: subscriptionCheck, error: subscriptionError } = await supabase
@@ -349,7 +353,7 @@ export function AuthProvider({ children }) {
 
   const fetchSubscriptionRequests = async (mf) => {
     try {
-      console.log(mf);
+      console.log('mf: ',mf);
       console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
 
       const mentorFacility = parseInt(mf, 8);  // Convert to integer
