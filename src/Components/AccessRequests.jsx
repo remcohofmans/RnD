@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthContext';
+import { Ban } from 'lucide-react';
 
 const AccessRequests = () => {
   const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
@@ -168,7 +169,7 @@ const AccessRequests = () => {
         {!selectedUser && (
           <div className="flex justify-between mt-4">
             <button
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className={`px-4 py-2 ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded`}
               onClick={goToPreviousPage}
               disabled={currentPage === 1}
             >
@@ -176,7 +177,7 @@ const AccessRequests = () => {
             </button>
             <p>Pagina {currentPage} van {totalPages}</p>
             <button
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className={`px-4 py-2 ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded `}
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
             >

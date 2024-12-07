@@ -118,7 +118,6 @@ const MentorBanUser = () => {
         )}
 
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Gebruikers</h2>
-        <p className="text-sm text-gray-600 mb-4">Je kan enkel mensen bannen van je eigen faciliteit.</p>
 
         <input
           type="text"
@@ -155,17 +154,17 @@ const MentorBanUser = () => {
             disabled={currentPage === 1}
             className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Previous
+            Vorige
           </button>
           <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
+            Pagina {currentPage} van {totalPages}
           </span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
             className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Next
+            Volgende
           </button>
         </div>
       </div>
