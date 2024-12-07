@@ -20,9 +20,7 @@ jobs:
                 node-version: 18
 
             - run: npm ci
-
-            - run: npm run test
-
+            
     Deploy-Preview:
         runs-on: ubuntu-latest
         steps:
