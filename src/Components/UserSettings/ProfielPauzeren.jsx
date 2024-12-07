@@ -50,18 +50,21 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
           </div>
         )}
         <div className="flex justify-center gap-4">
+
           <button
-            className="px-4 py-2 text-white bg-red-500 rounded-lg"
-            onClick={handleConfirmPause}
-          >
-            Bevestig
-          </button>
-          <button
-            className="px-4 py-2 text-white bg-gray-500 rounded-lg"
+              className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
             onClick={handleCancelPause}
           >
             Annuleer
           </button>
+
+          <button
+            className="px-4 py-2 text-white bg-rose-500 rounded-lg hover:bg-rose-700"
+            onClick={handleConfirmPause}
+          >
+            Bevestig
+          </button>
+          
         </div>
       </div>
     </div>

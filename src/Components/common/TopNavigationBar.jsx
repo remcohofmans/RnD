@@ -226,13 +226,13 @@ const TopNavigationBar = () => {
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition duration-200 text-sm"
+                className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
                 onClick={() => setShowLogoutConfirm(false)}
               >
                 Annuleer
               </button>
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 text-sm"
+                className="px-4 py-2 text-white bg-rose-500 rounded-lg hover:bg-rose-700"
                 onClick={handleLogOut}
               >
                 Log uit
