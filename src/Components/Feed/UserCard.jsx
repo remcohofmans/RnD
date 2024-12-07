@@ -53,7 +53,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
     try {
       const likeValue = isLove ? 'true' : 'false';
 
-      const { data: existingLike, error: checkError } = await supabase
+      const { data: existingLike } = await supabase
         .from('likes')
         .select('*')
         .eq('user_id', currentUserId)
@@ -95,7 +95,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
         userTwo: user.id,
       });
 
-      const { data: existingMatch, error: matchCheckError } = await supabase
+      const { data: existingMatch } = await supabase
         .from('matches')
         .select('*')
         .eq('id', currentUserId)

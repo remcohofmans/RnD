@@ -231,21 +231,21 @@ const Feed = () => {
     }
   }, [isDistanceServiceInitialized]);
 
-  const wheelData = users.map((user, index) => ({
-    option: user.name,
-    style: {
-      backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
-      textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
-    }
-  }));
+  // const wheelData = users.map((user, index) => ({
+  //   option: user.name,
+  //   style: {
+  //     backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
+  //     textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
+  //   }
+  // }));
 
-  const handleSpinClick = () => {
-    if (!mustSpin) {
-      const newIndex = Math.floor(Math.random() * users.length);
-      setCurrentIndex(newIndex);
-      setMustSpin(true);
-    }
-  };
+  // const handleSpinClick = () => {
+  //   if (!mustSpin) {
+  //     const newIndex = Math.floor(Math.random() * users.length);
+  //     setCurrentIndex(newIndex);
+  //     setMustSpin(true);
+  //   }
+  // };
 
   const handleWheelStop = () => {
     setMustSpin(false);

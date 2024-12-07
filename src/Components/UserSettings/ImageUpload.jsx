@@ -16,7 +16,7 @@ const CATEGORIES = {
 };
 
 const ImageUpload = ({ onUploadComplete }) => {
-  const { user: currentUser, loading, error } = useAuth();
+  const { user: currentUser } = useAuth();
   const [images, setImages] = useState(
     Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {})
   );
@@ -50,7 +50,7 @@ const ImageUpload = ({ onUploadComplete }) => {
     try {
       setLoadingImages((prev) => ({ ...prev, [category]: true }));
 
-      const { data, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('pictures')
         .upload(`${currentUser.id}/${category}/${file.name}`, file);
 
@@ -165,14 +165,14 @@ const ImageUpload = ({ onUploadComplete }) => {
     }
   }, [currentUser]);
 
-  const handleUpload = async () => {
-    try {
-      await onUploadComplete?.(images);
-      setImages(Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {}));
-    } catch (error) {
-      console.error('Upload failed:', error);
-    }
-  };
+  // const handleUpload = async () => {
+  //   try {
+  //     await onUploadComplete?.(images);
+  //     setImages(Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: null }), {}));
+  //   } catch (error) {
+  //     console.error('Upload failed:', error);
+  //   }
+  // };
 
   return (
     <div className="items-center bg-rose-50">

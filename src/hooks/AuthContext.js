@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/helper/supabaseClient';
 
 const AuthContext = createContext();
@@ -10,18 +10,6 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);
 
   // Existing functions for mentor, user and profile management...
-
-  const fetchCurrentUser = async () => {
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) throw error;
-      setUser(user);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const pauseAccount = async(userId) => {
     const {error } = await supabase
@@ -74,13 +62,12 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
 
-      console.log('email',email);
-      
+      console.log('Email of client signing in:',email);
       
       const {data: userData, error: userError} = await supabase
         .from('users')
         .select('*')
-        .eq('email',email);
+        .eq('email', email);
       
       if (userError) {
         
@@ -88,7 +75,7 @@ export function AuthProvider({ children }) {
         throw new Error("Failed to verify account.");
       }
   
-      console.log("Userdata: ", userData);
+      console.log("Sign-in data: ", userData);
   
       if (!userData || userData.length === 0) {
         setError("This account was deleted");
@@ -105,6 +92,7 @@ export function AuthProvider({ children }) {
       await fetchUserRole(loggedInUser.id);
       setError('');  // Clear any previous errors
       return { success: true, user: loggedInUser };
+
     } catch (err) {
       console.error('Error logging in:', err.message);
       setError(err.message);  // Set error state
@@ -432,31 +420,30 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const restoreSession = async () => {
+  const restoreSession = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
-
+  
       const sessionUser = data.session?.user;
       if (sessionUser) {
         setUser(sessionUser);
         await fetchUserRole(sessionUser.id);
       }
-
+  
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('id')
-        .eq('id',sessionUser.id);
-
+        .eq('id', sessionUser.id);
+  
       if (userError) {
-
         console.error("Error fetching user data:", userError.message);
         throw new Error("Failed to verify account.");
       }
-
-      console.log("Userdata: ", userData);
-
+  
+      console.log("Data obtained on restoring session: ", userData);
+  
       if (!userData || userData.length === 0) {
         logoutAndNavigate();
       }
@@ -467,15 +454,12 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-    
-  };
-
-
+  }, [fetchUserRole, logoutAndNavigate]); // Add dependencies here
 
   // Restore session on app load
   useEffect(() => {
     restoreSession();
-  }, []);
+  }, []); // Use the stable reference
   
 
   return (

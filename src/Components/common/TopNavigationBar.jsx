@@ -9,6 +9,7 @@ import { supabase } from '../../lib/helper/supabaseClient';
 // Import your custom image
 import logo from '../../Assets/Butterfly.png';
 
+
 const TopNavigationBar = () => {
   const navigate = useNavigate();
   const location = useLocation();

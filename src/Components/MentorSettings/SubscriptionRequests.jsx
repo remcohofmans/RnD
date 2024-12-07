@@ -2,17 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
 
 const SubscriptionRequests = () => {
-  const { user, fetchSubscriptionRequests, updateAccessStatus, fetchProfilePictureUrl,updateSubscription,fetchMentorFacility } = useAuth();
+  const { user, fetchSubscriptionRequests, updateSubscription, fetchMentorFacility } = useAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [mentorFacility, setMentorFacility] = useState(null);
+  const [setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [subscriptionRequests, setSubscriptionRequests] = useState([]); 
-  const [payAnnually, setPayAnnually] = useState(false);
+  const [setSubscriptionRequests] = useState([]); 
   const usersPerPage = 10;
 
   useEffect(() => {

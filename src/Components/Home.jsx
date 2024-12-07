@@ -11,9 +11,8 @@ const Home = () => {
   const navigate = useNavigate();
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const { user, logout, role, checkSubscription,logoutAndNavigate } = useAuth();
+  const { user, role, checkSubscription,logoutAndNavigate } = useAuth();
   const email = user?.email;
-  const loggedIn = !!user;
 
   useEffect(() => {
     track('go to feed');
@@ -26,7 +25,7 @@ const Home = () => {
       // Fetch user details if not already provided by the `useAuth` hook
       const fetchUserName = async () => {
         try {
-          const { data: data, error: error } = await supabase
+          const { data, error } = await supabase
             .from('users')
             .select('*')
             .eq('email', user?.email)
@@ -37,7 +36,7 @@ const Home = () => {
             return;
           }
 
-          console.log("data status: ", data.status);
+          console.log("Account status: ", data.status);
 
           if (data.status === 'PAUSED') {
             setIsPausedModalOpen(true);
@@ -52,15 +51,13 @@ const Home = () => {
       if (user) {
         fetchUserName();
       }
-
-
     }
   }, [navigate, role, user]);
 
   const handleGoToFeed = useCallback(async () => {
     track('go to feed');
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('users')
         .select('status')
         .eq('email', email)
@@ -74,7 +71,7 @@ const Home = () => {
     } catch (err) {
       console.error('Error checking account status:', err);
     }
-  }, [navigate, email]);
+  }, []);
 
   const handleUnpauseAccount = useCallback(async () => {
     try {
