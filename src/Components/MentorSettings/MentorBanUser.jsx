@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
+import AnimatedDots from '../common/AnimatedDots';
+
 
 const MentorBanUser = () => {
   const { deleteUser, fetchUsersByFacility, fetchMentorFacility, error } = useAuth();
@@ -7,6 +9,7 @@ const MentorBanUser = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [userIdToBan, setUserIdToBan] = useState(null);
   const [mentorFacility, setMentorFacility] = useState(null);
@@ -18,14 +21,17 @@ const MentorBanUser = () => {
   useEffect(() => {
     const getFacility = async () => {
       try {
+        setLoading(true);
         const facilityId = await fetchMentorFacility();
         setMentorFacility(facilityId);
       } catch (err) {
         console.error(err.message);
       }
+      finally{setLoading(false)}
     };
 
     getFacility();
+    setLoading(false);
   }, [fetchMentorFacility]);
 
   // Fetch users for the facility
@@ -126,6 +132,9 @@ const MentorBanUser = () => {
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
         />
+
+        {loading && <AnimatedDots />}
+
 
         <div className="space-y-2 overflow-y-auto flex-grow">
           {currentUsers.map((user) => (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthContext';
-import { Ban } from 'lucide-react';
+import AnimatedDots from '../Components/common/AnimatedDots';
+
 
 const AccessRequests = () => {
   const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
@@ -90,7 +91,6 @@ const AccessRequests = () => {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
 
-        {loading && <p>Laden ...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
         {!selectedUser && (
@@ -102,6 +102,8 @@ const AccessRequests = () => {
             className="w-full p-2 border border-gray-300 rounded mb-4"
           />
         )}
+
+        {loading && <AnimatedDots />}
 
         <div className="overflow-y-auto max-h-[50vh] mb-4">
           {!selectedUser && (

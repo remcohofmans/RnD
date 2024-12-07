@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
+import AnimatedDots from '../common/AnimatedDots';
+
 
 const SubscriptionRequests = () => {
   const { user, fetchSubscriptionRequests, updateSubscription, fetchMentorFacility } = useAuth();
@@ -162,6 +164,8 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
             className="w-full p-2 border border-gray-300 rounded mb-4"
           />
         )}
+
+        {loading && <AnimatedDots />}
 
         <div className="overflow-y-auto max-h-[50vh] mb-4">
           {!selectedUser && (
