@@ -124,13 +124,13 @@ const Home = () => {
             <div className="flex space-x-4">
               <button
                 onClick={handleUnpauseAccount}
-                className="flex-1 bg-rose-600 text-white py-2 md:py-3 rounded-lg hover:bg-rose-700 transition-colors"
+                className="flex-1 bg-rose-500 text-white py-2 md:py-3 rounded-lg hover:bg-rose-700 transition-colors"
               >
                 Account heractiveren
               </button>
               <button
                 onClick={logoutAndNavigate}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 md:py-3 rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 bg-white text-gray-800 border-2 border-[#fda4af] py-2 md:py-3 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Terug naar login
               </button>

@@ -221,7 +221,7 @@ const TopNavigationBar = () => {
       {showLogoutConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full transform transition-transform duration-300 scale-95">
-            <p className="text-lg font-medium text-gray-800">
+            <p className="text-lg font-medium text-rose-600">
               Ben je zeker dat je wilt uitloggen?
             </p>
             <div className="flex justify-end gap-4 mt-4">

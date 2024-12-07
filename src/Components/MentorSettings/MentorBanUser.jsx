@@ -181,7 +181,7 @@ const MentorBanUser = () => {
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-semibold text-gray-800">Bevestig Ban</h2>
+            <h2 className="text-lg font-semibold text-rose-600">Bevestig Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
               Weet je zeker dat je deze gebruiker wilt verbannen? Deze actie kan niet ongedaan worden gemaakt.
             </p>
