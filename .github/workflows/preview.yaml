@@ -24,7 +24,6 @@ jobs:
             - run: npm run test
 
     Deploy-Preview:
-        needs: [Test]
         runs-on: ubuntu-latest
         steps:
 
