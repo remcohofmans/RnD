@@ -340,7 +340,8 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid draaien aan het rad per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 40 keer draaien aan het rad per dag
+                                </span>
                             </li>
                         </ul>
 
