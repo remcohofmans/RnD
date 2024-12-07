@@ -129,7 +129,7 @@ const SettingsMentor = () => {
 
           {/* Logout Button */}
           <button
-            className="mt-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200"
+            className="mt-auto bg-gray-100 hover:bg-rose-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200"
             onClick={handleLogOut}
           >
             <div className="flex items-center gap-3">
