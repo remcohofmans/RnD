@@ -1,15 +1,95 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wheel } from 'react-custom-roulette';
+import { supabase } from '../../lib/helper/supabaseClient';
+
+const fetchUserSubscription = async (userID) => {
+  try {
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('subscription')
+      .eq('user_id', userID)
+      .single();
+
+    return data?.subscription || 'TRIAL';
+  } catch (err) {
+    console.error('Subscription fetch error:', err);
+    return 'TRIAL';
+  }
+};
 
 const WheelComponent = ({
+  userID,  
   users,
   currentIndex,
   mustSpin,
   setMustSpin,
   handleWheelStop,
   setCurrentIndex,
-  theme = 'pink', // Default theme is pink
+  theme = 'pink',
 }) => {
+  const [spinCount, setSpinCount] = useState(0);
+  const [showWarning, setShowWarning] = useState(false);
+  const [userSubscription, setUserSubscription] = useState('TRIAL');
+
+  const MAX_SPINS = userSubscription === 'ELITE' ? 40 
+                  : userSubscription === 'GEVORDERD' ? 20 
+                  : 10;
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!userID) return;
+
+      const subscription = await fetchUserSubscription(userID);
+      setUserSubscription(subscription);
+
+      const { data, error } = await supabase
+        .from('spins')
+        .select('spin_count')
+        .eq('user_id', userID)
+        .single();
+
+      if (error) {
+        console.error('Spin count fetch error:', error);
+        return;
+      }
+
+      setSpinCount(data?.spin_count || 0);
+    };
+
+    loadData();
+  }, [userID]);
+
+  const handleSpinClick = async () => {
+    if (spinCount >= MAX_SPINS) {
+      setShowWarning(true);
+      return;
+    }
+
+    if (!mustSpin) {
+      const newIndex = Math.floor(Math.random() * users.length);
+      setCurrentIndex(newIndex);
+      setMustSpin(true);
+
+      try {
+        const { error } = await supabase
+          .from('spins')
+          .upsert([{ 
+            user_id: userID, 
+            spin_count: spinCount + 1 
+          }], { onConflict: 'user_id' });
+
+        if (error) throw error;
+        setSpinCount(prev => prev + 1);
+      } catch (err) {
+        console.error('Spin update error:', err);
+      }
+    }
+  };
+
+  const handleCloseWarning = () => {
+    setShowWarning(false);
+  };
+
   const themeStyles = {
     pink: {
       segmentColors: ['#fff1f2', '#fb7185', '#881337'],
@@ -37,15 +117,23 @@ const WheelComponent = ({
     },
   }));
 
-  const handleSpinClick = () => {
-    if (!mustSpin) {
-      const newIndex = Math.floor(Math.random() * users.length);
-      setCurrentIndex(newIndex);
-      setMustSpin(true);
-    }
-  };
-
   return (
+<div className="flex flex-col items-center justify-center space-y-4">
+    {showWarning && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-xl text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Spin Limiet Bereikt!</h2>
+          <p className="mb-4">U heeft alle {MAX_SPINS} beschikbare spins gebruikt voor uw {userSubscription} abonnement.</p>
+          <button
+            onClick={handleCloseWarning}
+            className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600 transition"
+          >
+            Sluiten
+          </button>
+        </div>
+      </div>
+    )}
+
     <div className="relative mb-8 flex items-center justify-center">
       <Wheel
         mustStartSpinning={mustSpin}
@@ -94,6 +182,11 @@ const WheelComponent = ({
         {mustSpin ? 'Draaien...' : 'SPIN'}
       </button>
     </div>
+    
+    <div className="text-lg font-medium text-gray-700 bg-gray-100 px-4 py-2 rounded-lg">
+        Spins: {spinCount}/{MAX_SPINS} ({userSubscription})
+  </div>
+</div>
   );
 };
 

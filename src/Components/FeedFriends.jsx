@@ -346,6 +346,7 @@ const FeedFriends = () => {
           {/* Wheel Column */}
           <div className="bg-green-700 rounded-2xl shadow-xl p-8 flex flex-col items-center">
             <WheelComponent
+              userID={user.id}
               users={users}
               currentIndex={currentIndex}
               mustSpin={mustSpin}

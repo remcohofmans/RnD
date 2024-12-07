@@ -36,7 +36,7 @@ const ChatsPage = () => {
           <div className="md:col-span-3">
             {matches.length === 0 ? (
               <p className="text-center text-gray-500 bg-white p-4 rounded-lg shadow">
-                You don't have any matches yet.
+                Je hebt nog geen matches.
               </p>
             ) : (
               <ChatsList
