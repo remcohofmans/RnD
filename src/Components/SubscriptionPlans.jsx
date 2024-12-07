@@ -158,7 +158,7 @@ const Subscription = () => {
                             </div>
 
                             <p className="text-sm">
-                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{currentSubscription}</span>{' '}
+                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{selectedSubscription}</span>{' '}
                                 abonnement? Zo ja, type: <span className="font-bold">BEVESTIG</span>
                             </p>
 
