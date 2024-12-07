@@ -67,7 +67,7 @@ export function AuthProvider({ children }) {
       const {data: userData, error: userError} = await supabase
         .from('users')
         .select('*')
-        .eq('email', email);
+        .ilike('email', email);
       
       if (userError) {
         
@@ -166,7 +166,7 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase
         .from('users')
         .update({ facility_enum: selectedFacility })
-        .eq('email', signUpEmail); // Update the user with the provided userId
+        .ilike('email', signUpEmail); // Update the user with the provided userId
 
       if (error) {
         console.error('Error updating facility_enum:', error);

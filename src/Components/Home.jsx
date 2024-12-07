@@ -59,7 +59,7 @@ const Home = () => {
       const { error } = await supabase
         .from('users')
         .select('status')
-        .eq('email', email)
+        .ilike('email', email)
         .single();
 
       if (error) {
