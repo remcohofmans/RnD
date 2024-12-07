@@ -43,7 +43,7 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-        <p className="mb-4 text-lg">Ben je zeker dat je je profiel wilt pauzeren?</p>
+        <p className="mb-4 text-lg text-rose-600 font-bold">Ben je zeker dat je je profiel wilt pauzeren?</p>
         {error && (
           <div className="mb-4 p-2 text-sm text-red-600 bg-red-100 rounded">
             {error}
