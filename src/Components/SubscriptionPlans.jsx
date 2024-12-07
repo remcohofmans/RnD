@@ -73,8 +73,8 @@ const Subscription = () => {
         e.preventDefault();
   
         if (inputVal !== 'BEVESTIG') return;
-        //send mail to director using chargebee :)
-        const { data: { session } } = await supabase.auth.getSession();
+        //send mail to director using ChargeBee :)
+        const {} = await supabase.auth.getSession();
         const endDate = new Date();
         if (payAnnually){
             endDate.setFullYear(endDate.getFullYear()+1);
@@ -82,8 +82,7 @@ const Subscription = () => {
         else {
             endDate.setMonth(endDate.getMonth()+1);
         }
-    
-
+        
         const subscriptonFields = {
                     user_id: userId,
                     subscription_request: selectedSubscription,

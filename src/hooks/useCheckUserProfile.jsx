@@ -1,7 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 
 const useCheckUserProfile = (user) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const checkUserProfile = () => {
     if (user) {

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
+import AnimatedDots from '../common/AnimatedDots';
+
 
 const SubscriptionRequests = () => {
-  const { user, fetchSubscriptionRequests, updateAccessStatus, fetchProfilePictureUrl,updateSubscription,fetchMentorFacility } = useAuth();
+  const { user, fetchSubscriptionRequests, updateSubscription, fetchMentorFacility } = useAuth();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,8 +13,7 @@ const SubscriptionRequests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [mentorFacility, setMentorFacility] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [subscriptionRequests, setSubscriptionRequests] = useState([]); 
-  const [payAnnually, setPayAnnually] = useState(false);
+  const [SubscriptionRequests, setSubscriptionRequests] = useState([]); 
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -21,12 +22,13 @@ const SubscriptionRequests = () => {
         setLoading(true);
         const mentorFacility = await fetchMentorFacility();
         setMentorFacility(mentorFacility);
-        console.log("mf: ",mentorFacility);
-        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); // Assuming this returns a list of users with their subscriptions
+        console.log('Calling fetchSubscriptionRequests...');
+        const fetchedUsers = await fetchSubscriptionRequests(mentorFacility); 
+        console.log("fetchedUsers: ",fetchedUsers);
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
       } catch (err) {
-        setError('Failed to fetch users');
+        setError('Problem');
       } finally {
         setLoading(false);
       }
@@ -151,7 +153,7 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Abonnement verzoeken</h2>
 
-        {loading && <p>Laden ...</p>}
+        {loading && <AnimatedDots/>}
         {error && <p className="text-red-500">{error}</p>}
 
         {!selectedUser && (

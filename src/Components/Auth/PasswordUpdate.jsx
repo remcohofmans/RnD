@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import { Key, ShieldCheck } from 'lucide-react';
 
@@ -55,10 +55,7 @@ const PasswordUpdate = () => {
       setIsLoading(false);
     }
   };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 to-rose-100 p-4 relative overflow-hidden">

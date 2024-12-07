@@ -5,15 +5,16 @@ import { Heart, Users, Shield, Star } from 'lucide-react';
 import { supabase } from '../lib/helper/supabaseClient';
 import { useAuth } from '../hooks/AuthContext';
 import { useAnalytics } from '../hooks/analyticsContext';
+import AnimatedDots from './common/AnimatedDots';
 
 const Home = () => {
   const { track } = useAnalytics();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const { user, logout, role, checkSubscription,logoutAndNavigate } = useAuth();
+  const { user, role, checkSubscription, logoutAndNavigate } = useAuth();
   const email = user?.email;
-  const loggedIn = !!user;
 
   useEffect(() => {
     track('go to feed');
@@ -21,23 +22,18 @@ const Home = () => {
 
     if (role === 'STAFF_MEMBER') {
       navigate('/settingsMentor');
-    }
-    else {
-      // Fetch user details if not already provided by the `useAuth` hook
+    } else {
       const fetchUserName = async () => {
         try {
-          const { data: data, error: error } = await supabase
+          const { data, error } = await supabase
             .from('users')
             .select('*')
-            .eq('email', user?.email)
+            .ilike('email', user?.email)
             .single();
 
-          if (error) {
-            console.error('Error fetching user name:', error);
-            return;
-          }
-
-          console.log("data status: ", data.status);
+          console.log(data);
+          console.log("Username fetched on Home page:", userName);
+          console.log("Account status: ", data.status);
 
           if (data.status === 'PAUSED') {
             setIsPausedModalOpen(true);
@@ -46,24 +42,24 @@ const Home = () => {
           setUserName(data.name || 'Gebruiker'); // Default to 'Gebruiker' if name is not set
         } catch (err) {
           console.error('Error fetching user name:', err);
+        } finally {
+          setIsLoading(false);
         }
       };
 
       if (user) {
         fetchUserName();
       }
-
-
     }
   }, [navigate, role, user]);
 
   const handleGoToFeed = useCallback(async () => {
     track('go to feed');
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('users')
         .select('status')
-        .eq('email', email)
+        .ilike('email', email)
         .single();
 
       if (error) {
@@ -76,14 +72,16 @@ const Home = () => {
     } catch (err) {
       console.error('Error checking account status:', err);
     }
-  }, [navigate, email]);
+  }, []);
 
   const handleUnpauseAccount = useCallback(async () => {
     try {
       const { error } = await supabase
         .from('users')
         .update({ status: 'ACTIVE' })
-        .eq('email', email);
+        .ilike('email', email);
+
+        console.log("Called!");
 
       if (error) {
         console.error('Error updating account status:', error);
@@ -95,6 +93,13 @@ const Home = () => {
       console.error('Error updating account status:', err);
     }
   }, [navigate, email]);
+
+  // Early return if loading is true
+  if (isLoading) {
+    return (
+      <AnimatedDots/>
+    );
+  }
 
   return (
     <div className="bg-gradient-to-br from-rose-50 to-rose-100 min-h-screen">
@@ -145,7 +150,7 @@ const Home = () => {
           >
             V(l)inder
           </motion.h1>
-          
+
           {userName && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

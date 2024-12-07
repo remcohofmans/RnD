@@ -163,9 +163,9 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     setCurrentSuggestion(suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]);
   };
 
-  const scrollToBottom = () => {
-    messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;

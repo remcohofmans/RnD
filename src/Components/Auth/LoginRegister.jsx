@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import happyPeople from '../../Assets/happyPeople.png';
 import butterflyIcon from '../../Assets/Butterfly.png'; // Assuming the butterfly image is stored in Assets
 import { Mail, Lock, Heart, Building, PersonStanding } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';  // Import the hook
-import { supabase } from '../../lib/helper/supabaseClient';
+import { useNavigate, useLocation } from 'react-router-dom';  // Import the hook
+import { useAuth } from '../../hooks/AuthContext'
 
 
-const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
+const LoginRegister = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -34,11 +34,12 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
   const [passwordFeedback, setPasswordFeedback] = useState('');
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { loginWithEmail, signUpWithEmail } = useAuth();
+
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-
-    console.log(supabase);
 
     if (!loginEmail || !loginPassword) {
       setLoginError("Gelieve zowel je e-mailadres als wachtwoord op te geven.");
@@ -51,6 +52,7 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
         if (response.success) {
           setLoginError(''); // Clear error on successful login
           console.log('Logged in successfully:', response.user);
+          navigate("/");
         } else {
           setLoginError(response.error);
           console.log('Login failed:', response.error);
@@ -235,9 +237,8 @@ const LoginRegister = ({ loginWithEmail, signUpWithEmail }) => {
           {!isMobile && (
             <img
               src={happyPeople}
-              alt="Image"
               className="w-full h-1/2 object-cover"
-            />
+              />
           )}
 
           {/* Content Section */}

@@ -22,11 +22,11 @@ const FriendFeedSkeleton = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl font-bold text-green-900 mb-4 mt-10 tracking-tight">
-            Ontdek je Match
+            Vind Je Perfecte Vriend
           </h1>
           <p className="text-xl text-green-700 max-w-2xl mx-auto flex items-center justify-center gap-2">
             <Sparkle className="text-green-500" />
-            Spin het wiel en laat het toeval je naar de ware verbinding leiden
+            Ontdek verbindingen door het lot te laten beslissen
             <Sparkle className="text-green-500" />
           </p>
         </motion.div>
