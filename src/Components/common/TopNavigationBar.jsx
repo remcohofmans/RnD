@@ -229,13 +229,13 @@ const TopNavigationBar = () => {
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition duration-200 text-sm"
                 onClick={() => setShowLogoutConfirm(false)}
               >
-                Cancel
+                Annuleer
               </button>
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 text-sm"
                 onClick={handleLogOut}
               >
-                Logout
+                Log uit
               </button>
             </div>
           </div>

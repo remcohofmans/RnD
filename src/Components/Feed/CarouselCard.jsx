@@ -60,7 +60,7 @@ const CarouselCard = ({ userId }) => {
   const renderContent = () => {
     if (isLoading) return <div className="flex items-center justify-center w-full h-64 bg-[#fff1f2] rounded-full"><div className="w-8 h-8 border-4 border-[#e11d48] border-t-transparent rounded-full animate-spin"></div></div>;
     if (error) return <div className="flex items-center justify-center w-full h-64 bg-[#ffe4e6] rounded-full"><p className="text-[#9f1239]">⚠️ {error}</p></div>;
-    if (images.length === 0) return <div className="flex flex-col items-center justify-center w-full h-64 bg-[#fff1f2] rounded-full"><p className="text-[#e11d48] text-4xl mb-2">📷</p><p className="text-[#9f1239]">No images available</p></div>;
+    if (images.length === 0) return <div className="flex flex-col items-center justify-center w-full h-64 bg-[#fff1f2] rounded-full"><p className="text-[#e11d48] text-4xl mb-2">📷</p><p className="text-[#9f1239]">Geen afbeelding beschikbaar</p></div>;
 
     return (
       <div 

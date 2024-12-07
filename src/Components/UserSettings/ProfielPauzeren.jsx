@@ -54,13 +54,13 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
             className="px-4 py-2 text-white bg-red-500 rounded-lg"
             onClick={handleConfirmPause}
           >
-            Confirm
+            Bevestig
           </button>
           <button
             className="px-4 py-2 text-white bg-gray-500 rounded-lg"
             onClick={handleCancelPause}
           >
-            Cancel
+            Annuleer
           </button>
         </div>
       </div>

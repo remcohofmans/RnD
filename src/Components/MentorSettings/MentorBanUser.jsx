@@ -53,7 +53,7 @@ const MentorBanUser = () => {
       setUsers(updatedUsers);
       setFilteredUsers(updatedUsers);
       setShowConfirmation(false);
-      displaySuccessMessage('User has been successfully banned.');
+      displaySuccessMessage('Gebruiker succesvol geband.');
     } catch (err) {
       console.error(err.message);
     }
@@ -122,7 +122,7 @@ const MentorBanUser = () => {
 
         <input
           type="text"
-          placeholder="Search by name or email"
+          placeholder="Zoek op naam of email"
           value={searchQuery}
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
@@ -173,7 +173,7 @@ const MentorBanUser = () => {
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Ban</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Bevestig Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
               Weet je zeker dat je deze gebruiker wilt verbannen? Deze actie kan niet ongedaan worden gemaakt.
             </p>
@@ -183,14 +183,14 @@ const MentorBanUser = () => {
                 style={{ backgroundColor: '#FFFFFF', border: '2px solid #fda4af' }}
                 onClick={() => setShowConfirmation(false)}
               >
-                Cancel
+                Annuleer
               </button>
               <button
                 className="px-4 py-2 text-white rounded-lg"
                 style={{ backgroundColor: '#f43f5e' }}
                 onClick={() => handleBanUser(userIdToBan)}
               >
-                Ban User
+                Bevestig
               </button>
             </div>
           </div>

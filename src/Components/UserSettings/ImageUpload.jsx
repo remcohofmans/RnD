@@ -27,12 +27,12 @@ const ImageUpload = ({ onUploadComplete }) => {
   const fileInputRefs = useRef({});
 
   const validateFile = (file) => {
-    if (!file) return 'Please select a file';
+    if (!file) return 'Selecteer een bestand';
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      return 'Please upload a valid image file (JPEG, PNG, or WebP)';
+      return 'Upload een bestand van een juist type (JPEG, PNG, or WebP)';
     }
     if (file.size > MAX_FILE_SIZE) {
-      return 'File size must be less than 5MB';
+      return 'Bestand mag niet groter dan 5MB zijn';
     }
     return null;
   };
