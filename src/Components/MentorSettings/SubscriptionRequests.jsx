@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
+import AnimatedDots from '../common/AnimatedDots';
+
 
 const SubscriptionRequests = () => {
   const { user, fetchSubscriptionRequests, updateSubscription, fetchMentorFacility } = useAuth();
@@ -150,7 +152,7 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Abonnement verzoeken</h2>
 
-        {loading && <p>Laden ...</p>}
+        {loading && <AnimatedDots/>}
         {error && <p className="text-red-500">{error}</p>}
 
         {!selectedUser && (

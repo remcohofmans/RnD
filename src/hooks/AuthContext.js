@@ -470,7 +470,8 @@ export function AuthProvider({ children }) {
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
-      fetchSubscriptionRequests, updateSubscription, checkSubscription, restoreSession, pauseAccount
+      fetchSubscriptionRequests, updateSubscription, 
+      checkSubscription, restoreSession, pauseAccount
     }}>
       {children}
     </AuthContext.Provider>
