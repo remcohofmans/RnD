@@ -67,7 +67,7 @@ const ChatsPage = () => {
               setMobileView('profile');
             }
           }}
-          className={`p-4 flex flex-col items-center ${mobileView === 'profile' ? 'text-blue-600' : 'text-gray-500'}
+          className={`p-4 flex flex-col items-center ${mobileView === 'profile' ? 'text-rose-600' : 'text-gray-500'}
             ${!selectedMatchDetails ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <UserCircle2 size={24} />
