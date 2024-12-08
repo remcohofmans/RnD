@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { ArrowRight } from 'lucide-react';
 
 export const MessageInput = ({ onSendMessage }) => {
     const [newMessage, setNewMessage] = useState('');
@@ -64,10 +65,12 @@ export const MessageInput = ({ onSendMessage }) => {
                     />
                     <button
                         type="submit"
-                        className="flex-shrink-0 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 flex items-center justify-center transition-colors duration-200"
+                        className="flex-shrink-0 px-4 py-2 bg-rose-800 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 flex items-center justify-center transition-colors duration-200"
                     >
                         <span className="hidden sm:block">Verstuur</span>
-                        <span className="block sm:hidden text-xl">→</span>
+                        <span className="block sm:hidden">
+                            <ArrowRight className="w-6 h-6" />
+                        </span>
                     </button>
                 </div>
 
