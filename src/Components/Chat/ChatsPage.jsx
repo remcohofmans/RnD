@@ -134,58 +134,54 @@ const ChatsPage = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen mt-16 max-md:mt-0 px-8 md:px-6">
-      {/* Desktop Layout */}
-      <div className="container mx-auto py-8 max-md:py-0 hidden md:block">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          <div className="md:col-span-3">
-            {matches.length === 0 ? (
-              <p className="text-center text-gray-500 bg-white p-4 rounded-lg shadow">
-                Je hebt nog geen matches.
-              </p>
-            ) : (
-              <ChatsList
-                matches={matches}
-                onSelectMatch={setSelectedMatch}
-                selectedMatchId={selectedMatch}
-              />
-            )}
-          </div>
-
-          <div className="md:col-span-6">
-            {selectedMatchDetails ? (
-              <ChatWindow
-                matchId={selectedMatchDetails.match_id}
-                otherUserName={selectedMatchDetails.otherUserName}
-              />
-            ) : (
-              <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500">
-                Selecteer een match om het gesprek te openen.
-              </div>
-            )}
-          </div>
-
-          <div className="md:col-span-3">
-            <div>
-              {selectedMatchDetails ? (
-                <UserCardChats user={selectedMatchDetails.otherUserId} />
-              ) : (
-                <div></div>
-              )}
-            </div>
-          </div>
-        </div>
+<div className="bg-gray-100 min-h-screen mt-16 max-md:mt-0 px-8 md:px-6 flex flex-col">
+  {/* Desktop Layout */}
+  <div className="container mx-auto py-8 max-md:py-0 hidden md:flex flex-grow">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 flex-grow">
+      <div className="md:col-span-3 overflow-auto">
+        {matches.length === 0 ? (
+          <p className="text-center text-gray-500 bg-white p-4 rounded-lg shadow">
+            Je hebt nog geen matches.
+          </p>
+        ) : (
+          <ChatsList
+            matches={matches}
+            onSelectMatch={setSelectedMatch}
+            selectedMatchId={selectedMatch}
+          />
+        )}
       </div>
-
-      {/* Mobile Layout */}
-      {isMobile && <div className="md:hidden mt-12 md:mt-16 py-8">
-        {renderMobileContent()}
+      <div className="md:col-span-6 flex-grow flex flex-col overflow-hidden">
+        {selectedMatchDetails ? (
+          <ChatWindow
+            matchId={selectedMatchDetails.match_id}
+            otherUserName={selectedMatchDetails.otherUserName}
+          />
+        ) : (
+          <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500 flex-grow flex items-center justify-center">
+            Selecteer een match om het gesprek te openen.
+          </div>
+        )}
       </div>
-      }
-
-      {/* Mobile Navigation */}
-      <MobileNavigation />
+      <div className="md:col-span-3 overflow-auto">
+        {selectedMatchDetails && (
+          <UserCardChats user={selectedMatchDetails.otherUserId} />
+        )}
+      </div>
     </div>
+  </div>
+
+  {/* Mobile Layout */}
+  {isMobile && (
+    <div className="md:hidden mt-12 md:mt-16 py-8 flex-grow mobile-content">
+      {renderMobileContent()}
+    </div>
+  )}
+
+  {/* Mobile Navigation */}
+  <MobileNavigation />
+</div>
+
   );
 };
 
