@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Sparkles } from 'lucide-react';
-import { Wheel } from 'react-custom-roulette';
 import { supabase } from '../lib/helper/supabaseClient';
 import UserCard from './Feed/UserCard';
 import { useAuth } from '../hooks/AuthContext';
@@ -205,21 +204,21 @@ const FeedFriends = () => {
     initializeFeed();
   }, [isDistanceServiceInitialized]);
 
-  const wheelData = users.map((user, index) => ({
-    option: user.name,
-    style: {
-      backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
-      textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
-    }
-  }));
+  // const wheelData = users.map((user, index) => ({
+  //   option: user.name,
+  //   style: {
+  //     backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
+  //     textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
+  //   }
+  // }));
 
-  const handleSpinClick = () => {
-    if (!mustSpin) {
-      const newIndex = Math.floor(Math.random() * users.length);
-      setCurrentIndex(newIndex);
-      setMustSpin(true);
-    }
-  };
+  // const handleSpinClick = () => {
+  //   if (!mustSpin) {
+  //     const newIndex = Math.floor(Math.random() * users.length);
+  //     setCurrentIndex(newIndex);
+  //     setMustSpin(true);
+  //   }
+  // };
 
   const handleWheelStop = () => {
     setMustSpin(false);

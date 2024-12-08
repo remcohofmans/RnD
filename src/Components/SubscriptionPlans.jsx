@@ -73,8 +73,8 @@ const Subscription = () => {
         e.preventDefault();
   
         if (inputVal !== 'BEVESTIG') return;
-        //send mail to director using chargebee :)
-        const { data: { session } } = await supabase.auth.getSession();
+        //send mail to director using ChargeBee :)
+        const {} = await supabase.auth.getSession();
         const endDate = new Date();
         if (payAnnually){
             endDate.setFullYear(endDate.getFullYear()+1);
@@ -82,8 +82,7 @@ const Subscription = () => {
         else {
             endDate.setMonth(endDate.getMonth()+1);
         }
-    
-
+        
         const subscriptonFields = {
                     user_id: userId,
                     subscription_request: selectedSubscription,
@@ -159,7 +158,7 @@ const Subscription = () => {
                             </div>
 
                             <p className="text-sm">
-                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{currentSubscription}</span>{' '}
+                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{selectedSubscription}</span>{' '}
                                 abonnement? Zo ja, type: <span className="font-bold">BEVESTIG</span>
                             </p>
 
@@ -341,7 +340,8 @@ const Subscription = () => {
                                 icon = {subscriptionBenefitItem.icon}
                                 className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Onbeperkte hoeveelheid draaien aan het rad per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 40 keer draaien aan het rad per dag
+                                </span>
                             </li>
                         </ul>
 

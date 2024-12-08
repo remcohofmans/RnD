@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/AuthContext';
+import AnimatedDots from '../common/AnimatedDots';
+
 
 const MentorBanUser = () => {
   const { deleteUser, fetchUsersByFacility, fetchMentorFacility, error } = useAuth();
@@ -7,6 +9,7 @@ const MentorBanUser = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [userIdToBan, setUserIdToBan] = useState(null);
   const [mentorFacility, setMentorFacility] = useState(null);
@@ -18,14 +21,17 @@ const MentorBanUser = () => {
   useEffect(() => {
     const getFacility = async () => {
       try {
+        setLoading(true);
         const facilityId = await fetchMentorFacility();
         setMentorFacility(facilityId);
       } catch (err) {
         console.error(err.message);
       }
+      finally{setLoading(false)}
     };
 
     getFacility();
+    setLoading(false);
   }, [fetchMentorFacility]);
 
   // Fetch users for the facility
@@ -53,7 +59,7 @@ const MentorBanUser = () => {
       setUsers(updatedUsers);
       setFilteredUsers(updatedUsers);
       setShowConfirmation(false);
-      displaySuccessMessage('User has been successfully banned.');
+      displaySuccessMessage('Gebruiker succesvol geband.');
     } catch (err) {
       console.error(err.message);
     }
@@ -117,16 +123,18 @@ const MentorBanUser = () => {
           </div>
         )}
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Users</h2>
-        <p className="text-sm text-gray-600 mb-4">You can only ban users from your own facility.</p>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Ban Gebruikers</h2>
 
         <input
           type="text"
-          placeholder="Search by name or email"
+          placeholder="Zoek op naam of email"
           value={searchQuery}
           onChange={handleSearch}
           className="p-2 mb-4 border border-gray-300 rounded-lg w-full"
         />
+
+        {loading && <AnimatedDots />}
+
 
         <div className="space-y-2 overflow-y-auto flex-grow">
           {currentUsers.map((user) => (
@@ -155,17 +163,17 @@ const MentorBanUser = () => {
             disabled={currentPage === 1}
             className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Previous
+            Vorige
           </button>
           <span className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
+            Pagina {currentPage} van {totalPages}
           </span>
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
             className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
           >
-            Next
+            Volgende
           </button>
         </div>
       </div>
@@ -173,9 +181,9 @@ const MentorBanUser = () => {
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-semibold text-gray-800">Confirm Ban</h2>
+            <h2 className="text-lg font-semibold text-rose-600">Bevestig Ban</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to ban this user? This action cannot be undone.
+              Weet je zeker dat je deze gebruiker wilt verbannen? Deze actie kan niet ongedaan worden gemaakt.
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
@@ -183,14 +191,14 @@ const MentorBanUser = () => {
                 style={{ backgroundColor: '#FFFFFF', border: '2px solid #fda4af' }}
                 onClick={() => setShowConfirmation(false)}
               >
-                Cancel
+                Annuleer
               </button>
               <button
                 className="px-4 py-2 text-white rounded-lg"
                 style={{ backgroundColor: '#f43f5e' }}
                 onClick={() => handleBanUser(userIdToBan)}
               >
-                Ban User
+                Bevestig
               </button>
             </div>
           </div>

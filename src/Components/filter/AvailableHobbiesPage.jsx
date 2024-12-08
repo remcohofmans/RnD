@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+
+// https://unicode.org/emoji/charts/full-emoji-list.html
 export const availableHobbies = [
   // Collectie & Leren
   { name: 'Geschiedenis', icon: '📜', category: 'Leren' },
@@ -54,6 +56,7 @@ export const availableHobbies = [
   { name: 'Naar zee gaan', icon: '🏖️', category: 'Natuur' },
 
   // Sociaal & Gemeenschap
+  { name: 'Feesten', icon: '🎉', category: 'Sociaal' },
   { name: 'Debatteren', icon: '🗣️', category: 'Sociaal' },
   { name: 'Improvisatie', icon: '🎪', category: 'Sociaal' },
   { name: 'Theater', icon: '🎭', category: 'Sociaal' },
@@ -78,6 +81,34 @@ export const availableHobbies = [
   { name: 'Vechtsport', icon: '🥋', category: 'Sport' },
   { name: 'Wandelen', icon: '🚶‍♂️', category: 'Sport' },
   { name: 'Zwemmen', icon: '🏊‍♂️', category: 'Sport' },
+  { name: 'Voetbal', icon: '⚽', category: 'Sport' },
+  { name: 'Golf', icon: '⛳', category: 'Sport' },
+  { name: 'Amerikaanse Football', icon: '🏈', category: 'Sport' },
+  { name: 'Cricket', icon: '🏏', category: 'Sport' },
+  { name: 'Rugby', icon: '🏉', category: 'Sport' },
+  { name: 'Handbal', icon: '🤾‍♂️', category: 'Sport' },
+  { name: 'Lacrosse', icon: '🥍', category: 'Sport' },
+  { name: 'Badminton', icon: '🏸', category: 'Sport' },
+  { name: 'Waterpolo', icon: '🤽‍♂️', category: 'Sport' },
+  { name: 'Korfbal', icon: '⛹️‍♂️', category: 'Sport' },
+  { name: 'Ballet', icon: '🩰', category: 'Sport' },
+  { name: 'Motorsport', icon: '🏁', category: 'Sport' },
+  { name: 'Schaatsen', icon: '⛸️', category: 'Sport' },
+  { name: 'Bungee Jumpen', icon: '🏞️', category: 'Sport' },
+  { name: 'Zweefvliegen', icon: '🛩️', category: 'Sport' },
+  { name: 'Trampolinespringen', icon: '🤸‍♀️', category: 'Sport' },
+  { name: 'Wakeboarden', icon: '🏄‍♀️', category: 'Sport' },
+  { name: 'Parkour', icon: '🏃‍♀️', category: 'Sport' },
+  { name: 'Honkbal', icon: '⚾', category: 'Sport' },
+  { name: 'Tafeltennis', icon: '🏓', category: 'Sport' },
+  { name: 'Windsurfen', icon: '🌊', category: 'Sport' },
+  { name: 'Motorcross', icon: '🏍️', category: 'Sport' },
+  { name: 'Curling', icon: '🥌', category: 'Sport' },
+  { name: 'Skeeleren', icon: '🛼', category: 'Sport' },
+  { name: 'Schietsport', icon: '🏹', category: 'Sport' },
+  { name: 'Roeien', icon: '🚣‍♂️', category: 'Sport' },
+  { name: 'Schildpaddenrace', icon: '🐢', category: 'Sport' },
+  { name: 'Duiken', icon: '🤿', category: 'Sport' },
 
   // Technologie
   { name: 'bouwen', icon: '🛠️', category: 'Technologie' },
@@ -126,6 +157,8 @@ export const HobbyCategory = ({ category, hobbies, selectedHobbies, onToggle }) 
           }`}
           aria-pressed={selectedHobbies.includes(hobby.name)}
         >
+
+          {/* https://medium.com/@seanmcp/%EF%B8%8F-how-to-use-emojis-in-react-d23bbf608bf7 */}
           <span role="img" aria-label={hobby.name} className="text-xl">
             {hobby.icon}
           </span>

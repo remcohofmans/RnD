@@ -9,6 +9,7 @@ import { supabase } from '../../lib/helper/supabaseClient';
 // Import your custom image
 import logo from '../../Assets/Butterfly.png';
 
+
 const TopNavigationBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -220,21 +221,21 @@ const TopNavigationBar = () => {
       {showLogoutConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full transform transition-transform duration-300 scale-95">
-            <p className="text-lg font-medium text-gray-800">
-              Are you sure you want to log out?
+            <p className="text-lg font-medium text-rose-600">
+              Ben je zeker dat je wilt uitloggen?
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition duration-200 text-sm"
+                className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
                 onClick={() => setShowLogoutConfirm(false)}
               >
-                Cancel
+                Annuleer
               </button>
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 text-sm"
+                className="px-4 py-2 text-white bg-rose-500 rounded-lg hover:bg-rose-700"
                 onClick={handleLogOut}
               >
-                Logout
+                Log uit
               </button>
             </div>
           </div>

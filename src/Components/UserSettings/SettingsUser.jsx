@@ -10,7 +10,6 @@ import { useSearchParams } from 'react-router-dom';
 
 const SettingsUser = () => {
   const [userId, setUserId] = useState(null);
-  const [status, setStatus] = useState("ACTIVE");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [activeComponent, setActiveComponent] = useState(null);

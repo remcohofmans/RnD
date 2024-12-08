@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/AuthContext';
+import AnimatedDots from '../Components/common/AnimatedDots';
+
 
 const AccessRequests = () => {
   const { user, fetchUsersForMentor, fetchProfilePictureUrl, updateAccessStatus } = useAuth();
@@ -89,7 +91,6 @@ const AccessRequests = () => {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg flex flex-col min-h-[70vh]">
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">Toegangsverzoeken</h2>
 
-        {loading && <p>Laden ...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
         {!selectedUser && (
@@ -101,6 +102,8 @@ const AccessRequests = () => {
             className="w-full p-2 border border-gray-300 rounded mb-4"
           />
         )}
+
+        {loading && <AnimatedDots />}
 
         <div className="overflow-y-auto max-h-[50vh] mb-4">
           {!selectedUser && (
@@ -168,7 +171,7 @@ const AccessRequests = () => {
         {!selectedUser && (
           <div className="flex justify-between mt-4">
             <button
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className={`px-4 py-2 ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded`}
               onClick={goToPreviousPage}
               disabled={currentPage === 1}
             >
@@ -176,7 +179,7 @@ const AccessRequests = () => {
             </button>
             <p>Pagina {currentPage} van {totalPages}</p>
             <button
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className={`px-4 py-2 ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded `}
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
             >

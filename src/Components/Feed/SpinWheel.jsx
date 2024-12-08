@@ -31,7 +31,7 @@ const WheelComponent = ({
   const [showWarning, setShowWarning] = useState(false);
   const [userSubscription, setUserSubscription] = useState('TRIAL');
 
-  const MAX_SPINS = userSubscription === 'ELITE' ? 30 
+  const MAX_SPINS = userSubscription === 'ELITE' ? 40 
                   : userSubscription === 'GEVORDERD' ? 20 
                   : 10;
 

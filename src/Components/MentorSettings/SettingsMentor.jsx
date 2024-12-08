@@ -129,7 +129,7 @@ const SettingsMentor = () => {
 
           {/* Logout Button */}
           <button
-            className="mt-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200"
+            className="mt-auto bg-gray-100 hover:bg-rose-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200"
             onClick={handleLogOut}
           >
             <div className="flex items-center gap-3">
@@ -151,20 +151,20 @@ const SettingsMentor = () => {
           {/* Confirmation Modal */}
           {showConfirmation && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-              <div className="p-6 bg-white rounded-lg shadow-lg w-80 border-4 border-[#fda4af]">
-                <h2 className="text-lg font-semibold text-gray-800">Bevestig Verwijdering</h2>
+              <div className="p-6 bg-white rounded-lg shadow-lg w-80">
+                <h2 className="text-lg font-semibold text-rose-600">Bevestig Verwijdering</h2>
                 <p className="mt-2 text-sm text-gray-600">
                   Ben je zeker dat je dit account wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.
                 </p>
                 <div className="flex justify-end gap-4 mt-4">
                   <button
-                    className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg"
+                    className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
                     onClick={() => setShowConfirmation(false)}
                   >
                     Annuleer
                   </button>
                   <button
-                    className="px-4 py-2 bg-[#f43f5e] text-white rounded-lg"
+                    className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-700"
                     onClick={() => {
                       setShowConfirmation(false);
                       handleDeleteAccount();

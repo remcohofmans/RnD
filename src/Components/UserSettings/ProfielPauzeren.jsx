@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { supabase } from '../../lib/helper/supabaseClient';
 import { useAuth } from '../../hooks/AuthContext';
+
 
 const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
   const {pauseAccount } = useAuth();
@@ -43,25 +43,28 @@ const ProfielPauzeren = ({ onSuccess, onError, setIsConfirming }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-        <p className="mb-4 text-lg">Ben je zeker dat je je profiel wilt pauzeren?</p>
+        <p className="mb-4 text-lg text-rose-600 font-bold">Ben je zeker dat je je profiel wilt pauzeren?</p>
         {error && (
           <div className="mb-4 p-2 text-sm text-red-600 bg-red-100 rounded">
             {error}
           </div>
         )}
         <div className="flex justify-center gap-4">
+
           <button
-            className="px-4 py-2 text-white bg-red-500 rounded-lg"
-            onClick={handleConfirmPause}
-          >
-            Confirm
-          </button>
-          <button
-            className="px-4 py-2 text-white bg-gray-500 rounded-lg"
+              className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
             onClick={handleCancelPause}
           >
-            Cancel
+            Annuleer
           </button>
+
+          <button
+            className="px-4 py-2 text-white bg-rose-500 rounded-lg hover:bg-rose-700"
+            onClick={handleConfirmPause}
+          >
+            Bevestig
+          </button>
+          
         </div>
       </div>
     </div>
