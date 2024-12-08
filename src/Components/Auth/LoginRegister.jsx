@@ -238,7 +238,7 @@ const LoginRegister = () => {
             <img
               src={happyPeople}
               className="w-full h-1/2 object-cover"
-              />
+            />
           )}
 
           {/* Content Section */}
@@ -307,7 +307,14 @@ const LoginRegister = () => {
                   />
                 </div>
 
-                {emailFeedback && <p className="text-red-600 text-sm">{emailFeedback}</p>}
+                {emailFeedback &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{emailFeedback}</p>
+                  </div>
+                }
 
                 {/* Password Input */}
                 <div className="relative">
@@ -324,7 +331,14 @@ const LoginRegister = () => {
                   />
                 </div>
 
-                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+                {passwordFeedback &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{passwordFeedback}</p>
+                  </div>
+                }
 
                 {/* Forgot Password Link */}
                 <div className="text-right mt-2">
@@ -345,9 +359,14 @@ const LoginRegister = () => {
                 </button>
 
                 {/* Display login error if any */}
-                {loginError && (
-                  <p className="text-red-600 text-xs mt-4">{loginError}</p>
-                )}
+                {loginError &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{loginError}</p>
+                  </div>
+                }
 
               </form>
             ) : (
@@ -370,11 +389,14 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!emailFeedback}
                   />
-                  {emailFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {emailFeedback}
-                    </p>
-                  )}
+                  {emailFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{emailFeedback}</p>
+                    </div>
+                  }
                 </div>
                 {/* Password Input */}
                 <div className="relative">
@@ -396,11 +418,14 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!passwordFeedback}
                   />
-                  {passwordFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {passwordFeedback}
-                    </p>
-                  )}
+                  {passwordFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{passwordFeedback}</p>
+                    </div>
+                  }
                 </div>
 
                 {/* Confirm Password Input */}
@@ -418,18 +443,24 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!confirmPasswordFeedback}
                   />
-                  {confirmPasswordFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {confirmPasswordFeedback}
-                    </p>
-                  )}
+                  {confirmPasswordFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{confirmPasswordFeedback}</p>
+                    </div>
+                  }
                 </div>
 
                 {/* Password Match Success Message */}
                 {signUpPassword && confirmPassword && signUpPassword === confirmPassword && (
-                  <p className="text-green-600 text-sm mt-2">
-                    De wachtwoorden zijn een match!
-                  </p>
+                  <div role="alert" className="flex items-center text-green-600 bg-green-100 border border-green-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <p className="text-sm">De wachtwoorden zijn een match!</p>
+                  </div>
                 )}
 
                 {/* Mentor Checkbox */}
