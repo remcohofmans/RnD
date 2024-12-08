@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import data from '@emoji-mart/data' //bevat alle emojis, altijd ingeladen
-import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 export const MessageInput = ({ onSendMessage }) => {
     const [newMessage, setNewMessage] = useState('');
@@ -11,9 +11,9 @@ export const MessageInput = ({ onSendMessage }) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
-                emojiPickerRef.current && 
+                emojiPickerRef.current &&
                 !emojiPickerRef.current.contains(event.target) &&
-                emojiButtonRef.current && 
+                emojiButtonRef.current &&
                 !emojiButtonRef.current.contains(event.target)
             ) {
                 setShowEmojiPicker(false);
@@ -35,7 +35,7 @@ export const MessageInput = ({ onSendMessage }) => {
     };
 
     const handleEmojiSelect = (emoji) => {
-        setNewMessage(prevMessage => prevMessage + emoji.native);
+        setNewMessage((prevMessage) => prevMessage + emoji.native);
         setShowEmojiPicker(false);
     };
 
@@ -44,14 +44,14 @@ export const MessageInput = ({ onSendMessage }) => {
     };
 
     return (
-        <div className="relative">
+        <div className="relative w-full max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="bg-rose-50 px-4 py-3 border-t border-rose-200">
-                <div className="flex space-x-3 relative">
-                    <button 
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                    <button
                         ref={emojiButtonRef}
                         type="button"
                         onClick={toggleEmojiPicker}
-                        className="px-2 py-2 text-xl hover:bg-rose-200 rounded-lg focus:outline-none"
+                        className="flex-shrink-0 p-2 text-xl hover:bg-rose-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300"
                     >
                         😊
                     </button>
@@ -59,42 +59,36 @@ export const MessageInput = ({ onSendMessage }) => {
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        className="flex-grow px-3 py-2 bg-white border border-rose-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        placeholder="schrijf een bericht"
+                        className="flex-grow min-w-0 px-3 py-2 bg-white border border-rose-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                        placeholder="Schrijf een bericht"
                     />
-                    <button 
-                        type="submit" 
-                        className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                    <button
+                        type="submit"
+                        className="flex-shrink-0 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 flex items-center justify-center transition-colors duration-200"
                     >
-                        Verstuur
+                        <span className="hidden sm:block">Verstuur</span>
+                        <span className="block sm:hidden text-xl">→</span>
                     </button>
                 </div>
-    
+
                 {showEmojiPicker && (
-                    <div 
+                    <div
                         ref={emojiPickerRef}
-                        className="fixed z-40"
-                        style={{
-                            position: 'fixed',
-                            bottom: '80px', 
-                            left: '50%', 
-                            transform: 'translateX(-50%)',
-                            maxWidth: 'calc(100% - 40px)', // Ensure it doesn't exceed screen width
-                            width: 'max-content', 
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                        }}
+                        className="fixed z-50 bottom-20 left-1/2 -translate-x-1/2 w-full max-w-md"
                     >
-                        <Picker 
-                            data={data}
-                            onEmojiSelect={handleEmojiSelect}
-                            theme="light"
-                            perLine={8}
-                            maxFrequentRows={2}
-                        />
+                        <div className="w-full overflow-x-auto">
+                            <Picker
+                                data={data}
+                                onEmojiSelect={handleEmojiSelect}
+                                theme="light"
+                                perLine={8}
+                                maxFrequentRows={2}
+                                className="w-full"
+                            />
+                        </div>
                     </div>
                 )}
             </form>
         </div>
     );
-    
 };
