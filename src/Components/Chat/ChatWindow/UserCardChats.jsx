@@ -58,7 +58,7 @@ const UserCardChats = ({ user: userId }) => {
         setAge(calculatedAge);
     
         const { data: hobbyData, error: hobbyError } = await supabase
-          .from('userpreferences')
+          .from('preferences')
           .select('hobbies')
           .eq('id', userId);
     
