@@ -1,4 +1,3 @@
-
 import { Check } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
@@ -225,17 +224,17 @@ const Subscription = () => {
                 </div>
             )}
 
-            {/* Subscription card component used from flowbite */}
-            <div className='flex flex-col items-center justify-center min-h-screen'>
+            {/* Subscription cards section */}
+            <div className='flex flex-col items-center justify-center min-h-screen p-4'>
                 
-                <div className='flex justify-center items-center'>
-                <div
-                    className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-600 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
-                        (currentSubscription === "BASIS" ? " border-4 border-neutral-50 ring-4 ring-amber-600" : "")
-                    }
-                    
-                    >           
+                <div className='flex flex-col lg:flex-row justify-center items-center w-full'>
+                    {/* Basis Plan */}
+                    <div
+                        className={
+                            "w-full lg:w-1/3 max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-600 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms] mb-8 lg:mb-0 lg:mx-4" +
+                            (currentSubscription === "BASIS" ? " border-4 border-neutral-50 ring-4 ring-amber-600" : "")
+                        }
+                    >
                         <h5 className="mb-4 text-xl font-bold text-neutral-50">Basis</h5>
                         <div className="flex items-baseline text-neutral-50">
                             <span className="text-3xl font-semibold">€</span>
@@ -267,12 +266,12 @@ const Subscription = () => {
                             }}>{currentSubscription === 'BASIS' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
+                    {/* Gevorderd Plan */}
                     <div
-                    className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-gray-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
-                        (currentSubscription === "GEVORDERD" ? " border-4 border-neutral-50 ring-4 ring-gray-400" : "")
-                    }
-                    
+                        className={
+                            "w-full lg:w-1/3 max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-gray-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms] mb-8 lg:mb-0 lg:mx-4" +
+                            (currentSubscription === "GEVORDERD" ? " border-4 border-neutral-50 ring-4 ring-gray-400" : "")
+                        }
                     >                        
                         <h5 className="mb-4 text-xl font-bold text-neutral-50">Gevorderd</h5>
                         <div className="flex items-baseline text-neutral-50">
@@ -312,11 +311,12 @@ const Subscription = () => {
                         }}>{currentSubscription === 'GEVORDERD' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
+                    {/* Elite Plan */}
                     <div
                         className={
-                        "m-16 w-full max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms]" +
-                            (currentSubscription === "ELITE" ? " border-4 border-neutral-50 ring-4 ring-amber-400" : "")}
-                        
+                            "w-full lg:w-1/3 max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms] mb-8 lg:mb-0 lg:mx-4" +
+                            (currentSubscription === "ELITE" ? " border-4 border-neutral-50 ring-4 ring-amber-400" : "")
+                        }
                     >           
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#fafafa' }}>Elite</h5>
                         <div className="flex items-baseline" style={{ color: '#fafafa' }}>
@@ -356,17 +356,17 @@ const Subscription = () => {
                             }}>{currentSubscription === 'ELITE' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
                 </div>
-                <div className='flex flex-row items-center mb-8 justify-center rounded-lg' style={{background: '#e11d48', color: '#fafaf9'}}>
-                    <span className='p-4'>Betaal maandelijks</span>
-                    <ToggleSlider
-                    onToggle={state => setPayAnnually(state)}
-                    barBackgroundColor='#fda4af'
-                    barBackgroundColorActive='#881337'
 
+                {/* Toggle section */}
+                <div className='flex flex-col sm:flex-row items-center mb-8 justify-center rounded-lg p-4 w-full max-w-sm' style={{background: '#e11d48', color: '#fafaf9'}}>
+                    <span className='mb-4 sm:mb-0 sm:mr-4'>Betaal maandelijks</span>
+                    <ToggleSlider
+                        onToggle={state => setPayAnnually(state)}
+                        barBackgroundColor='#fda4af'
+                        barBackgroundColorActive='#881337'
                     />
-                    <span className='p-4'>Betaal jaarlijks</span>
+                    <span className='mt-4 sm:mt-0 sm:ml-4'>Betaal jaarlijks</span>
                 </div>
-        
             </div>  
         </div>        
     );
