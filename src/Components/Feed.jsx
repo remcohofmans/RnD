@@ -256,7 +256,7 @@ const Feed = () => {
 
   if (error || users.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center px-4 md:px-0">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
