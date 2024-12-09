@@ -218,12 +218,6 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
             Like
           </button>
         )}
-        <button
-          className={`chat-button flex items-center ${currentTheme.chatButtonBg} ${currentTheme.textColor} px-4 py-2 rounded-full shadow-lg ${currentTheme.chatButtonHoverBg}`}
-        >
-          <FontAwesomeIcon icon={faComment} className="mr-2" title="Chat" />
-          Chat
-        </button>
       </div>
     </div>
   );
