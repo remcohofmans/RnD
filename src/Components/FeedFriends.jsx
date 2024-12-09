@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import FriendFeedSkeleton from '../Components/Feed/FriendFeedSkeleton';
 import WheelComponent from '../Components/Feed/SpinWheel';
 import { shuffle } from 'lodash';
+import NavigationButton from './Feed/NavigationButton';
 
 const FeedFriends = () => {
   const { user, checkSubscription } = useAuth();
@@ -266,12 +267,7 @@ const FeedFriends = () => {
               ? `Oeps! Er ging iets mis: ${error}`
               : 'Geen matches gevonden. Pas je voorkeuren aan.'}
           </p>
-          <button
-            onClick={() => (error ? window.location.reload() : (window.location.href = '/userFilterForm'))}
-            className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
-          >
-            {error ? 'Opnieuw proberen' : 'Filter aanpassen'}
-          </button>
+          <NavigationButton color='green'/>
         </div>
       </div>
     );
