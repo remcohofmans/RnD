@@ -52,7 +52,7 @@ export const ChatHeader = ({ otherUserName, otherUserId , matchId }) => {
           Chat with {otherUserName}
         </h3>
         <button 
-          className="px-2 py-1 bg-red-300 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          className="px-2 py-1 bg-rose-300 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           onClick={handleReportButton}
         >
           Help
