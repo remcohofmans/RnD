@@ -187,8 +187,8 @@ const MentorBanUser = () => {
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
-                className="px-4 py-2 text-gray-800 rounded-lg"
-                style={{ backgroundColor: '#FFFFFF', border: '2px solid #fda4af' }}
+                className="px-4 py-2 text-gray-800 bg-white border-2 border-[#fda4af] rounded-lg hover:bg-rose-300"
+
                 onClick={() => setShowConfirmation(false)}
               >
                 Annuleer
