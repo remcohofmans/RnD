@@ -21,7 +21,7 @@ const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
 }, {});
 const defaultHobbyIcon = faStar;
 
-const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }) => {
+const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink', touchedSpin = false }) => {
   const [alertMessage, setAlertMessage] = useState('');
   const { track } = useAnalytics();
 
@@ -80,6 +80,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
                 liked_user_id: user.id,
                 love_like: likeValue,
             }]);
+
 
       const { error: likeError } = await likeOperation;
 
@@ -158,68 +159,96 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
       } else {
         setAlertMessage('Gebruiker succesvol geliket!');
       }
-      
+
     } catch (error) {
       console.error('Error in handleLoveClick:', error.message || error);
       setAlertMessage('Er is een fout opgetreden, probeer het opnieuw.');
     }
   };
 
+  // If touchedSpin is false, show the message and don't render the user info
+  if (!touchedSpin) {
+    return (
+      <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
+        <h2 className={`text-2xl font-semibold ${currentTheme.textColor} text-center`}>
+          Spin the button to find a match
+        </h2>
+      </div>
+    );
+  }
+
+  // If touchedSpin is true, display the user information
   return (
     <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
-      {alertMessage && <CustomAlert message={alertMessage} theme={theme} />} {/* Pass the theme to CustomAlert */}
-      <CarouselCard userId={user.id} />
-      <h2 className={`name text-2xl font-semibold ${currentTheme.textColor} text-center`}>{user.name}</h2>
-      <div className={`info text-left mt-4 ${currentTheme.textColor}`}>
-        <p className="age">
-          <FontAwesomeIcon icon={faUser} className="mr-2" title="Leeftijd" />
-          {user.age} jaar
-        </p>
-        <p className="location">
-          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" title="Locatie" />
-          {user.location}
-        </p>
-        <p className="facility">
-          <FontAwesomeIcon icon={faBuilding} className="mr-2" title="Faciliteit" />
-          {user.facility}
-        </p>
-      </div>
-      <div className={`hobbies mt-4 text-left ${currentTheme.textColor}`}>
-        <span className="hobbies-label font-bold">Hobby's:</span>
-        <div className="hobby-icons flex flex-wrap gap-3 mt-2">
-          {hobbies.length > 0 ? (
-            hobbies.map((hobby, index) => (
-              <span key={index} className="hobby-item flex items-center text-sm">
-                <span className="mr-2 text-xl">{hobbyIcons[hobby] || defaultHobbyIcon}</span>
-                {hobby}
-              </span>
-            ))
-          ) : (
-            <p>Geen hobby's vermeld</p>
-          )}
+      {alertMessage && <CustomAlert message={alertMessage} theme={theme} />}
+      {/* If there's no user, show the spinning message */}
+      {!user ? (
+        <div className="text-center">
+          <h2 className={`text-2xl font-semibold ${currentTheme.textColor}`}>
+            Spin the button to find a match
+          </h2>
         </div>
-      </div>
-      <div className="actions flex justify-between mt-6">
-        {showLoveButton ? (
-          <button
-            className={`love-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
-            onClick={() => handleLoveClick(true)}
-          >
-            <FontAwesomeIcon icon={faHeart} className="mr-2" title="Liefde" />
-            Love
-          </button>
-        ) : (
-          <button
-            className={`like-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
-            onClick={() => handleLoveClick(false)}
-          >
-            <FontAwesomeIcon icon={faThumbsUp} className="mr-2" title="Like" />
-            Like
-          </button>
-        )}
-      </div>
+      ) : (
+        <>
+          <CarouselCard userId={user.id} />
+          <h2 className={`name text-2xl font-semibold ${currentTheme.textColor} text-center`}>{user.name}</h2>
+          <div className={`info text-left mt-4 ${currentTheme.textColor}`}>
+            <p className="age">
+              <FontAwesomeIcon icon={faUser} className="mr-2" title="Leeftijd" />
+              {user.age} jaar
+            </p>
+            <p className="location">
+              <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" title="Locatie" />
+              {user.location}
+            </p>
+            <p className="facility">
+              <FontAwesomeIcon icon={faBuilding} className="mr-2" title="Faciliteit" />
+              {user.facility}
+            </p>
+          </div>
+          <div className={`hobbies mt-4 text-left ${currentTheme.textColor}`}>
+            <span className="hobbies-label font-bold">Hobby's:</span>
+            <div className="hobby-icons flex flex-wrap gap-3 mt-2">
+              {hobbies.length > 0 ? (
+                hobbies.map((hobby, index) => (
+                  <span key={index} className="hobby-item flex items-center text-sm">
+                    <span className="mr-2 text-xl">{hobbyIcons[hobby] || defaultHobbyIcon}</span>
+                    {hobby}
+                  </span>
+                ))
+              ) : (
+                <p>Geen hobby's vermeld</p>
+              )}
+            </div>
+          </div>
+          <div className="actions flex justify-between mt-6">
+            {showLoveButton ? (
+              <button
+                className={`love-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
+                onClick={() => handleLoveClick(true)}
+              >
+                <FontAwesomeIcon icon={faHeart} className="mr-2" title="Liefde" />
+                Love
+              </button>
+            ) : (
+              <button
+                className={`like-button flex items-center ${currentTheme.buttonBg} text-white px-4 py-2 rounded-full shadow-lg ${currentTheme.buttonHoverBg}`}
+                onClick={() => handleLoveClick(false)}
+              >
+                <FontAwesomeIcon icon={faThumbsUp} className="mr-2" title="Like" />
+                Like
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
+};
+
+// Default props for touchedSpin
+UserCard.defaultProps = {
+  touchedSpin: false,
 };
 
 export default UserCard;
