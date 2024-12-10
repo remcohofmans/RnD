@@ -54,13 +54,15 @@ const LoginRegister = () => {
           console.log('Logged in successfully:', response.user);
           navigate("/");
         } else {
-          setLoginError(response.error);
-          console.log('Login failed:', response.error);
+          if(response.error.toString()=="Invalid login credentials") {
+            setLoginError("Ongeldig e-mailadres of wachtwoord");
+          }
+          console.log('Log-in failed:', response.error);
         }
       })
       .catch((err) => {
         // In case an unexpected error occured outside of the function
-        setLoginError('An unexpected error occurred.');
+        setLoginError('Een onverwachte fout trad op.');
         console.error('Unexpected error:', err);
       });
   }
@@ -141,18 +143,15 @@ const LoginRegister = () => {
 
     // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, isMentor, selectedFacility)
-      .then(async (response) => {
-        if (response) {
-          setSignupError(response.toString);
-          return;
-        }
+      .then(() => {
+        // If sign-up succeeds, clear any error message
+        setSignupError(null);
+        navigate('/completeProfile'); // Redirect to the profile completion page
       })
       .catch((error) => {
-        console.error("Error during sign-up:", error);
-        setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
-      });
-
-    navigate('/completeProfile')
+        console.error(error);
+        setSignupError(error.message || "Er is een onverwachte fout opgetreden.");
+      })
   };
 
   const handleEmailChange = (e) => {
@@ -498,7 +497,7 @@ const LoginRegister = () => {
                 ) : (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Geef je mentor ID in. (*)</span>
+                      <span>Geef je mentor-ID in. (*)</span>
                     </div>
                     <div className="relative">
                       <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -623,8 +622,12 @@ const LoginRegister = () => {
 
                 {/* Error message display */}
                 {signupError && (
-                  <p className="text-red-600 text-xs mt-4">{signupError}</p>
-                )}
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{signupError}</p>
+                  </div>)}
               </form>
             )}
 
@@ -650,7 +653,7 @@ const LoginRegister = () => {
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
                   >
-                    Login
+                    Log in
                   </button>
                 </p>
               )}
