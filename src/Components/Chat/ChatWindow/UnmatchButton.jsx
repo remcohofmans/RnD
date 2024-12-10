@@ -34,7 +34,7 @@ export const UnmatchButton = ({ otherUserName, otherUserId, matchId, onUnmatch }
   return (
     <>
       <button 
-        className="px-2 py-1 bg-red-300 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+        className="px-2 py-1 bg-rose-300 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         onClick={handleUnmatchClick}
       >
         Unmatch
@@ -54,7 +54,7 @@ export const UnmatchButton = ({ otherUserName, otherUserId, matchId, onUnmatch }
                 Annuleren
               </button>
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 text-sm"
+                className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600 transition duration-200 text-sm"
                 onClick={handleConfirmUnmatch}
               >
                 Unmatch

@@ -256,7 +256,7 @@ const Feed = () => {
 
   if (error || users.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center px-4 md:px-0">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -322,7 +322,7 @@ const Feed = () => {
               <div className="text-center text-rose-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
+                  <p className="text-lg font-medium">Op zoek naar je ideale liefde...</p>
                 </div>
               </div>
             ) : (
