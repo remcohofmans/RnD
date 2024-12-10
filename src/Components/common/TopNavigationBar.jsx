@@ -25,6 +25,12 @@ const TopNavigationBar = () => {
     if (!user || matchesLoading) return;
     
     calculateUnreadChats();
+
+    const interval = setInterval(() => {
+      calculateUnreadChats();
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [user, matches, matchesLoading]);
 
   const calculateUnreadChats = async () => {
