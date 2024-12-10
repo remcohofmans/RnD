@@ -6,7 +6,6 @@ import {
   faBuilding,
   faHeart,
   faStar,
-  faComment,
   faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -168,7 +167,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
 
   return (
     <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
-      {alertMessage && <CustomAlert message={alertMessage} />}
+      {alertMessage && <CustomAlert message={alertMessage} theme={theme} />} {/* Pass the theme to CustomAlert */}
       <CarouselCard userId={user.id} />
       <h2 className={`name text-2xl font-semibold ${currentTheme.textColor} text-center`}>{user.name}</h2>
       <div className={`info text-left mt-4 ${currentTheme.textColor}`}>
