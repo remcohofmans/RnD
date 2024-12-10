@@ -322,7 +322,7 @@ const Feed = () => {
               <div className="text-center text-rose-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
+                  <p className="text-lg font-medium">Op zoek naar je ideale liefde...</p>
                 </div>
               </div>
             ) : (
