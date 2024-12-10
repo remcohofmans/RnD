@@ -98,7 +98,7 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
 
     if (isOtherUserLastSender) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
+        <span className="flex items-center justify-center px-2.5 py-0.5 rounded-full font-medium bg-rose-100 text-rose-800">
           Jouw Beurt
         </span>
       );
