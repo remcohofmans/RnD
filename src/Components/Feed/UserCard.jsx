@@ -13,7 +13,7 @@ import { useAnalytics } from '../../hooks/analyticsContext.js';
 import { availableHobbies } from '../filter/AvailableHobbiesPage';
 import { supabase } from '../../lib/helper/supabaseClient';
 import CarouselCard from '../Feed/CarouselCard';
-import CustomAlert from '../Feed/CustomAlert'; // Import the custom alert component
+import CustomAlert from '../Feed/CustomAlert'; 
 
 const hobbyIcons = availableHobbies.reduce((acc, hobby) => {
   acc[hobby.name] = hobby.icon;
@@ -166,7 +166,6 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink', 
     }
   };
 
-  // If touchedSpin is false, show the message and don't render the user info
   if (!touchedSpin) {
     return (
       <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
@@ -177,7 +176,6 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink', 
     );
   }
 
-  // If touchedSpin is true, display the user information
   return (
     <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
       {alertMessage && <CustomAlert message={alertMessage} theme={theme} />}
@@ -246,7 +244,6 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink', 
   );
 };
 
-// Default props for touchedSpin
 UserCard.defaultProps = {
   touchedSpin: false,
 };
