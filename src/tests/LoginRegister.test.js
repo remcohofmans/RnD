@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import LoginRegister from '../Components/Auth/LoginRegister';
+import { AuthProvider } from '../hooks/AuthContext';
 
 
 // Mock supabase and react-router-dom
@@ -19,16 +20,19 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
 }));
 
-const mockLoginWithEmail = jest.fn();
-const mockSignUpWithEmail = jest.fn();
+jest.mock('../hooks/AuthContext', () => ({
+  useAuth: jest.fn(() => ({
+    loginWithEmail: jest.fn(),
+    signUpWithEmail: jest.fn(),
+  })),
+}));
 
 const renderComponent = () => {
   return render(
     <BrowserRouter>
-      <LoginRegister
-        loginWithEmail={mockLoginWithEmail}
-        signUpWithEmail={mockSignUpWithEmail}
-      />
+    <AuthProvider>
+      <LoginRegister/>
+      </AuthProvider>
     </BrowserRouter>
   );
 };

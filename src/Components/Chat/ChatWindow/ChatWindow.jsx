@@ -36,7 +36,6 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     setupRealtimeSubscription();
   }, [matchId]);
 
-
   useEffect(() => {
     if (!loading) {
       setShowSuggestion(messages.length === 0);
@@ -47,6 +46,17 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
       }
     }
   }, [messages, loading]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
 
   const fetchCurrentUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -163,16 +173,12 @@ export const ChatWindow = ({ matchId, otherUserName }) => {
     setCurrentSuggestion(suggestedMessages[Math.floor(Math.random() * suggestedMessages.length)]);
   };
 
-  // const scrollToBottom = () => {
-  //   messagesContainerRef.current?.scrollIntoView({ behavior: "smooth" });
-  // };
-
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[80vh] flex flex-col">
+    <div className="bg-white shadow-lg rounded-lg border border-rose-200 h-[70vh] md:h-[80vh] flex flex-col">
       <ChatHeader 
         otherUserName={otherUserName}
         otherUserId={matchedUserId}

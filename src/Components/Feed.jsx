@@ -19,6 +19,7 @@ const Feed = () => {
   const [mustSpin, setMustSpin] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [touchedSpin, setTouchedSpin] = useState(false); // Track if the wheel has spun
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 9;
@@ -50,7 +51,7 @@ const Feed = () => {
       setError('Er ging iets mis bij het controleren van je toegang.');
       return false;
     } finally {
-      setCheckingAccess(false);  // New line
+      setCheckingAccess(false);
     }
   };
 
@@ -63,160 +64,129 @@ const Feed = () => {
     setLoading(true);
     setError(null);
 
-    // First check if user has access
-    const userHasAccess = await checkUserAccess();
-    if (!userHasAccess) {
-      setLoading(false);
-      return;
-    }
-
     try {
-      // Fetch user preferences
-      const { data: userPreferences, error: userPreferencesError } = await supabase
-        .from('preferences')
-        .select('distance, min_age, max_age, interest')
-        .eq('id', user.id)
-        .single();
+      const [
+        userPreferencesRes,
+        currentUserRes,
+        likedUsersRes,
+        matchedUsersRes,
+        fetchedUsersRes
+      ] = await Promise.all([
+        supabase
+          .from('preferences')
+          .select('distance, min_age, max_age, interest')
+          .eq('id', user.id)
+          .single(),
+        supabase
+          .from('users')
+          .select('facility_id')
+          .eq('id', user.id)
+          .single(),
+        supabase
+          .from('likes')
+          .select('liked_user_id')
+          .eq('user_id', user.id),
+        supabase
+          .from('matches')
+          .select('matched_user_id')
+          .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`),
+        supabase
+          .from('users')
+          .select('id, birthday, name, facility_id, gender, status')
+          .eq('access_granted', 'YES')
+      ]);
 
-      if (userPreferencesError) {
-        throw new Error("Failed to fetch user preferences.");
+      const { data: userPreferences, error: userPreferencesError } = userPreferencesRes;
+      const { data: currentUser, error: currentUserError } = currentUserRes;
+      const { data: likedUsers } = likedUsersRes;
+      const { data: matchedUsers } = matchedUsersRes;
+      const { data: fetchedUsers } = fetchedUsersRes;
+
+      if (userPreferencesError || currentUserError) {
+        throw new Error("Failed to fetch user preferences or current user data.");
       }
 
-      // Fetch current user's facility ID and then facility details to get the city
-      const { data: currentUser, error: currentUserError } = await supabase
-        .from('users')
-        .select('facility_id')
-        .eq('id', user.id)
-        .single();
-
-      if (currentUserError || !currentUser?.facility_id) {
+      if (!currentUser?.facility_id) {
         throw new Error("Your location is not set. Please update your profile.");
       }
 
-      const { data: currentUserFacility, error: currentUserFacilityError } = await supabase
+      const currentUserFacility = await supabase
         .from('facility_enum')
         .select('city')
         .eq('id', currentUser.facility_id)
         .single();
 
-      if (currentUserFacilityError || !currentUserFacility?.city) {
+      const currentUserCity = currentUserFacility?.data?.city;
+      if (!currentUserCity) {
         throw new Error("Failed to fetch your facility details.");
       }
 
-      const currentUserCity = currentUserFacility.city;
+      const likedUserIds = likedUsers.map((like) => like.liked_user_id);
+      const matchedUserIds = matchedUsers.map((match) => match.matched_user_id);
+      const excludedUserIds = new Set([...likedUserIds, ...matchedUserIds, user.id]);
+
       const maxDistance = userPreferences.distance;
+      const minAge = userPreferences.min_age;
+      const maxAge = userPreferences.max_age;
+      const interest = userPreferences.interest;
 
-      // Fetch liked and matched user IDs
-      const { data: likedUsers, error: likedUsersError } = await supabase
-        .from('likes')
-        .select('liked_user_id')
-        .eq('user_id', user.id);
-
-      if (likedUsersError) {
-        throw new Error("Failed to fetch liked users.");
-      }
-
-      const { data: matchedUsers, error: matchedUsersError } = await supabase
-        .from('matches')
-        .select('matched_user_id')
-        .or(`id.eq.${user.id},matched_user_id.eq.${user.id}`);
-
-      if (matchedUsersError) {
-        throw new Error("Failed to fetch matched users.");
-      }
-
-      const likedUserIds = likedUsers.map(like => like.liked_user_id);
-      const matchedUserIds = matchedUsers.map(match => match.matched_user_id);
-      const excludedUserIds = [...new Set([...likedUserIds, ...matchedUserIds, user.id])];
-
-      // Fetch users with access granted and not the current user
-      const { data: fetchedUsers, error: fetchedUsersError } = await supabase
-        .from('users')
-        .select('id, birthday, name, facility_id, gender')
-        .eq('access_granted', 'YES')
-        .not('id', 'in', `(${excludedUserIds.join(',')})`)
-        .neq('id', user.id)
-        .neq('status', 'PAUSED')
-        .not('name', 'is', null)
-        .not('birthday', 'is', null)
-        .not('facility_id', 'is', null);
-
-      if (fetchedUsersError) {
-        throw new Error("Failed to fetch users.");
-      }
-
-      if (!fetchedUsers || fetchedUsers.length === 0) {
-        setUsers([]);
-        return;
-      }
-
-      // Fetch facility details for all users
-      const facilityIds = fetchedUsers.map(user => user.facility_id);
-      const { data: facilities, error: facilitiesError } = await supabase
+      const facilities = await supabase
         .from('facility_enum')
-        .select('id, name, city')
-        .in('id', facilityIds);
+        .select('id, name, city');
 
-      if (facilitiesError) {
-        throw new Error("Failed to fetch facilities.");
-      }
-
-      const facilityMap = (facilities || []).reduce((acc, facility) => {
+      const facilityMap = facilities.data.reduce((acc, facility) => {
         acc[facility.id] = facility;
         return acc;
       }, {});
 
-      let usersWithDetails = [];
-      for (const potentialUser of fetchedUsers) {
-        const age = calculateAge(potentialUser.birthday);
+      const usersWithDetails = await Promise.all(
+        fetchedUsers
+          .filter(
+            (potentialUser) =>
+              potentialUser.id &&
+              !excludedUserIds.has(potentialUser.id) &&
+              potentialUser.status !== 'PAUSED' &&
+              potentialUser.name &&
+              potentialUser.birthday &&
+              potentialUser.facility_id
+          )
+          .map(async (potentialUser) => {
+            const age = calculateAge(potentialUser.birthday);
+            if (age < minAge || age > maxAge) return null;
 
-        if (
-          age < userPreferences.min_age ||
-          age > userPreferences.max_age ||
-          (userPreferences.interest !== 'geen-voorkeur' &&
-            potentialUser.gender !== userPreferences.interest)
-        ) {
-          continue;
-        }
+            if (
+              interest !== 'geen-voorkeur' &&
+              potentialUser.gender !== interest
+            ) {
+              return null;
+            }
 
-        const facility = facilityMap[potentialUser.facility_id];
-        if (!facility) {
-          continue;
-        }
+            const facility = facilityMap[potentialUser.facility_id];
+            if (!facility) return null;
 
-        const distance = await calculateDistance(currentUserCity, facility.city);
+            const distance = await calculateDistance(currentUserCity, facility.city);
+            if (parseFloat(distance) > maxDistance) return null;
 
-        if (parseFloat(distance) > maxDistance) {
-          continue;
-        }
+            const preferencesData = await supabase
+              .from('preferences')
+              .select('hobbies')
+              .eq('id', potentialUser.id)
+              .single();
 
-        const { data: preferencesData, error: preferencesDataError } = await supabase
-          .from('preferences')
-          .select('hobbies')
-          .eq('id', potentialUser.id)
-          .single();
+            return {
+              id: potentialUser.id,
+              name: potentialUser.name || 'Anonymous',
+              location: `${facility.city} (${distance})`,
+              facility: facility.name,
+              birthday: potentialUser.birthday,
+              age,
+              hobbies: preferencesData?.data?.hobbies ? JSON.parse(preferencesData.data.hobbies) : [],
+              distance,
+            };
+          })
+      );
 
-        if (preferencesDataError) {
-          continue;
-        }
-
-        usersWithDetails.push({
-          id: potentialUser.id,
-          name: potentialUser.name || 'Anonymous',
-          location: `${facility.city} (${distance})`,
-          facility: facility.name,
-          birthday: potentialUser.birthday,
-          age,
-          hobbies: preferencesData?.hobbies ? JSON.parse(preferencesData.hobbies) : [],
-          distance,
-        });
-      }
-
-      // Shuffle the array of usersWithDetails using lodash.shuffle
-      usersWithDetails = shuffle(usersWithDetails);
-
-      // Select the first 10 users from the shuffled list
-      setUsers(usersWithDetails.slice(0, USERS_TO_FETCH));
+      setUsers(shuffle(usersWithDetails.filter(Boolean)).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
     } finally {
@@ -225,30 +195,20 @@ const Feed = () => {
   };
 
   useEffect(() => {
-    if (isDistanceServiceInitialized) {
-      fetchUserData(isDistanceServiceInitialized);
-      checkSubscription(navigate);
-    }
+    const initializeFeed = async () => {
+      const hasAccess = await checkUserAccess();
+      if (hasAccess && isDistanceServiceInitialized) {
+        await fetchUserData(isDistanceServiceInitialized);
+        checkSubscription(navigate);
+      }
+    };
+
+    initializeFeed();
   }, [isDistanceServiceInitialized]);
-
-  // const wheelData = users.map((user, index) => ({
-  //   option: user.name,
-  //   style: {
-  //     backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
-  //     textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
-  //   }
-  // }));
-
-  // const handleSpinClick = () => {
-  //   if (!mustSpin) {
-  //     const newIndex = Math.floor(Math.random() * users.length);
-  //     setCurrentIndex(newIndex);
-  //     setMustSpin(true);
-  //   }
-  // };
 
   const handleWheelStop = () => {
     setMustSpin(false);
+    setTouchedSpin(true); // Update the touchedSpin state after the wheel stops spinning
   };
 
   // Show skeleton loader while checking access
@@ -279,7 +239,7 @@ const Feed = () => {
 
   if (error || users.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center px-4 md:px-0">
         <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -345,12 +305,17 @@ const Feed = () => {
               <div className="text-center text-rose-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-rose-500 border-rose-200"></div>
-                  <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
+                  <p className="text-lg font-medium">Op zoek naar je ideale liefde...</p>
                 </div>
               </div>
             ) : (
               <div className="w-full flex items-center justify-center">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={true} />
+                <UserCard
+                  user={users[currentIndex]}
+                  currentUserId={user.id}
+                  showLoveButton={true}
+                  touchedSpin={touchedSpin} // Pass touchedSpin prop here
+                />
               </div>
             )}
           </div>

@@ -67,9 +67,10 @@ const FilterForm = () => {
     }
   };
   
+
   useEffect(() => {
     fetchData();
-  }, [userId, fetchData]);
+  }, [userId]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -95,14 +96,14 @@ const FilterForm = () => {
       };
 
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('preferences')
           .select('id')
           .eq('id', userId)
           .single();
 
         if (data) {
-          const { error: updateError } = await supabase
+          const { data: updateData, error: updateError } = await supabase
             .from('preferences')
             .update(dataToSubmit)
             .eq('id', userId);
@@ -114,7 +115,7 @@ const FilterForm = () => {
             console.log('Form updated:', dataToSubmit);
           }
         } else {
-          const { error: insertError } = await supabase
+          const { data: insertData, error: insertError } = await supabase
             .from('preferences')
             .insert([dataToSubmit]);
 
@@ -131,24 +132,24 @@ const FilterForm = () => {
     }
   };
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormState((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  //   if (errors[name]) {
-  //     setErrors((prev) => ({ ...prev, [name]: '' }));
-  //   }
-  // };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
 
   const handleRemoveHobby = (hobby) => {
     setSelectedHobbies((prev) => prev.filter((h) => h !== hobby));
   };
 
-  // const handleAddHobby = (hobby) => {
-  //   setSelectedHobbies((prev) => [...prev, hobby]);
-  // };
+  const handleAddHobby = (hobby) => {
+    setSelectedHobbies((prev) => [...prev, hobby]);
+  };
 
   const getHobbyIcon = (hobbyName) => {
     const hobby = availableHobbies.find((h) => h.name === hobbyName);

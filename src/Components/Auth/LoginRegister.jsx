@@ -54,13 +54,15 @@ const LoginRegister = () => {
           console.log('Logged in successfully:', response.user);
           navigate("/");
         } else {
-          setLoginError(response.error);
-          console.log('Login failed:', response.error);
+          if (response.error.toString() == "Invalid login credentials") {
+            setLoginError("Ongeldig e-mailadres of wachtwoord");
+          }
+          console.log('Log-in failed:', response.error);
         }
       })
       .catch((err) => {
         // In case an unexpected error occured outside of the function
-        setLoginError('An unexpected error occurred.');
+        setLoginError('Een onverwachte fout trad op.');
         console.error('Unexpected error:', err);
       });
   }
@@ -141,18 +143,15 @@ const LoginRegister = () => {
 
     // Call signUpWithEmail function if all validations pass
     signUpWithEmail(signUpEmail, signUpPassword, isMentor, selectedFacility)
-      .then(async (response) => {
-        if (response) {
-          setSignupError(response.toString);
-          return;
-        }
+      .then(() => {
+        // If sign-up succeeds, clear any error message
+        setSignupError(null);
+        navigate('/completeProfile'); // Redirect to the profile completion page
       })
       .catch((error) => {
-        console.error("Error during sign-up:", error);
-        setSignupError("Er is een fout opgetreden tijdens het aanmelden.");
-      });
-
-    navigate('/completeProfile')
+        console.error(error);
+        setSignupError(error.message || "Er is een onverwachte fout opgetreden.");
+      })
   };
 
   const handleEmailChange = (e) => {
@@ -238,20 +237,20 @@ const LoginRegister = () => {
             <img
               src={happyPeople}
               className="w-full h-1/2 object-cover"
-              />
+            />
           )}
 
           {/* Content Section */}
           <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
             <div className="flex flex-row items-center justify-start space-x-4">
               {isMobile && (
-                <div className="bg-white rounded-full p-4 shadow-lg">
-                  <img src={butterflyIcon} alt="Butterfly Icon" className="w-20 h-20" />
+                <div className="bg-white rounded-full shadow-lg flex items-center justify-center" style={{ width: "96px", height: "96px" }}>
+                  <img src={butterflyIcon} alt="Butterfly Icon" className="rounded-full object-contain w-full h-full" />
                 </div>
               )}
 
               {/* Text Section */}
-              <div className="text-left">
+              <div className="px-2 text-left">
                 <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
                   V(l)inder
                 </h1>
@@ -307,7 +306,14 @@ const LoginRegister = () => {
                   />
                 </div>
 
-                {emailFeedback && <p className="text-red-600 text-sm">{emailFeedback}</p>}
+                {emailFeedback &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{emailFeedback}</p>
+                  </div>
+                }
 
                 {/* Password Input */}
                 <div className="relative">
@@ -324,7 +330,14 @@ const LoginRegister = () => {
                   />
                 </div>
 
-                {passwordFeedback && <p className="text-red-600 text-sm">{passwordFeedback}</p>}
+                {passwordFeedback &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{passwordFeedback}</p>
+                  </div>
+                }
 
                 {/* Forgot Password Link */}
                 <div className="text-right mt-2">
@@ -345,9 +358,14 @@ const LoginRegister = () => {
                 </button>
 
                 {/* Display login error if any */}
-                {loginError && (
-                  <p className="text-red-600 text-xs mt-4">{loginError}</p>
-                )}
+                {loginError &&
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{loginError}</p>
+                  </div>
+                }
 
               </form>
             ) : (
@@ -370,11 +388,14 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!emailFeedback}
                   />
-                  {emailFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {emailFeedback}
-                    </p>
-                  )}
+                  {emailFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{emailFeedback}</p>
+                    </div>
+                  }
                 </div>
                 {/* Password Input */}
                 <div className="relative">
@@ -396,11 +417,14 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!passwordFeedback}
                   />
-                  {passwordFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {passwordFeedback}
-                    </p>
-                  )}
+                  {passwordFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{passwordFeedback}</p>
+                    </div>
+                  }
                 </div>
 
                 {/* Confirm Password Input */}
@@ -418,18 +442,24 @@ const LoginRegister = () => {
                     required
                     aria-invalid={!!confirmPasswordFeedback}
                   />
-                  {confirmPasswordFeedback && (
-                    <p className="text-red-600 text-sm mt-1" role="alert">
-                      {confirmPasswordFeedback}
-                    </p>
-                  )}
+                  {confirmPasswordFeedback &&
+                    <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                      <p className="text-sm">{confirmPasswordFeedback}</p>
+                    </div>
+                  }
                 </div>
 
                 {/* Password Match Success Message */}
                 {signUpPassword && confirmPassword && signUpPassword === confirmPassword && (
-                  <p className="text-green-600 text-sm mt-2">
-                    De wachtwoorden zijn een match!
-                  </p>
+                  <div role="alert" className="flex items-center text-green-600 bg-green-100 border border-green-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <p className="text-sm">De wachtwoorden zijn een match!</p>
+                  </div>
                 )}
 
                 {/* Mentor Checkbox */}
@@ -467,7 +497,7 @@ const LoginRegister = () => {
                 ) : (
                   <>
                     <div className="mb-4 text-lg text-gray-600">
-                      <span>Geef je mentor ID in. (*)</span>
+                      <span>Geef je mentor-ID in. (*)</span>
                     </div>
                     <div className="relative">
                       <PersonStanding className="absolute left-3 top-3 w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -592,8 +622,12 @@ const LoginRegister = () => {
 
                 {/* Error message display */}
                 {signupError && (
-                  <p className="text-red-600 text-xs mt-4">{signupError}</p>
-                )}
+                  <div role="alert" className="flex items-center text-red-600 bg-red-100 border border-red-600 rounded p-2 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                    <p className="text-sm">{signupError}</p>
+                  </div>)}
               </form>
             )}
 
@@ -619,7 +653,7 @@ const LoginRegister = () => {
                     className="text-[#e11d48] hover:text-[#be123c] font-bold"
                     onClick={() => { setIsLogin(true); setShowRegisterInfo(false); }}
                   >
-                    Login
+                    Log in
                   </button>
                 </p>
               )}
