@@ -171,22 +171,20 @@ const AccessRequests = () => {
         {!selectedUser && (
           <div className="flex justify-between mt-4">
             <button
-            onClick={goToPreviousPage}
-            disabled={currentPage === 1}
-            className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
-          >
-            Vorige
-          </button>
-          <span className="text-sm text-gray-600">
-            Pagina {currentPage} van {totalPages}
-          </span>
-          <button
-            onClick={goToNextPage}
-            disabled={currentPage === totalPages || totalPages === 0}  // disable "Volgende" if no pages exist
-            className={`px-3 py-1 rounded ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'}`}
-          >
-            Volgende
-          </button>
+              className={`px-4 py-2 ${currentPage === 1 ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded`}
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+            >
+              Vorige
+            </button>
+            <p>Pagina {currentPage} van {totalPages}</p>
+            <button
+              className={`px-4 py-2 ${currentPage === totalPages ? 'bg-gray-300' : 'bg-[#f43f5e] text-white'} rounded `}
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Volgende
+            </button>
           </div>
         )}
       </div>
