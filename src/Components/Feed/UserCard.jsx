@@ -170,7 +170,7 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink', 
     return (
       <div className={`relative user-card ${currentTheme.cardBg} rounded-lg shadow-lg p-6 mb-6 w-80 mx-auto`}>
         <h2 className={`text-2xl font-semibold ${currentTheme.textColor} text-center`}>
-          Druk op de spin button om een mogelijke match te vinden...
+          Druk op de spin button en laat je verrassen...
         </h2>
       </div>
     );
