@@ -240,25 +240,25 @@ const LoginRegister = () => {
             />
           )}
 
-          {/* Content Section */}
-          <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
-            <div className="flex flex-row items-center justify-start space-x-4">
-              {isMobile && (
-                <div className="bg-white rounded-full p-4 shadow-lg">
-                  <img src={butterflyIcon} alt="Butterfly Icon" className="w-20 h-20" />
-                </div>
-              )}
-
-              {/* Text Section */}
-              <div className="text-left">
-                <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
-                  V(l)inder
-                </h1>
-                <p className="text-rose-800 text-base font-medium md:text-xl drop-shadow-sm">
-                  Find your perfect match
-                </p>
-              </div>
+      {/* Content Section */}
+      <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
+        <div className="flex flex-row items-center justify-start space-x-4">
+          {isMobile && (
+            <div className="bg-white rounded-full shadow-lg flex items-center justify-center" style={{ width: "96px", height: "96px" }}>
+              <img src={butterflyIcon} alt="Butterfly Icon" className="rounded-full object-contain w-full h-full" />
             </div>
+          )}
+
+          {/* Text Section */}
+          <div className="px-2 text-left">
+            <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
+              V(l)inder
+            </h1>
+            <p className="text-rose-800 text-base font-medium md:text-xl drop-shadow-sm">
+              Find your perfect match
+            </p>
+          </div>
+        </div>
 
             {/* Registration Info Prompt */}
             {showRegisterInfo && !isMobile && (
