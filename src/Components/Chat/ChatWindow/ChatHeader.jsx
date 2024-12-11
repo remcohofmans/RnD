@@ -49,7 +49,7 @@ export const ChatHeader = ({ otherUserName, otherUserId , matchId }) => {
           fallbackText={otherUserName}
         />
         <h3 className="text-xl font-semibold text-rose-800">
-          Chat met {otherUserName}
+          Chat met {otherUserName} 
         </h3>
         <button 
           className="px-2 py-1 bg-rose-300 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
