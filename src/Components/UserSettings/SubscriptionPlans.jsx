@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect} from 'react';
 import { ToggleSlider }  from "react-toggle-slider";
-import { supabase } from '../lib/helper/supabaseClient'; 
-import { useAnalytics } from '../hooks/analyticsContext';
+import { supabase } from '../../lib/helper/supabaseClient'; 
+import { useAnalytics } from '../../hooks/analyticsContext';
 
 const Subscription = () => {
     const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
@@ -292,9 +292,10 @@ const Subscription = () => {
                             <li className="flex items-center">
                             <FontAwesomeIcon 
                                 icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
+                                className="text-white text-base transition duration-300"
                                 />
-                                <span className="text-base font-normal leading-tight ms-3 text-neutral-50" >Limiet van 20 keer draaien aan het rad per dag</span>
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 20 keer draaien aan het rad per dag
+                                </span>
                             </li>
 
                         </ul>
@@ -342,6 +343,15 @@ const Subscription = () => {
                                 <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 40 keer draaien aan het rad per dag
                                 </span>
                             </li>
+
+                            <li className="flex items-center">
+                            <FontAwesomeIcon 
+                                icon = {subscriptionBenefitItem.icon}
+                                className="text-white text-base transition duration-300"
+                                />
+                                <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Grootste mogelijkheid tot matches
+                                </span>
+                            </li>
                         </ul>
 
                         <button 
@@ -357,7 +367,7 @@ const Subscription = () => {
                 </div>
 
                 {/* Toggle section */}
-                <div className='flex flex-col sm:flex-row items-center mb-8 justify-center rounded-lg p-8 sm:p-8 w-full max-w-sm' style={{background: '#e11d48', color: '#fafaf9'}}>
+                <div className='flex flex-col sm:flex-row items-center mb-8 justify-center rounded-3xl p-4 sm:p-4 w-full max-w-sm' style={{background: '#e11d48', color: '#fafaf9'}}>
                     <span className='mb-4 sm:mb-0 sm:mr-4'>Betaal maandelijks</span>
                     <ToggleSlider
                         onToggle={state => setPayAnnually(state)}
