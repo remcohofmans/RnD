@@ -16,9 +16,10 @@ const FeedFriends = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mustSpin, setMustSpin] = useState(false);
+  const [mustSpin, setMustSpin] = useState(false); 
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [touchedSpin, setTouchedSpin] = useState(false);
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 10;
@@ -64,7 +65,6 @@ const FeedFriends = () => {
     setError(null);
 
     try {
-      // Fetch necessary data in parallel
       const [
         userPreferencesRes,
         currentUserRes,
@@ -205,31 +205,18 @@ const FeedFriends = () => {
     initializeFeed();
   }, [isDistanceServiceInitialized]);
 
-  // const wheelData = users.map((user, index) => ({
-  //   option: user.name,
-  //   style: {
-  //     backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
-  //     textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
-  //   }
-  // }));
-
-  // const handleSpinClick = () => {
-  //   if (!mustSpin) {
-  //     const newIndex = Math.floor(Math.random() * users.length);
-  //     setCurrentIndex(newIndex);
-  //     setMustSpin(true);
-  //   }
-  // };
-
   const handleWheelStop = () => {
-    setMustSpin(false);
+    setTouchedSpin(true); // Mark the spin as done when wheel stops
+    setMustSpin(false); // Stop the wheel after it finishes spinning
   };
 
-  // Show skeleton loader while checking access
+  const handleStartSpin = () => {
+    setTouchedSpin(false); // Reset touchedSpin to false when starting the spin
+    setMustSpin(true); // Start the spin when the button is pressed
+  };
+
   if (checkingAccess) {
-    return (
-      <FriendFeedSkeleton />
-    );
+    return <FriendFeedSkeleton />;
   }
 
   if (!hasAccess) {
@@ -290,21 +277,20 @@ const FeedFriends = () => {
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         <div className="text-center mb-16">
-        <h1
-  className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
-    flex items-center justify-center gap-4 
-    text-center 
-    bg-gradient-to-r from-green-400 via-green-600 to-green-400 
-    bg-clip-text text-transparent 
-    animate-gradient-x"
->
-  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
-  <span className="text-black-300">
-    Vind Je Perfecte Vriend
-  </span>
-  <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
-</h1>
-
+          <h1
+            className="text-3xl md:text-5xl font-extrabold mb-6 mt-10 tracking-tight 
+              flex items-center justify-center gap-4 
+              text-center 
+              bg-gradient-to-r from-green-400 via-green-600 to-green-400 
+              bg-clip-text text-transparent 
+              animate-gradient-x"
+          >
+            <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+            <span className="text-black-300">
+              Vind Je Perfecte Vriend
+            </span>
+            <Sparkles className="text-green-500 animate-pulse w-8 h-8 md:w-10 md:h-10" />
+          </h1>
           <p className="text-xl text-green-700 max-w-2xl mx-auto flex items-center justify-center space-x-4">
             Ontdek verbindingen door het lot te laten beslissen
           </p>
@@ -321,27 +307,29 @@ const FeedFriends = () => {
               setMustSpin={setMustSpin}
               handleWheelStop={handleWheelStop}
               setCurrentIndex={setCurrentIndex}
-              theme = 'green'
+              theme='green'
+              handleStartSpin={handleStartSpin}
             />
           </div>
 
           {/* User Card Column */}
           <div className="bg-white/30 backdrop-blur-lg rounded-2xl border border-green-100 p-8 flex items-center justify-center h-full">
-            {mustSpin ? (
+            {!mustSpin ? (
+              <div className="w-full flex items-center justify-center">
+                <UserCard
+                  user={users[currentIndex]}
+                  currentUserId={user.id}
+                  showLoveButton={false}
+                  theme="green"
+                  touchedSpin={touchedSpin} 
+                />
+              </div>
+            ) : (
               <div className="text-center text-green-800 p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-4 border-t-green-500 border-green-200"></div>
                   <p className="text-lg font-medium">Op zoek naar je ideale vriend...</p>
                 </div>
-              </div>
-            ) : (
-              <div className="w-full flex items-center justify-center">
-                <UserCard 
-                user={users[currentIndex]} 
-                currentUserId={user.id} 
-                showLoveButton={false} 
-                theme = 'green'
-                />
               </div>
             )}
           </div>
@@ -350,6 +338,5 @@ const FeedFriends = () => {
     </div>
   );
 };
-
 
 export default FeedFriends;

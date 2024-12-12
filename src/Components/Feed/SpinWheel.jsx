@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Wheel } from 'react-custom-roulette';
 import { supabase } from '../../lib/helper/supabaseClient';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+
 
 const fetchUserSubscription = async (userID) => {
   try {
@@ -33,7 +36,7 @@ const WheelComponent = ({
 
   const MAX_SPINS = userSubscription === 'ELITE' ? 40
     : userSubscription === 'GEVORDERD' ? 20
-    : 10;
+      : 10;
 
   useEffect(() => {
     const loadData = async () => {
@@ -187,9 +190,20 @@ const WheelComponent = ({
         </button>
       </div>
 
-      <div className="text-lg font-medium text-gray-700 bg-gray-100 px-4 py-2 rounded-lg">
-        Spins: {spinCount}/{MAX_SPINS} ({userSubscription})
+      <div className="flex items-center text-lg font-medium text-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-3 rounded-lg shadow-md border border-orange-200 space-x-2">
+        <span className="text-orange-600">
+          <FontAwesomeIcon icon={faStar} />
+        </span>
+        <span>Spins:</span>
+        <span className="text-orange-600 font-semibold">
+          {spinCount}/{MAX_SPINS}
+        </span>
+        <span className="text-sm bg-orange-200 text-orange-700 font-semibold px-2 py-1 rounded-full">
+          {userSubscription}
+        </span>
       </div>
+
+
     </div>
   );
 };

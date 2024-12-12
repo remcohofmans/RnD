@@ -54,7 +54,7 @@ const LoginRegister = () => {
           console.log('Logged in successfully:', response.user);
           navigate("/");
         } else {
-          if(response.error.toString()=="Invalid login credentials") {
+          if (response.error.toString() == "Invalid login credentials") {
             setLoginError("Ongeldig e-mailadres of wachtwoord");
           }
           console.log('Log-in failed:', response.error);
@@ -244,13 +244,13 @@ const LoginRegister = () => {
           <div className="flex flex-col items-center justify-center h-full text-center p-12 font-poppins">
             <div className="flex flex-row items-center justify-start space-x-4">
               {isMobile && (
-                <div className="bg-white rounded-full p-4 shadow-lg">
-                  <img src={butterflyIcon} alt="Butterfly Icon" className="w-20 h-20" />
+                <div className="bg-white rounded-full shadow-lg flex items-center justify-center" style={{ width: "96px", height: "96px" }}>
+                  <img src={butterflyIcon} alt="Butterfly Icon" className="rounded-full object-contain w-full h-full" />
                 </div>
               )}
 
               {/* Text Section */}
-              <div className="text-left">
+              <div className="px-2 text-left">
                 <h1 className="text-rose-100 text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">
                   V(l)inder
                 </h1>
