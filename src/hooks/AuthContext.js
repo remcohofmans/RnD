@@ -237,7 +237,7 @@ export function AuthProvider({ children }) {
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor, selectedFacility) => {
-    setLoading(true);
+    
     // Check first if the email already exists
     const { data: existingUsers, error: emailCheckError } = await supabase
       .from('users') // Query the users table in Supabase
@@ -424,7 +424,8 @@ export function AuthProvider({ children }) {
   };
 
   const restoreSession = useCallback(async () => {
-    setLoading(true);
+    //setLoading(true);
+    console.log('test restore 1')
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
@@ -434,6 +435,8 @@ export function AuthProvider({ children }) {
         setUser(sessionUser);
         await fetchUserRole(sessionUser.id);
       }
+
+      console.log('test restore 2')
 
       const { data: userData, error: userError } = await supabase
         .from('users')
@@ -457,7 +460,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [fetchUserRole, logoutAndNavigate]); // Add dependencies here
+  }, [fetchUserRole, logoutAndNavigate]);
 
   // Restore session on app load
   useEffect(() => {
