@@ -131,8 +131,11 @@ const TopNavigationBar = () => {
                 isActive ? 'text-white scale-110' : 'text-white'
               }`}
             />
-            {/* Only show badge when not calculating and count > 0 */}
-            {item.badge !== undefined && !isCalculating && item.badge > 0 && (
+            {/* Only show badge when not calculating, count > 0, and not on chats page */}
+            {item.badge !== undefined && 
+             !isCalculating && 
+             item.badge > 0 && 
+             location.pathname !== '/chats' && (
               <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
                 {item.badge}
               </span>
