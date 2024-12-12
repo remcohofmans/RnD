@@ -77,7 +77,7 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
     try {
       setLoading(true);
       console.log(userId);
-      const selected = users.find((user) => user.user_id === userId);
+      const selected = users.find((user) => user.user_id === userId); 
       if (selected) {
         setSelectedUser({ ...selected });
         
@@ -182,7 +182,7 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
                   </div>
                   <button
                     className="px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#be123c]"
-                    onClick={() => handleViewDetails(user.user_id)}
+                    onClick={() => handleViewDetails(user.user_id)} 
                   >
                     Zie Details
                   </button>
