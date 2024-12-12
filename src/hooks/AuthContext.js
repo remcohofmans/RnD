@@ -78,10 +78,9 @@ export function AuthProvider({ children }) {
       console.log("Sign-in data: ", userData);
 
       if (!userData || userData.length === 0) {
-        setError("This account does was deleted");
-        return { success: false, error: "Dit account bestaat niet of was verwijderd" }; // Stop further execution
+        setError("This account was deleted");
+        return { success: false, error};
       }
-
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -237,7 +236,7 @@ export function AuthProvider({ children }) {
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor, selectedFacility) => {
-    setLoading(true);
+    
     // Check first if the email already exists
     const { data: existingUsers, error: emailCheckError } = await supabase
       .from('users') // Query the users table in Supabase
@@ -424,7 +423,8 @@ export function AuthProvider({ children }) {
   };
 
   const restoreSession = useCallback(async () => {
-    setLoading(true);
+    //setLoading(true);
+    console.log('test restore 1')
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
@@ -434,6 +434,8 @@ export function AuthProvider({ children }) {
         setUser(sessionUser);
         await fetchUserRole(sessionUser.id);
       }
+
+      console.log('test restore 2')
 
       const { data: userData, error: userError } = await supabase
         .from('users')
@@ -457,7 +459,23 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [fetchUserRole, logoutAndNavigate]); // Add dependencies here
+  }, [fetchUserRole, logoutAndNavigate]);
+
+  const fetchCurrentSubscription = async (navigate) => {
+    try {
+      const { data: subscriptionCheck, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('subscription')
+      .eq('user_id', user.id);
+
+      if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
+
+      return subscriptionCheck[0].subscription;
+
+    } catch (err) {
+      console.error('Error during the fetching of the subscription: ', err.message);
+    }
+  };
 
   // Restore session on app load
   useEffect(() => {
@@ -473,8 +491,9 @@ export function AuthProvider({ children }) {
       fetchProfilePictureUrl, updateAccessStatus,
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
-      fetchSubscriptionRequests, updateSubscription,
-      checkSubscription, restoreSession, pauseAccount
+      fetchSubscriptionRequests, updateSubscription, 
+      checkSubscription, restoreSession, pauseAccount, fetchCurrentSubscription
+
     }}>
       {children}
     </AuthContext.Provider>

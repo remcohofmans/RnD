@@ -41,22 +41,22 @@ const SubscriptionRequests = () => {
 
   const checkoutBasis = (payAnnually) => {
 
-    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
-    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+    payAnnually ? window.location.href ="https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Basis-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
 const checkoutGevorderd = (payAnnually) => {
 
-    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
-    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+    payAnnually ? window.location.href ="https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Gevorderd-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
 const checkoutElite = (payAnnually) => {
 
-    payAnnually ? window.location.href ="https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
-    window.location.href = "https://vlinder-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
+    payAnnually ? window.location.href ="https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Yearly&subscription_items[quantity][0]=1&layout=in_app" :
+    window.location.href = "https://vlindersaas-test.chargebee.com/hosted_pages/checkout?subscription_items[item_price_id][0]=Elite-EUR-Monthly&subscription_items[quantity][0]=1&layout=in_app";
 
 };
 
@@ -76,7 +76,8 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
   const handleViewDetails = async (userId) => {
     try {
       setLoading(true);
-      const selected = users.find((user) => user.id === userId);
+      console.log(userId);
+      const selected = users.find((user) => user.user_id === userId); 
       if (selected) {
         setSelectedUser({ ...selected });
         
@@ -181,7 +182,7 @@ const goToCheckout = async (selectedSubscription,payAnnually) => {
                   </div>
                   <button
                     className="px-4 py-2 bg-[#f43f5e] text-white rounded hover:bg-[#be123c]"
-                    onClick={() => handleViewDetails(user.id)}
+                    onClick={() => handleViewDetails(user.user_id)} 
                   >
                     Zie Details
                   </button>
