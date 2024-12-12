@@ -20,10 +20,10 @@ const Home = () => {
   useEffect(() => {
     checkSubscription(navigate);
     const fetchSubscription = async () => {
-      const subscriptionDate = await fetchCurrentSubscription();
+      const subscription= await fetchCurrentSubscription();
 
-      if (subscriptionDate) {
-        const currentSubscription = subscriptionDate;
+      if (subscription) {
+        const currentSubscription = subscription;
 
         if (currentSubscription === "FREE") {
           setFreeTrial(true);
@@ -32,14 +32,6 @@ const Home = () => {
         console.log('subscription', currentSubscription);
       }
     }
-    
-
-    const currentSubscription = fetchCurrentSubscription();
-
-    if (currentSubscription === "FREE") {
-      setFreeTrial(true);
-    }
-    console.log('subscription', currentSubscription);
 
 
     if (role === 'STAFF_MEMBER') {

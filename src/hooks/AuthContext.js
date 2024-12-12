@@ -469,7 +469,7 @@ export function AuthProvider({ children }) {
 
       if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
 
-      return subscriptionCheck[0].subscription
+      return subscriptionCheck[0].subscription;
 
     } catch (err) {
       console.error('Error during the fetching of the subscription: ', err.message);
