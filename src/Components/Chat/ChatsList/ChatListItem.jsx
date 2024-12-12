@@ -112,35 +112,33 @@ export const ChatListItem = ({ match, isSelected, onSelect }) => {
       className={`cursor-pointer hover:bg-rose-50 transition-colors duration-150 ease-in-out ${isSelected ? 'bg-rose-50' : ''}`}
       onClick={() => onSelect(match.match_id)}
     >
-      <div className="p-4 flex items-center gap-3">
-        <UserPicture
-          userId={match.otherUserId}
-          category="profielAfbeelding"
-          variant="circle"
-          size="md" // Adjust size based on your design
-          fallbackText={match.otherUserName || 'U'}
-        />
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-rose-900 flex items-center gap-1">
-            {match.otherUserName || 'Unknown name in db'}
-            {loveLikeStatus !== null && (
-              <p>
-                {console.log("Rendering loveLikeStatus:", loveLikeStatus)}
-                {loveLikeStatus ? '❤️' : '🤝'}
-              </p>
-            )}
-
-          </h3>
-          {lastMessage && (
-            <p className="text-sm text-gray-600 truncate mt-1">
-              {lastMessage.message.length > 30
-                ? lastMessage.message.slice(0, 25) + '...'
-                : lastMessage.message}
-            </p>
-          )}
-        </div>
-        <StatusBadge />
-      </div>
+      <div className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+  <UserPicture 
+    userId={match.otherUserId}
+    category="profielAfbeelding"
+    variant="circle"
+    size="md" // Keeping original size
+    fallbackText={match.otherUserName || 'U'}
+  />
+  <div className="flex-1 min-w-0">
+    <h3 className="text-sm sm:text-lg font-semibold text-rose-900 flex items-center gap-1">
+      <span className="truncate">{match.otherUserName || 'Unknown name in db'}</span>
+      {loveLikeStatus !== null && (
+        <span className="text-xs sm:text-base">
+          {loveLikeStatus ? '❤️' : '🤝'}
+        </span>
+      )}
+    </h3>
+    {lastMessage && (
+      <p className="text-xs sm:text-sm text-gray-600 truncate">
+        {lastMessage.message.length > 30
+          ? lastMessage.message.slice(0, 25) + '...'
+          : lastMessage.message}
+      </p>
+    )}
+  </div>
+  <StatusBadge />
+</div>
     </li>
   );
 };
