@@ -12,7 +12,7 @@ import FeedFriends from './Components/FeedFriends';
 import SettingsUser from './Components/UserSettings/SettingsUser';
 import SettingsMentor from './Components/MentorSettings/SettingsMentor';
 import CompleteRegistration from './Components/Auth/CompleteRegistration';
-import SubscriptionPlans from './Components/SubscriptionPlans'
+import SubscriptionPlans from './Components/UserSettings/SubscriptionPlans';
 import AccessRequests from './Components/AccessRequests';
 
 import MainLayout from './MainLayout';

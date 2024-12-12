@@ -13,12 +13,34 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPausedModalOpen, setIsPausedModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const { user, role, checkSubscription, logoutAndNavigate } = useAuth();
+  const { user, role, checkSubscription, logoutAndNavigate, fetchCurrentSubscription } = useAuth();
+  const [freeTrial, setFreeTrial] = useState(false);
   const email = user?.email;
 
   useEffect(() => {
-    track('go to feed');
     checkSubscription(navigate);
+    const fetchSubscription = async () => {
+      const subscriptionDate = await fetchCurrentSubscription();
+
+      if (subscriptionDate) {
+        const currentSubscription = subscriptionDate;
+
+        if (currentSubscription === "FREE") {
+          setFreeTrial(true);
+        }
+
+        console.log('subscription', currentSubscription);
+      }
+    }
+    
+
+    const currentSubscription = fetchCurrentSubscription();
+
+    if (currentSubscription === "FREE") {
+      setFreeTrial(true);
+    }
+    console.log('subscription', currentSubscription);
+
 
     if (role === 'STAFF_MEMBER') {
       navigate('/settingsMentor');
@@ -51,6 +73,7 @@ const Home = () => {
         fetchUserName();
       }
     }
+    fetchSubscription();
   }, [navigate, role, user]);
 
   const handleGoToFeed = useCallback(async () => {
@@ -187,6 +210,19 @@ const Home = () => {
               Ontdek Matches
             </button>
           </motion.div>
+
+          { freeTrial && (
+            <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="mt-6 mb-8"
+          >
+              <p className="text-gray-500">
+                Je gratis proefperiode eindigt binnenkort. Geniet ervan!
+              </p>
+            </motion.div>
+          )}
         </div>
       </header>
 

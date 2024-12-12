@@ -135,6 +135,10 @@ const UserCard = ({ user, currentUserId, showLoveButton = true, theme = 'pink' }
           setAlertMessage('Er is een fout opgetreden bij het maken van de match, probeer het opnieuw.');
           return;
         }
+        track('users matched', {
+          userOne: currentUserId,
+          userTwo: user.id
+        })
 
         const deleteLikes = await Promise.all([supabase
             .from('likes')

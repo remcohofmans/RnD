@@ -460,6 +460,22 @@ export function AuthProvider({ children }) {
     }
   }, [fetchUserRole, logoutAndNavigate]); // Add dependencies here
 
+  const fetchCurrentSubscription = async (navigate) => {
+    try {
+      const { data: subscriptionCheck, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('subscription')
+      .eq('user_id', user.id);
+
+      if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
+
+      return subscriptionCheck[0].subscription
+
+    } catch (err) {
+      console.error('Error during the fetching of the subscription: ', err.message);
+    }
+  };
+
   // Restore session on app load
   useEffect(() => {
     restoreSession();
@@ -475,7 +491,7 @@ export function AuthProvider({ children }) {
       deleteUser, fetchUsersByFacility, fetchMentorFacility,
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
       fetchSubscriptionRequests, updateSubscription, 
-      checkSubscription, restoreSession, pauseAccount
+      checkSubscription, restoreSession, pauseAccount, fetchCurrentSubscription
     }}>
       {children}
     </AuthContext.Provider>

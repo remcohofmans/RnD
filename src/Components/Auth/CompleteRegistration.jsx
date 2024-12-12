@@ -55,7 +55,7 @@ const CompleteProfile = () => {
         .from('subscriptions')
         .insert({
           user_id: user.id,
-          subscription: 'BASIS',
+          subscription: 'FREE',
           end_date: endDate,
           active: false
         })

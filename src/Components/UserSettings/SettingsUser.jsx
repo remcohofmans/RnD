@@ -5,7 +5,7 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import UserFilterForm from './UserFilterForm';
 import PasswordChangeForm from './PasswordChangeForm';
 import ProfielPauzeren from './ProfielPauzeren';
-import SubscriptionPlans from '../SubscriptionPlans';
+import SubscriptionPlans from './SubscriptionPlans';
 import { useSearchParams } from 'react-router-dom';
 
 const SettingsUser = () => {
