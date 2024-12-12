@@ -19,6 +19,7 @@ const Feed = () => {
   const [mustSpin, setMustSpin] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [touchedSpin, setTouchedSpin] = useState(false); // Track if the wheel has spun
 
   const isDistanceServiceInitialized = useDistanceMatrixService();
   const USERS_TO_FETCH = 9;
@@ -50,7 +51,7 @@ const Feed = () => {
       setError('Er ging iets mis bij het controleren van je toegang.');
       return false;
     } finally {
-      setCheckingAccess(false);  // New line
+      setCheckingAccess(false);
     }
   };
 
@@ -59,12 +60,11 @@ const Feed = () => {
       console.error("Distance Matrix Service not ready.");
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
-      // Fetch necessary data in parallel
       const [
         userPreferencesRes,
         currentUserRes,
@@ -95,50 +95,50 @@ const Feed = () => {
           .select('id, birthday, name, facility_id, gender, status')
           .eq('access_granted', 'YES')
       ]);
-  
+
       const { data: userPreferences, error: userPreferencesError } = userPreferencesRes;
       const { data: currentUser, error: currentUserError } = currentUserRes;
       const { data: likedUsers } = likedUsersRes;
       const { data: matchedUsers } = matchedUsersRes;
       const { data: fetchedUsers } = fetchedUsersRes;
-  
+
       if (userPreferencesError || currentUserError) {
         throw new Error("Failed to fetch user preferences or current user data.");
       }
-  
+
       if (!currentUser?.facility_id) {
         throw new Error("Your location is not set. Please update your profile.");
       }
-  
+
       const currentUserFacility = await supabase
         .from('facility_enum')
         .select('city')
         .eq('id', currentUser.facility_id)
         .single();
-  
+
       const currentUserCity = currentUserFacility?.data?.city;
       if (!currentUserCity) {
         throw new Error("Failed to fetch your facility details.");
       }
-  
+
       const likedUserIds = likedUsers.map((like) => like.liked_user_id);
       const matchedUserIds = matchedUsers.map((match) => match.matched_user_id);
       const excludedUserIds = new Set([...likedUserIds, ...matchedUserIds, user.id]);
-  
+
       const maxDistance = userPreferences.distance;
       const minAge = userPreferences.min_age;
       const maxAge = userPreferences.max_age;
       const interest = userPreferences.interest;
-  
+
       const facilities = await supabase
         .from('facility_enum')
         .select('id, name, city');
-  
+
       const facilityMap = facilities.data.reduce((acc, facility) => {
         acc[facility.id] = facility;
         return acc;
       }, {});
-  
+
       const usersWithDetails = await Promise.all(
         fetchedUsers
           .filter(
@@ -153,26 +153,26 @@ const Feed = () => {
           .map(async (potentialUser) => {
             const age = calculateAge(potentialUser.birthday);
             if (age < minAge || age > maxAge) return null;
-  
+
             if (
               interest !== 'geen-voorkeur' &&
               potentialUser.gender !== interest
             ) {
               return null;
             }
-  
+
             const facility = facilityMap[potentialUser.facility_id];
             if (!facility) return null;
-  
+
             const distance = await calculateDistance(currentUserCity, facility.city);
             if (parseFloat(distance) > maxDistance) return null;
-  
+
             const preferencesData = await supabase
               .from('preferences')
               .select('hobbies')
               .eq('id', potentialUser.id)
               .single();
-  
+
             return {
               id: potentialUser.id,
               name: potentialUser.name || 'Anonymous',
@@ -185,7 +185,7 @@ const Feed = () => {
             };
           })
       );
-  
+
       setUsers(shuffle(usersWithDetails.filter(Boolean)).slice(0, USERS_TO_FETCH));
     } catch (error) {
       setError(error.message);
@@ -193,7 +193,6 @@ const Feed = () => {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     const initializeFeed = async () => {
@@ -203,29 +202,13 @@ const Feed = () => {
         checkSubscription(navigate);
       }
     };
-  
+
     initializeFeed();
   }, [isDistanceServiceInitialized]);
-  
-
-  // const wheelData = users.map((user, index) => ({
-  //   option: user.name,
-  //   style: {
-  //     backgroundColor: index % 3 === 0 ? '#fff1f2' : index % 3 === 1 ? '#fb7185' : '#881337',
-  //     textColor: index % 3 === 0 ? '#881337' : '#fff1f2'
-  //   }
-  // }));
-
-  // const handleSpinClick = () => {
-  //   if (!mustSpin) {
-  //     const newIndex = Math.floor(Math.random() * users.length);
-  //     setCurrentIndex(newIndex);
-  //     setMustSpin(true);
-  //   }
-  // };
 
   const handleWheelStop = () => {
     setMustSpin(false);
+    setTouchedSpin(true); // Update the touchedSpin state after the wheel stops spinning
   };
 
   // Show skeleton loader while checking access
@@ -327,7 +310,12 @@ const Feed = () => {
               </div>
             ) : (
               <div className="w-full flex items-center justify-center">
-                <UserCard user={users[currentIndex]} currentUserId={user.id} showLoveButton={true} />
+                <UserCard
+                  user={users[currentIndex]}
+                  currentUserId={user.id}
+                  showLoveButton={true}
+                  touchedSpin={touchedSpin} // Pass touchedSpin prop here
+                />
               </div>
             )}
           </div>

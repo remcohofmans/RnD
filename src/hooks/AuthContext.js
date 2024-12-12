@@ -11,17 +11,17 @@ export function AuthProvider({ children }) {
 
   // Existing functions for mentor, user and profile management...
 
-  const pauseAccount = async(userId) => {
-    const {error } = await supabase
-        .from('users')
-        .update({ status: "PAUSED" })
-        .eq('id', userId);
+  const pauseAccount = async (userId) => {
+    const { error } = await supabase
+      .from('users')
+      .update({ status: "PAUSED" })
+      .eq('id', userId);
 
-      if(error) throw error;
-      else{
-        logoutAndNavigate();
-      }
-};
+    if (error) throw error;
+    else {
+      logoutAndNavigate();
+    }
+  };
 
   const fetchUsersForMentor = async (mentorId) => {
     try {
@@ -62,26 +62,26 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
 
-      console.log('Email of client signing in:',email);
-      
-      const {data: userData, error: userError} = await supabase
+      console.log('Email of client signing in:', email);
+
+      const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
         .ilike('email', email);
-      
+
       if (userError) {
-        
+
         console.error("Error fetching user data:", userError.message);
         throw new Error("Failed to verify account.");
       }
-  
+
       console.log("Sign-in data: ", userData);
-  
+
       if (!userData || userData.length === 0) {
         setError("This account does was deleted");
         return { success: false, error: "Dit account bestaat niet of was verwijderd" }; // Stop further execution
       }
-      
+
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -183,8 +183,8 @@ export function AuthProvider({ children }) {
     try {
       const { error } = await supabase.from('users').delete().eq('id', userId);
       if (error) throw new Error('Failed to delete user');
-      
-      
+
+
     } catch (err) {
       console.error('Error deleting user:', err.message);
       throw err;
@@ -214,7 +214,7 @@ export function AuthProvider({ children }) {
   const fetchMentorFacility = async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+
 
       if (userError) throw new Error('Failed to fetch user information');
 
@@ -225,7 +225,7 @@ export function AuthProvider({ children }) {
         .eq('id', mentorId)
         .single();
 
-        console.log('mentorData: ',mentorData.facility_id);
+      console.log('mentorData: ', mentorData.facility_id);
 
       if (mentorError) throw new Error('Failed to fetch mentor facility');
       return mentorData.facility_id;
@@ -237,42 +237,41 @@ export function AuthProvider({ children }) {
 
   // Function for email/password sign-up
   const signUpWithEmail = async (email, password, isMentor, selectedFacility) => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) throw new Error(`Sign-up failed: ${error.message}`);
+    
+    // Check first if the email already exists
+    const { data: existingUsers, error: emailCheckError } = await supabase
+      .from('users') // Query the users table in Supabase
+      .select('id') // Only select the ID field to reduce data payload
+      .ilike('email', email);
 
-      const newUser = data.user;
-      const role = isMentor ? 'STAFF_MEMBER' : 'USER';
-
-      const { data: facilityData, error: facilityError } = await supabase
-        .from('facility_enum')
-        .select('id')
-        .eq('name', selectedFacility);
-
-      if (facilityError) throw new Error(`Failed to fetch facility ID: ${facilityError.message}`);
-      const facilityId = facilityData[0]?.id;
-
-      console.log(facilityId);
-
-      const { error: userError } = await supabase.from('users').upsert({
-        id: newUser.id,
-        email,
-        role,
-        facility_id: facilityId,
-      });
-
-      if (userError) throw new Error(`Failed to insert user into the database: ${userError.message}`);
-
-      setUser(newUser);
-      setRole(role);
-      setError(null);
-    } catch (err) {
-      console.error('Error signing up:', err.message);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (emailCheckError) throw new Error(emailCheckError.message);
+    if (existingUsers.length > 0) {
+      throw new Error('Email is reeds gekoppeld aan een bestaand account.');
     }
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw new Error(error.message);
+
+    const newUser = data.user;
+    const role = isMentor ? 'STAFF_MEMBER' : 'USER';
+
+    const { data: facilityData, error: facilityError } = await supabase
+      .from('facility_enum')
+      .select('id')
+      .eq('name', selectedFacility);
+
+    const facilityId = facilityData[0]?.id;
+
+    const { error: userError } = await supabase.from('users').upsert({
+      id: newUser.id,
+      email,
+      role,
+      facility_id: facilityId,
+    });
+
+    setUser(newUser);
+    setRole(role);
+    setError(null);
   };
 
   // Logout function
@@ -291,7 +290,7 @@ export function AuthProvider({ children }) {
 
   const deleteCurrentUserAccount = async () => {
     try {
-      
+
       const {
         data: { user },
         error: userError,
@@ -309,7 +308,7 @@ export function AuthProvider({ children }) {
       if (deleteError) {
         throw new Error('Failed to delete user data.');
       }
-  
+
       return true; // Deletion successful
     } catch (err) {
       console.error('Error deleting account:', err.message);
@@ -331,9 +330,9 @@ export function AuthProvider({ children }) {
   const checkSubscription = async (navigate) => {
     try {
       const { data: subscriptionCheck, error: subscriptionError } = await supabase
-      .from('subscriptions')
-      .select('active, end_date')
-      .eq('user_id', user.id);
+        .from('subscriptions')
+        .select('active, end_date')
+        .eq('user_id', user.id);
 
       if (subscriptionError) throw new Error('Error fetching subscription', subscriptionError);
       else {
@@ -353,7 +352,7 @@ export function AuthProvider({ children }) {
 
   const fetchSubscriptionRequests = async (mf) => {
     try {
-      console.log('mf: ',mf);
+      console.log('mf: ', mf);
       console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
 
       const mentorFacility = parseInt(mf, 8);  // Convert to integer
@@ -362,47 +361,47 @@ export function AuthProvider({ children }) {
 
       // Fetch subscription requests using the 'subs' function
       const { data: subscriptions, error: subscriptionsError } = await supabase
-        .rpc('fetch_subscription_requests', { mentorfacility : mentorFacility });
+        .rpc('fetch_subscription_requests', { mentorfacility: mentorFacility });
       if (subscriptionsError) {
         console.error('Error fetching subscription requests:', subscriptionsError.message);
         throw subscriptionsError;
       }
-  
+
       console.log('Subscriptions:', subscriptions);
-      
+
 
       const userIds = subscriptions.map(sub => sub.user_id);
 
       const { data: users, error: usersError } = await supabase
-      .from('users')
-      .select('id, name, email')  // Assuming there's a 'name' column
-      .in('id', userIds);  // Filter users by the extracted user_ids
+        .from('users')
+        .select('id, name, email')  // Assuming there's a 'name' column
+        .in('id', userIds);  // Filter users by the extracted user_ids
 
-    if (usersError) {
-      console.error('Error fetching user names:', usersError.message);
-      throw usersError;
-    }
+      if (usersError) {
+        console.error('Error fetching user names:', usersError.message);
+        throw usersError;
+      }
 
-    console.log('Users:', users);
+      console.log('Users:', users);
 
-    const subscriptionsWithNames = subscriptions.map(sub => {
-      const user = users.find(user => user.id === sub.user_id);
-      return { ...sub, name: user ? user.name : 'Unknown',email: user.email };
-    });
+      const subscriptionsWithNames = subscriptions.map(sub => {
+        const user = users.find(user => user.id === sub.user_id);
+        return { ...sub, name: user ? user.name : 'Unknown', email: user.email };
+      });
 
-    console.log('Subscriptions with User Names:', subscriptionsWithNames);
+      console.log('Subscriptions with User Names:', subscriptionsWithNames);
       return subscriptionsWithNames;
-  
+
     } catch (err) {
       console.error('Error fetching subscription requests:', err.message);
       throw err;
     }
   };
 
-  const updateSubscription = async (userId, sub,pay) => {
+  const updateSubscription = async (userId, sub, pay) => {
     try {
 
-      console.log("UserID: ",userId," with request for ",sub);
+      console.log("UserID: ", userId, " with request for ", sub);
 
       const { error } = await supabase
         .from('subscriptions')
@@ -410,13 +409,13 @@ export function AuthProvider({ children }) {
           subscription: sub,          // Correct field name for subscription
           subscription_request: sub,  // Correct field name for subscription request
           annual_payment: pay,
-          annual_payment_request:pay
-          
+          annual_payment_request: pay
+
         })
         .eq('user_id', userId);
-  
+
       if (error) throw error;
-  
+
       return true; // Success
     } catch (error) {
       console.error('Error updating subscription status:', error.message);
@@ -425,29 +424,32 @@ export function AuthProvider({ children }) {
   };
 
   const restoreSession = useCallback(async () => {
-    setLoading(true);
+    //setLoading(true);
+    console.log('test restore 1')
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
-  
+
       const sessionUser = data.session?.user;
       if (sessionUser) {
         setUser(sessionUser);
         await fetchUserRole(sessionUser.id);
       }
-  
+
+      console.log('test restore 2')
+
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('id')
         .eq('id', sessionUser.id);
-  
+
       if (userError) {
         console.error("Error fetching user data:", userError.message);
         throw new Error("Failed to verify account.");
       }
-  
+
       console.log("Data obtained on restoring session: ", userData);
-  
+
       if (!userData || userData.length === 0) {
         logoutAndNavigate();
       }
@@ -458,7 +460,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [fetchUserRole, logoutAndNavigate]); // Add dependencies here
+  }, [fetchUserRole, logoutAndNavigate]);
 
   const fetchCurrentSubscription = async (navigate) => {
     try {
@@ -480,7 +482,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     restoreSession();
   }, []); // Use the stable reference
-  
+
 
   return (
     <AuthContext.Provider value={{
@@ -492,6 +494,7 @@ export function AuthProvider({ children }) {
       fetchUserRole, deleteCurrentUserAccount, logoutAndNavigate,
       fetchSubscriptionRequests, updateSubscription, 
       checkSubscription, restoreSession, pauseAccount, fetchCurrentSubscription
+
     }}>
       {children}
     </AuthContext.Provider>
