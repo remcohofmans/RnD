@@ -78,10 +78,9 @@ export function AuthProvider({ children }) {
       console.log("Sign-in data: ", userData);
 
       if (!userData || userData.length === 0) {
-        setError("This account does was deleted");
-        return { success: false, error: "Dit account bestaat niet of was verwijderd" }; // Stop further execution
+        setError("This account was deleted");
+        return { success: false, error};
       }
-
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 

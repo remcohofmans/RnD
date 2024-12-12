@@ -54,8 +54,9 @@ const LoginRegister = () => {
           console.log('Logged in successfully:', response.user);
           navigate("/");
         } else {
-          if (response.error.toString() == "Invalid login credentials") {
+          if (response.error) {
             setLoginError("Ongeldig e-mailadres of wachtwoord");
+            console.log("Invalid log-in credentials");
           }
           console.log('Log-in failed:', response.error);
         }
