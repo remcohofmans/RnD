@@ -54,6 +54,8 @@ const MentorBanUser = () => {
   // Handle banning a user
   const handleBanUser = async (userId) => {
     try {
+      console.log("handlebanuser");
+      console.log(userId);
       await deleteUser(userId);
       const updatedUsers = await fetchUsersByFacility(mentorFacility);
       setUsers(updatedUsers);

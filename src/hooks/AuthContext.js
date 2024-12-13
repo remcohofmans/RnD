@@ -177,18 +177,23 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Delete user (ban user by removing them from the database)
   const deleteUser = async (userId) => {
     try {
-      const { error } = await supabase.from('users').delete().eq('id', userId);
-      if (error) throw new Error('Failed to delete user');
-
-
+      const { data, error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
+  
+      if (error) {
+        throw new Error(`Failed to delete user: ${error.message}`);
+      }
+      console.log(`User with id ${userId} deleted successfully:`, data);
     } catch (err) {
-      console.error('Error deleting user:', err.message);
-      throw err;
+      console.error('Error deleting user:', err);
+      throw err; 
     }
   };
+  
 
   // Fetch users by facility
   const fetchUsersByFacility = async (facilityId) => {
