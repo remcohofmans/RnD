@@ -139,11 +139,7 @@ function AppRoutes() {
         <Route
           path="/forgotPassword"
           element={
-            <ProtectedRoute >
-              <MainLayout>
                 <PasswordRecovery />
-              </MainLayout>
-            </ProtectedRoute>
           }
         />
 

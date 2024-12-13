@@ -352,7 +352,7 @@ export function AuthProvider({ children }) {
   const fetchSubscriptionRequests = async (mf) => {
     try {
       console.log('mf: ', mf);
-      console.log('mentorFacility type:', typeof mf); // Should be INT, UUID, etc.
+      console.log('mentorFacility type:', typeof mf);  // Should be INT, UUID, etc.
 
       const mentorFacility = parseInt(mf, 8);  // Convert to integer
       console.log('mentorFacility type after conversion:', typeof mentorFacility); // Should be INT, UUID, etc.
