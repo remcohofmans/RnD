@@ -251,7 +251,7 @@ const FeedFriends = () => {
           </svg>
           <p className="text-gray-800 mb-4">
             {error
-              ? `Oeps! Er ging iets mis: ${error}`
+              ? `Geen personen gevonden, pas je filter voorkeuren aan`
               : 'Geen matches gevonden. Pas je voorkeuren aan.'}
           </p>
           <NavigationButton color='green'/>

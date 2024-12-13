@@ -354,7 +354,8 @@ export function AuthProvider({ children }) {
       console.log('mf: ', mf);
       console.log('mentorFacility type:', typeof mf);  // Should be INT, UUID, etc.
 
-      const mentorFacility = parseInt(mf, 8);  // Convert to integer
+      const mentorFacility = parseInt(mf, 10);  // Convert to integer
+      console.log("Parse: ",mentorFacility)
       console.log('mentorFacility type after conversion:', typeof mentorFacility); // Should be INT, UUID, etc.
 
 
