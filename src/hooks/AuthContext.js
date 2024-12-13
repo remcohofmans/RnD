@@ -342,7 +342,7 @@ export function AuthProvider({ children }) {
       else {
         const today = new Date();
         const endDate = new Date(subscriptionCheck[0].end_date);
-        if (subscriptionCheck[0].active === false && endDate < today) {
+        if (endDate < today) {  
           navigate('/subscription');
           console.log("Subscription ended");
         }
