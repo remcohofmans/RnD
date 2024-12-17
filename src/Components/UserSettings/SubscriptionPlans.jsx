@@ -369,14 +369,14 @@ const Subscription = () => {
                     </div>
                 </div>
                 {/* Toggle section */}
-                <div className='flex flex-col sm:flex-row items-center justify-center rounded-3xl p-4 w-full max-w-sm space-y-4 sm:space-y-0 sm:space-x-4' style={{ background: '#e11d48', color: '#fafaf9' }}>
-                    <span className='text-center sm:text-left'>Betaal maandelijks</span>
+                <div className='flex items-center justify-center rounded-3xl p-4 w-full max-w-sm space-x-4' style={{ background: '#e11d48', color: '#fafaf9' }}>
+                    <span className='text-sm sm:text-base'>Maandelijks</span>
                     <ToggleSlider
                         onToggle={state => setPayAnnually(state)}
                         barBackgroundColor='#fda4af'
                         barBackgroundColorActive='#881337'
                     />
-                    <span className='text-center sm:text-left'>Betaal jaarlijks</span>
+                    <span className='text-sm sm:text-base'>Jaarlijks</span>
                 </div>
             </div>
         </div>
