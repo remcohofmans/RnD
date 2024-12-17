@@ -1,13 +1,13 @@
 import { Check } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
-import React, { useState, useEffect} from 'react';
-import { ToggleSlider }  from "react-toggle-slider";
-import { supabase } from '../../lib/helper/supabaseClient'; 
+import React, { useState, useEffect } from 'react';
+import { ToggleSlider } from "react-toggle-slider";
+import { supabase } from '../../lib/helper/supabaseClient';
 import { useAnalytics } from '../../hooks/analyticsContext';
 
 const Subscription = () => {
-    const subscriptionBenefitItem = {icon: faCircleCheck, label: Check};
+    const subscriptionBenefitItem = { icon: faCircleCheck, label: Check };
     const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [selectedSubscription, setSelectedSubscription] = useState(false);
@@ -18,31 +18,31 @@ const Subscription = () => {
 
     const { track } = useAnalytics();
 
-    const monthlyPrices = {BASIS: 10, GEVORDERD: 17, ELITE: 20}
-    const annualPrices = {BASIS: 110, GEVORDERD: 187, ELITE: 220}
-    const annualPricesSaved = {BASIS: 120, GEVORDERD: 204, ELITE: 240}
+    const monthlyPrices = { BASIS: 10, GEVORDERD: 17, ELITE: 20 }
+    const annualPrices = { BASIS: 110, GEVORDERD: 187, ELITE: 220 }
+    const annualPricesSaved = { BASIS: 120, GEVORDERD: 204, ELITE: 240 }
 
     useEffect(() => {
         const fetchUserData = async () => {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            setUserId(session.user.id);
-            console.log("Session user ID:", session.user.id);
-            const {data: subscription, error} = await supabase
-                .from('subscriptions')
-                .select('subscription')
-                .eq('user_id', session.user.id)
-            if (error) {
-                console.log("error fetching subscription", error);
-                return;
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                setUserId(session.user.id);
+                console.log("Session user ID:", session.user.id);
+                const { data: subscription, error } = await supabase
+                    .from('subscriptions')
+                    .select('subscription')
+                    .eq('user_id', session.user.id)
+                if (error) {
+                    console.log("error fetching subscription", error);
+                    return;
+                }
+                else {
+                    setCurrentSubscription(subscription[0].subscription);
+                }
             }
-            else {
-                setCurrentSubscription(subscription[0].subscription);
-            }
-          }
         };
         fetchUserData();
-      }, []);
+    }, []);
 
     const openSubscriptionModal = (subscription) => {
         setSelectedSubscription(subscription);
@@ -70,36 +70,36 @@ const Subscription = () => {
     const handleSubscribe = async (e) => {
         console.log("subscriptionhandler entered");
         e.preventDefault();
-  
+
         if (inputVal !== 'BEVESTIG') return;
         //send mail to director using ChargeBee :)
-        const {} = await supabase.auth.getSession();
+        const { } = await supabase.auth.getSession();
         const endDate = new Date();
-        if (payAnnually){
-            endDate.setFullYear(endDate.getFullYear()+1);
+        if (payAnnually) {
+            endDate.setFullYear(endDate.getFullYear() + 1);
         }
         else {
-            endDate.setMonth(endDate.getMonth()+1);
+            endDate.setMonth(endDate.getMonth() + 1);
         }
-        
+
         const subscriptonFields = {
-                    user_id: userId,
-                    subscription_request: selectedSubscription,
-                    end_date: endDate,
-                    annual_payment_request: payAnnually,
-                    active:true
-                }
-        const {data: existingSubscription, error: fetchFailed} = await supabase
+            user_id: userId,
+            subscription_request: selectedSubscription,
+            end_date: endDate,
+            annual_payment_request: payAnnually,
+            active: true
+        }
+        const { data: existingSubscription, error: fetchFailed } = await supabase
             .from('subscriptions')
             .select('*')
             .eq('user_id', userId)
             .single();
 
         if (fetchFailed) {
-            console.log("no existing subscription", fetchFailed) 
+            console.log("no existing subscription", fetchFailed)
             //return;
         }
-        
+
         if (existingSubscription) {
             const { error } = await supabase
                 .from('subscriptions')
@@ -116,11 +116,11 @@ const Subscription = () => {
             const { error } = await supabase
                 .from('subscriptions')
                 .insert([subscriptonFields])
-            if (error){
+            if (error) {
                 console.log("inserting subscription failed", error);
             }
             console.log("subscription inserted");
-        }        
+        }
         track('Subscription Confirmed', {
             user: userId,
             subscription: selectedSubscription
@@ -133,7 +133,7 @@ const Subscription = () => {
 
     return (
         <div>
-           
+
 
             {/*Subscription Modal window*/}
             {isSubscriptionModalOpen && (
@@ -143,48 +143,48 @@ const Subscription = () => {
                         style={{ backgroundColor: '#be123c' }}
                     >
                         <form onSubmit={handleSubscribe}>
-                        
-                        <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
-                            Bevestig je aankoop!
-                        </h5>
-                        
 
-                        <div className="flex flex-col items-center text-center space-y-4" style={{ color: '#ffe4e6' }}>
-                            <div className="flex items-baseline space-x-1">
-                                <span className="text-3xl font-semibold">€</span>
-                                <span className="text-3xl font-extrabold tracking-tight">{payAnnually ? annualPrices[selectedSubscription] : monthlyPrices[selectedSubscription]}</span>
-                                <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
+                            <h5 className="mb-4 text-2xl font-bold text-center" style={{ color: '#ffe4e6' }}>
+                                Bevestig je aankoop!
+                            </h5>
+
+
+                            <div className="flex flex-col items-center text-center space-y-4" style={{ color: '#ffe4e6' }}>
+                                <div className="flex items-baseline space-x-1">
+                                    <span className="text-3xl font-semibold">€</span>
+                                    <span className="text-3xl font-extrabold tracking-tight">{payAnnually ? annualPrices[selectedSubscription] : monthlyPrices[selectedSubscription]}</span>
+                                    <span className="text-xl font-normal" style={{ color: '#fecdd3' }}>{payAnnually ? "/jaar" : "/maand"}</span>
+                                </div>
+
+                                <p className="text-sm">
+                                    Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{selectedSubscription}</span>{' '}
+                                    abonnement? Zo ja, type: <span className="font-bold">BEVESTIG</span>
+                                </p>
+
+                                <input
+                                    type="text"
+                                    placeholder="BEVESTIG"
+                                    value={inputVal}
+                                    onChange={e => setInputVal(e.target.value)}
+                                    className="w-full p-2 border-2 rounded-lg border-rose-300 text-rose-700 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                                    style={{ backgroundColor: '#ffe4e6' }}
+                                />
                             </div>
+                            <div className='flex items-start justify-between w-full space-x-4'>
+                                <button
+                                    onClick={closeSubscriptionModal}
+                                    type="button"
+                                    className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
+                                    style={{ color: '#881337', backgroundColor: '#fda4af' }}
+                                    onMouseOver={(e) => (e.target.style.backgroundColor = '#fb7185')}
+                                    onMouseOut={(e) => (e.target.style.backgroundColor = '#fda4af')}
+                                >
+                                    Terug
+                                </button>
 
-                            <p className="text-sm">
-                                Ben je zeker dat je wilt veranderen naar het <span className="font-bold">{selectedSubscription}</span>{' '}
-                                abonnement? Zo ja, type: <span className="font-bold">BEVESTIG</span>
-                            </p>
-
-                            <input
-                                type="text"
-                                placeholder="BEVESTIG"
-                                value={inputVal}
-                                onChange={e => setInputVal(e.target.value)}
-                                className="w-full p-2 border-2 rounded-lg border-rose-300 text-rose-700 focus:ring-rose-500 focus:border-rose-500 outline-none"
-                                style={{ backgroundColor: '#ffe4e6' }}
-                            />
-                        </div>
-                        <div  className='flex items-start justify-between w-full space-x-4'>
-                            <button 
-                                onClick={closeSubscriptionModal}
-                                type="button"
-                                className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
-                                style={{ color: '#881337', backgroundColor: '#fda4af' }}
-                                onMouseOver={(e) => (e.target.style.backgroundColor = '#fb7185')}
-                                onMouseOut={(e) => (e.target.style.backgroundColor = '#fda4af')}
-                            >
-                                Terug
-                            </button>
-                            
                                 <button
                                     type="submit"
-                                    disabled={inputVal!=='BEVESTIG'}
+                                    disabled={inputVal !== 'BEVESTIG'}
                                     className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
                                     style={{ color: '#881337', backgroundColor: '#fff1f2' }}
                                     onMouseOver={(e) => (e.target.style.backgroundColor = '#fecdd3')}
@@ -192,8 +192,8 @@ const Subscription = () => {
                                 >
                                     Abonneer
                                 </button>
-                            
-                        </div>
+
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -210,7 +210,7 @@ const Subscription = () => {
                             Bedankt voor je aankoop!
                         </h5>
                         <span style={{ color: '#ffe4e6' }}>De betaling zal doorgevoerd worden via je faciliteit. We wachten nog op de bevestiging van je mentor. Daarna kan je genieten van je nieuwe abonnement!</span>
-                        <button 
+                        <button
                             onClick={closeFeedbackModal}
                             type="button"
                             className="mt-6 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center transition duration-300"
@@ -225,8 +225,8 @@ const Subscription = () => {
             )}
 
             {/* Subscription cards section */}
-            <div className='flex flex-col items-center justify-center min-h-screen p-4 pb-32 sm:pb-24'>
-                <div className='flex flex-col lg:flex-row justify-center items-center w-full mb-16 sm:mb-12'>
+            <div className='flex flex-col items-center justify-center min-h-screen p-4 mt-12 md:mt-16'>
+                <div className='flex flex-col lg:flex-row justify-center items-center w-full'>
                     {/* Basis Plan */}
                     <div
                         className={
@@ -241,27 +241,28 @@ const Subscription = () => {
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.BASIS : monthlyPrices.BASIS}</span>
                             <span className="ms-1 text-xl font-normal text-neutral-50">{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
-                        
+
                         <ul role="list" className="space-y-5 my-7">
 
                             <li className="flex items-center">
-                                <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Limiet van 10 keer draaien aan het rad per dag</span>
                             </li>
 
                         </ul>
 
-                        <button 
-                        onClick={() => openSubscriptionModal('BASIS')} 
-                        disabled={currentSubscription === 'BASIS'}
-                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
-                        style={{ color: '#881337', 
-                            backgroundColor: '#fafafa', 
-                            hover: { backgroundColor: '#fecdd3' },
-                            cursor:  currentSubscription === 'BASIS' ? 'not-allowed' : 'pointer'
+                        <button
+                            onClick={() => openSubscriptionModal('BASIS')}
+                            disabled={currentSubscription === 'BASIS'}
+                            type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center"
+                            style={{
+                                color: '#881337',
+                                backgroundColor: '#fafafa',
+                                hover: { backgroundColor: '#fecdd3' },
+                                cursor: currentSubscription === 'BASIS' ? 'not-allowed' : 'pointer'
                             }}>{currentSubscription === 'BASIS' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
@@ -271,7 +272,7 @@ const Subscription = () => {
                             "w-full lg:w-1/3 max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-gray-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms] mb-8 lg:mb-0 lg:mx-4" +
                             (currentSubscription === "GEVORDERD" ? " border-4 border-neutral-50 ring-4 ring-gray-400" : "")
                         }
-                    >                        
+                    >
                         <h5 className="mb-4 text-xl font-bold text-neutral-50">Gevorderd</h5>
                         <div className="flex items-baseline text-neutral-50">
                             <span className="text-3xl font-semibold text-neutral-50">€</span>
@@ -279,20 +280,20 @@ const Subscription = () => {
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.GEVORDERD : monthlyPrices.GEVORDERD}</span>
                             <span className="ms-1 text-xl font-normal text-neutral-50">{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
-                        
+
                         <ul role="list" className="space-y-5 my-7">
                             <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300 hover:text-rose-700"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300 hover:text-rose-700"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3 text-neutral-50">Alles van het basisabonnement</span>
                             </li>
 
                             <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 20 keer draaien aan het rad per dag
                                 </span>
@@ -300,15 +301,16 @@ const Subscription = () => {
 
                         </ul>
 
-                        <button 
-                        onClick={() => openSubscriptionModal('GEVORDERD')} 
-                        disabled={currentSubscription === 'GEVORDERD'}
-                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
-                        style={{ color: '#881337', 
-                        backgroundColor: '#fafafa', 
-                        hover: { backgroundColor: '#fecdd3' },
-                        cursor:  currentSubscription === 'GEVORDERD' ? 'not-allowed' : 'pointer'
-                        }}>{currentSubscription === 'GEVORDERD' ? 'Huidig plan' : 'Kies plan'}</button>
+                        <button
+                            onClick={() => openSubscriptionModal('GEVORDERD')}
+                            disabled={currentSubscription === 'GEVORDERD'}
+                            type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center"
+                            style={{
+                                color: '#881337',
+                                backgroundColor: '#fafafa',
+                                hover: { backgroundColor: '#fecdd3' },
+                                cursor: currentSubscription === 'GEVORDERD' ? 'not-allowed' : 'pointer'
+                            }}>{currentSubscription === 'GEVORDERD' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
 
                     {/* Elite Plan */}
@@ -317,7 +319,7 @@ const Subscription = () => {
                             "w-full lg:w-1/3 max-w-sm p-4 rounded-lg drop-shadow-lg sm:p-8 bg-amber-400 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.5)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-no-repeat px-8 py-16 shadow-2xl transition-[background-position_0s_ease] hover:bg-[position:200%_0,0_0] hover:duration-[1500ms] mb-16 lg:mb-0 lg:mx-4" +
                             (currentSubscription === "ELITE" ? " border-4 border-neutral-50 ring-4 ring-amber-400" : "")
                         }
-                    >           
+                    >
                         <h5 className="mb-4 text-xl font-bold" style={{ color: '#fafafa' }}>Elite</h5>
                         <div className="flex items-baseline" style={{ color: '#fafafa' }}>
                             <span className="text-3xl font-semibold">€</span>
@@ -325,59 +327,59 @@ const Subscription = () => {
                             <span className="text-5xl font-extrabold tracking-tight">{payAnnually ? annualPrices.ELITE : monthlyPrices.ELITE}</span>
                             <span className="ms-1 text-xl font-normal" style={{ color: '#fafafa' }}>{payAnnually ? "/jaar" : "/maand"}</span>
                         </div>
-                        
+
                         <ul role="list" className="space-y-5 my-7">
                             <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Alles van het gevorderde abonnement</span>
                             </li>
 
                             <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Limiet van 40 keer draaien aan het rad per dag
                                 </span>
                             </li>
 
                             <li className="flex items-center">
-                            <FontAwesomeIcon 
-                                icon = {subscriptionBenefitItem.icon}
-                                className="text-white text-base transition duration-300"
+                                <FontAwesomeIcon
+                                    icon={subscriptionBenefitItem.icon}
+                                    className="text-white text-base transition duration-300"
                                 />
                                 <span className="text-base font-normal leading-tight ms-3" style={{ color: '#fafafa' }}>Grootste mogelijkheid tot matches
                                 </span>
                             </li>
                         </ul>
 
-                        <button 
-                        onClick={() => openSubscriptionModal('ELITE')} 
-                        disabled={currentSubscription === 'ELITE'}
-                        type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center" 
-                        style={{ color: '#881337', 
-                            backgroundColor: '#fafafa', 
-                            hover: { backgroundColor: '#fecdd3' },
-                            cursor:  currentSubscription === 'ELITE' ? 'not-allowed' : 'pointer'
+                        <button
+                            onClick={() => openSubscriptionModal('ELITE')}
+                            disabled={currentSubscription === 'ELITE'}
+                            type="button" className="font-medium rounded-lg text-sm px-5 py-2.5 inline-flex justify-center w-full text-center"
+                            style={{
+                                color: '#881337',
+                                backgroundColor: '#fafafa',
+                                hover: { backgroundColor: '#fecdd3' },
+                                cursor: currentSubscription === 'ELITE' ? 'not-allowed' : 'pointer'
                             }}>{currentSubscription === 'ELITE' ? 'Huidig plan' : 'Kies plan'}</button>
                     </div>
                 </div>
-
                 {/* Toggle section */}
-                <div className='flex flex-col sm:flex-row items-center mb-8 justify-center rounded-3xl p-4 sm:p-4 w-full max-w-sm' style={{background: '#e11d48', color: '#fafaf9'}}>
-                    <span className='mb-4 sm:mb-0 sm:mr-4'>Betaal maandelijks</span>
+                <div className='flex flex-col sm:flex-row items-center justify-center rounded-3xl p-4 w-full max-w-sm space-y-4 sm:space-y-0 sm:space-x-4' style={{ background: '#e11d48', color: '#fafaf9' }}>
+                    <span className='text-center sm:text-left'>Betaal maandelijks</span>
                     <ToggleSlider
                         onToggle={state => setPayAnnually(state)}
                         barBackgroundColor='#fda4af'
                         barBackgroundColorActive='#881337'
                     />
-                    <span className='mt-4 sm:mt-0 sm:ml-4'>Betaal jaarlijks</span>
+                    <span className='text-center sm:text-left'>Betaal jaarlijks</span>
                 </div>
-            </div>  
-        </div>        
+            </div>
+        </div>
     );
 
 };

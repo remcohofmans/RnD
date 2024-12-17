@@ -2,7 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import LoginRegister from '../Components/Auth/LoginRegister';
-import { AuthProvider } from '../hooks/AuthContext';
+import AuthProvider from '../hooks/AuthContext';
+import LoginWrapper from '../LoginWrapper';
 
 
 // Mock supabase and react-router-dom
@@ -28,12 +29,14 @@ jest.mock('../hooks/AuthContext', () => ({
 }));
 
 const renderComponent = () => {
-  return render(
-    <BrowserRouter>
+  render(
     <AuthProvider>
-      <LoginRegister/>
-      </AuthProvider>
-    </BrowserRouter>
+      <BrowserRouter>
+        <LoginWrapper>
+          <LoginRegister />
+        </LoginWrapper>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 
