@@ -23,7 +23,7 @@ const TopNavigationBar = () => {
 
   useEffect(() => {
     if (!user || matchesLoading) return;
-    
+
     calculateUnreadChats();
 
     const interval = setInterval(() => {
@@ -109,17 +109,15 @@ const TopNavigationBar = () => {
 
   const NavItem = ({ item, isActive }) => (
     <div
-      className={`group flex flex-col items-center justify-center cursor-pointer relative py-2 h-full ${
-        isActive && typeof item.icon !== 'string' ? activeBgColor : hoverBgColor
-      }`}
+      className={`group flex flex-col items-center justify-center cursor-pointer relative py-2 h-full ${isActive && typeof item.icon !== 'string' ? activeBgColor : hoverBgColor
+        }`}
       onClick={() => handleNavigate(item.path)}
     >
       <div
-        className={`flex flex-col items-center px-4 ${
-          isActive && typeof item.icon !== 'string'
+        className={`flex flex-col items-center px-4 ${isActive && typeof item.icon !== 'string'
             ? 'relative after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-1 after:bg-white'
             : ''
-        }`}
+          }`}
       >
         {typeof item.icon === 'string' ? (
           <img src={item.icon} alt={item.label} className="h-12 w-12 rounded-full" />
@@ -127,32 +125,30 @@ const TopNavigationBar = () => {
           <div className="relative">
             <FontAwesomeIcon
               icon={item.icon}
-              className={`text-sm md:text-lg transition duration-300 ${
-                isActive ? 'text-white scale-110' : 'text-white'
-              }`}
+              className={`text-sm md:text-lg transition duration-300 ${isActive ? 'text-white scale-110' : 'text-white'
+                }`}
             />
             {/* Only show badge when not calculating, count > 0, and not on chats page */}
-            {item.badge !== undefined && 
-             !isCalculating && 
-             item.badge > 0 && 
-             location.pathname !== '/chats' && (
-              <span className="absolute top-[-2px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
-                {item.badge}
-              </span>
-            )}
+            {item.badge !== undefined &&
+              !isCalculating &&
+              item.badge > 0 &&
+              location.pathname !== '/chats' && (
+                <span className="absolute top-[4px] right-[-4px] grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-amber-500 py-1 px-1 text-xs font-bold text-white">
+                  {item.badge}
+                </span>
+              )}
           </div>
         )}
         <span
-          className={`text-xs mt-1 transition-all duration-300 ${
-            isActive ? 'text-white font-medium' : 'text-white'
-          } absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}
+          className={`text-xs mt-1 transition-all duration-300 ${isActive ? 'text-white font-medium' : 'text-white'
+            } absolute bottom-[-1.2rem] left-1/2 transform -translate-x-1/2 bg-gray-800 px-2 py-1 rounded opacity-0 group-hover:opacity-100 md:opacity-100 md:static md:bg-transparent md:translate-x-0 md:px-0 md:py-0`}
         >
           {item.label}
         </span>
       </div>
     </div>
   );
-  
+
 
   return (
     <div className={`fixed top-0 left-0 right-0 ${bgColor} z-50`}>
@@ -201,11 +197,10 @@ const TopNavigationBar = () => {
           {centerItems.map((item, index) => (
             <div
               key={index}
-              className={`py-2 w-full text-center cursor-pointer ${
-                location.pathname === item.path
+              className={`py-2 w-full text-center cursor-pointer ${location.pathname === item.path
                   ? `${activeBgColor} font-medium`
                   : hoverBgColor
-              }`}
+                }`}
               onClick={() => {
                 setIsMenuOpen(false);
                 handleNavigate(item.path);
